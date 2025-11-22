@@ -42,12 +42,52 @@ async function bootstrap() {
     // ✅ Global prefix for all routes
     app.setGlobalPrefix('api/v1');
 
-    // ✅ Allow requests from your frontend
+    // ✅ CORS Configuration
+    // Note: When credentials: true, we cannot use '*' - must specify exact origins
+    const corsOrigin = process.env.CORS_ORIGIN?.trim();
+    let allowedOrigins: string[] | ((origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => void);
+    
+    // Default origins that should always be included
+    const defaultOrigins = [
+      'http://127.0.0.1:4200',
+      'http://localhost:4200',
+      'https://feedin.up.railway.app',
+    ];
+    
+    if (corsOrigin) {
+      if (corsOrigin === '*') {
+        // When credentials are true, we need to allow all origins dynamically
+        // Use a function that accepts any origin
+        allowedOrigins = (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+          // Allow any origin when CORS_ORIGIN is set to *
+          callback(null, true);
+        };
+        logger.log('🌐 CORS: Allowing all origins (*) with credentials support');
+      } else {
+        // Split by comma and trim each origin, merge with defaults
+        const envOrigins = corsOrigin.split(',').map(origin => origin.trim()).filter(Boolean);
+        allowedOrigins = [...new Set([...defaultOrigins, ...envOrigins])]; // Remove duplicates
+        logger.log(`🌐 CORS: Allowing origins: ${allowedOrigins.join(', ')}`);
+      }
+    } else {
+      // Default fallback origins - include the frontend domain
+      allowedOrigins = defaultOrigins;
+      logger.log(`🌐 CORS: Using default origins: ${allowedOrigins.join(', ')}`);
+    }
+
     app.enableCors({
-      origin: process.env.CORS_ORIGIN === '*' ? true : process.env.CORS_ORIGIN?.split(',') || ['http://127.0.0.1:4200', 'http://localhost:4200'],
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+      origin: allowedOrigins,
+      methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token', 'Accept', 'Origin', 'X-Requested-With'],
+      exposedHeaders: ['Set-Cookie'],
       credentials: true,
+      preflightContinue: false,
+      optionsSuccessStatus: 204,
+      maxAge: 86400, // 24 hours
     });
+    
+    logger.log(`✅ CORS configured successfully`);
+    logger.log(`📋 CORS_ORIGIN env: ${corsOrigin || 'not set'}`);
 
     const port = process.env.PORT || 3000;
     await app.listen(port);
