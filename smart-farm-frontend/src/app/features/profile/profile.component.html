@@ -1,0 +1,387 @@
+<!-- Profile Container with Dashboard-consistent styling -->
+<div class="profile-container" [attr.dir]="languageService.getCurrentLanguage().direction">
+
+  <!-- Enhanced Profile Header with Avatar -->
+  <div class="profile-header-card">
+    <div class="avatar-section">
+      <div class="avatar-wrapper">
+        <div class="avatar-circle">
+          <mat-icon class="avatar-icon">person</mat-icon>
+        </div>
+        <button
+          mat-mini-fab
+          class="avatar-edit-btn"
+          color="primary"
+          [attr.aria-label]="('profile.actions.changePhoto' | translate)">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </div>
+      <div class="user-info">
+        <h1 class="user-name" *ngIf="user()">
+          {{ user()?.first_name }} {{ user()?.last_name }}
+        </h1>
+        <p class="user-role" *ngIf="user()">
+          <mat-icon>work_outline</mat-icon>
+          {{ user()?.role | titlecase }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs for Different Sections -->
+  <div class="profile-content">
+    <mat-tab-group animationDuration="300ms" class="profile-tabs">
+
+      <!-- Profile Information Tab -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">person</mat-icon>
+          <span class="tab-label">{{ 'profile.personalInfo' | translate }}</span>
+        </ng-template>
+
+        <div class="tab-content">
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-title">
+                <mat-icon>badge</mat-icon>
+              <h2>{{ 'profile.personalInfo' | translate }}</h2>
+              </div>
+            <p class="section-subtitle">{{ 'profile.descriptions.personalInfo' | translate }}</p>
+            </div>
+
+            <form [formGroup]="profileForm" (ngSubmit)="onProfileSubmit()" class="profile-form">
+
+              <!-- Name Fields -->
+              <div class="form-section">
+                <h3 class="form-section-title">{{ 'profile.sections.fullName' | translate }}</h3>
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>{{ 'auth.firstName' | translate }}</mat-label>
+                    <input
+                      matInput
+                      formControlName="first_name"
+                      [placeholder]="'profile.placeholders.firstName' | translate">
+                    <mat-icon matPrefix>person_outline</mat-icon>
+                    <mat-error *ngIf="profileForm.get('first_name')?.invalid && profileForm.get('first_name')?.touched">
+                      {{ getErrorMessage(profileForm, 'first_name') }}
+                    </mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>{{ 'auth.lastName' | translate }}</mat-label>
+                    <input
+                      matInput
+                      formControlName="last_name"
+                      [placeholder]="'profile.placeholders.lastName' | translate">
+                    <mat-icon matPrefix>person_outline</mat-icon>
+                    <mat-error *ngIf="profileForm.get('last_name')?.invalid && profileForm.get('last_name')?.touched">
+                      {{ getErrorMessage(profileForm, 'last_name') }}
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <!-- Contact Information -->
+              <div class="form-section">
+                <h3 class="form-section-title">{{ 'profile.sections.contact' | translate }}</h3>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>{{ 'common.email' | translate }}</mat-label>
+                  <input
+                    matInput
+                    type="email"
+                    formControlName="email"
+                    [placeholder]="'profile.placeholders.email' | translate">
+                  <mat-icon matPrefix>email</mat-icon>
+                  <mat-error *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched">
+                    {{ getErrorMessage(profileForm, 'email') }}
+                  </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>{{ 'profile.fields.phone' | translate }}</mat-label>
+                  <input
+                    matInput
+                    type="tel"
+                    formControlName="phone"
+                    [placeholder]="'profile.placeholders.phone' | translate">
+                  <mat-icon matPrefix>phone</mat-icon>
+                </mat-form-field>
+              </div>
+
+              <!-- Location -->
+              <div class="form-section">
+                <h3 class="form-section-title">{{ 'profile.sections.location' | translate }}</h3>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>{{ 'profile.fields.address' | translate }}</mat-label>
+                  <textarea
+                    matInput
+                    formControlName="address"
+                    [placeholder]="'profile.placeholders.address' | translate"
+                    rows="2"></textarea>
+                  <mat-icon matPrefix>location_on</mat-icon>
+                </mat-form-field>
+
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>{{ 'profile.fields.city' | translate }}</mat-label>
+                    <input
+                      matInput
+                      formControlName="city"
+                      [placeholder]="'profile.placeholders.city' | translate">
+                    <mat-icon matPrefix>location_city</mat-icon>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>{{ 'profile.fields.country' | translate }}</mat-label>
+                    <input
+                      matInput
+                      formControlName="country"
+                      [placeholder]="'profile.placeholders.country' | translate">
+                    <mat-icon matPrefix>public</mat-icon>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <!-- Additional Details -->
+              <div class="form-section">
+                <h3 class="form-section-title">{{ 'profile.sections.additional' | translate }}</h3>
+
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>{{ 'profile.fields.dateOfBirth' | translate }}</mat-label>
+                    <input
+                      matInput
+                      type="date"
+                      formControlName="date_of_birth"
+                      [attr.title]="('profile.tooltips.dateOfBirth' | translate)">
+                    <mat-icon matPrefix>cake</mat-icon>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>{{ 'profile.fields.gender' | translate }}</mat-label>
+                    <input
+                      matInput
+                      formControlName="gender"
+                      [placeholder]="'profile.placeholders.gender' | translate">
+                    <mat-icon matPrefix>wc</mat-icon>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="form-actions">
+                <button mat-stroked-button type="button" class="cancel-button">
+                  <mat-icon>close</mat-icon>
+                  {{ 'common.cancel' | translate }}
+                </button>
+                <button mat-raised-button color="primary" type="submit" class="save-button" [disabled]="isLoading || profileForm.invalid">
+                  <mat-spinner *ngIf="isLoading" diameter="20" class="button-spinner"></mat-spinner>
+                  <mat-icon *ngIf="!isLoading">save</mat-icon>
+                  <span *ngIf="!isLoading">{{ 'profile.updateProfile' | translate }}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Security Tab -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">lock</mat-icon>
+          <span class="tab-label">{{ 'profile.accountSettings' | translate }}</span>
+        </ng-template>
+
+        <div class="tab-content">
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-title">
+                <mat-icon>shield</mat-icon>
+                <h2>{{ 'profile.changePassword' | translate }}</h2>
+              </div>
+              <p class="section-subtitle">{{ 'profile.descriptions.security' | translate }}</p>
+            </div>
+
+            <form [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()" class="password-form">
+
+              <div class="security-notice">
+                <mat-icon>info</mat-icon>
+                <div>
+                  <p class="notice-title">{{ 'profile.securityRequirements.title' | translate }}</p>
+                  <ul class="notice-list">
+                    <li>{{ 'profile.securityRequirements.items.minLength' | translate }}</li>
+                    <li>{{ 'profile.securityRequirements.items.mixCharacters' | translate }}</li>
+                    <li>{{ 'profile.securityRequirements.items.unique' | translate }}</li>
+                  </ul>
+                </div>
+              </div>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>{{ 'profile.currentPassword' | translate }}</mat-label>
+                <input
+                  matInput
+                  [type]="hidePassword ? 'password' : 'text'"
+                  formControlName="currentPassword"
+                  [placeholder]="'profile.placeholders.currentPassword' | translate">
+                <mat-icon matPrefix>lock_outline</mat-icon>
+                <button
+                  mat-icon-button
+                  matSuffix
+                  type="button"
+                  (click)="hidePassword = !hidePassword"
+                  [attr.aria-label]="('profile.actions.togglePasswordVisibility' | translate)">
+                  <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+                <mat-error *ngIf="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched">
+                  {{ getErrorMessage(passwordForm, 'currentPassword') }}
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>{{ 'profile.newPassword' | translate }}</mat-label>
+                <input
+                  matInput
+                  [type]="hideNewPassword ? 'password' : 'text'"
+                  formControlName="newPassword"
+                  [placeholder]="'profile.placeholders.newPassword' | translate">
+                <mat-icon matPrefix>vpn_key</mat-icon>
+                <button
+                  mat-icon-button
+                  matSuffix
+                  type="button"
+                  (click)="hideNewPassword = !hideNewPassword"
+                  [attr.aria-label]="('profile.actions.togglePasswordVisibility' | translate)">
+                  <mat-icon>{{hideNewPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+                <mat-error *ngIf="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched">
+                  {{ getErrorMessage(passwordForm, 'newPassword') }}
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>{{ 'profile.confirmNewPassword' | translate }}</mat-label>
+                <input
+                  matInput
+                  [type]="hideConfirmPassword ? 'password' : 'text'"
+                  formControlName="confirmPassword"
+                  [placeholder]="'profile.placeholders.confirmPassword' | translate">
+                <mat-icon matPrefix>check_circle_outline</mat-icon>
+                <button
+                  mat-icon-button
+                  matSuffix
+                  type="button"
+                  (click)="hideConfirmPassword = !hideConfirmPassword"
+                  [attr.aria-label]="('profile.actions.togglePasswordVisibility' | translate)">
+                  <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+                <mat-error *ngIf="passwordForm.get('confirmPassword')?.invalid && passwordForm.get('confirmPassword')?.touched">
+                  {{ getErrorMessage(passwordForm, 'confirmPassword') }}
+                </mat-error>
+              </mat-form-field>
+
+              <!-- Action Buttons -->
+              <div class="form-actions">
+                <button mat-stroked-button type="button" class="cancel-button">
+                  <mat-icon>close</mat-icon>
+                  {{ 'common.cancel' | translate }}
+                </button>
+                <button mat-raised-button color="primary" type="submit" class="save-button" [disabled]="isPasswordLoading || passwordForm.invalid">
+                  <mat-spinner *ngIf="isPasswordLoading" diameter="20" class="button-spinner"></mat-spinner>
+                  <mat-icon *ngIf="!isPasswordLoading">security</mat-icon>
+                  <span *ngIf="!isPasswordLoading">{{ 'profile.updatePassword' | translate }}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Account Information Tab -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">info</mat-icon>
+          <span class="tab-label">{{ 'profile.accountInfo' | translate }}</span>
+        </ng-template>
+
+        <div class="tab-content">
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-title">
+                <mat-icon>admin_panel_settings</mat-icon>
+                <h2>{{ 'profile.accountInfo' | translate }}</h2>
+              </div>
+              <p class="section-subtitle">{{ 'profile.descriptions.accountInfo' | translate }}</p>
+            </div>
+
+            <div class="account-info" *ngIf="user()">
+
+              <div class="info-grid">
+                <div class="info-card">
+                  <div class="info-icon">
+                    <mat-icon>fingerprint</mat-icon>
+                  </div>
+                  <div class="info-details">
+                    <span class="info-label">{{ 'profile.fields.userId' | translate }}</span>
+                    <span class="info-value">{{ user()?.user_id }}</span>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <div class="info-icon">
+                    <mat-icon>badge</mat-icon>
+                  </div>
+                  <div class="info-details">
+                    <span class="info-label">{{ 'profile.fields.role' | translate }}</span>
+                    <span class="info-value">{{ user()?.role | titlecase }}</span>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <div class="info-icon status-active">
+                    <mat-icon>verified</mat-icon>
+                  </div>
+                  <div class="info-details">
+                    <span class="info-label">{{ 'profile.accountStatus' | translate }}</span>
+                    <span class="info-value status-badge">{{ user()?.status | titlecase }}</span>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <div class="info-icon">
+                    <mat-icon>event</mat-icon>
+                  </div>
+                  <div class="info-details">
+                    <span class="info-label">{{ 'profile.memberSince' | translate }}</span>
+                    <span class="info-value">{{ user()?.created_at | date:'mediumDate' }}</span>
+                  </div>
+                </div>
+
+                <div class="info-card" *ngIf="user()?.last_login">
+                  <div class="info-icon">
+                    <mat-icon>schedule</mat-icon>
+                  </div>
+                  <div class="info-details">
+                    <span class="info-label">{{ 'profile.lastLogin' | translate }}</span>
+                    <span class="info-value">{{ user()?.last_login | date:'short' }}</span>
+                  </div>
+                </div>
+
+                <div class="info-card">
+                  <div class="info-icon">
+                    <mat-icon>mail_outline</mat-icon>
+                  </div>
+                  <div class="info-details">
+                    <span class="info-label">{{ 'common.email' | translate }}</span>
+                    <span class="info-value">{{ user()?.email }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

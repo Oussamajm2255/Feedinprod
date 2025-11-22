@@ -1,0 +1,267 @@
+/**
+ * Devices Table View Styles
+ * Styles for the table layout
+ */
+
+.table-container {
+  background: var(--user-menu-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--user-menu-shadow);
+  border: 1px solid var(--header-border);
+  margin-bottom: 2rem;
+
+  .devices-table {
+    width: 100%;
+
+    ::ng-deep {
+      .mat-mdc-table {
+        background: transparent;
+      }
+
+      .mat-mdc-header-row {
+        background: rgba(46, 125, 50, 0.05);
+      }
+
+      .mat-mdc-header-cell {
+        color: var(--header-text);
+        font-weight: 600;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 1rem;
+      }
+
+      .mat-mdc-cell {
+        color: var(--header-text);
+        padding: 1rem;
+        font-size: 0.9375rem;
+      }
+
+      .mat-mdc-row {
+        transition: background-color 0.2s ease;
+
+        &:hover {
+          background: rgba(46, 125, 50, 0.03);
+        }
+
+        &:focus-within {
+          background: rgba(46, 125, 50, 0.05);
+          outline: 2px solid #2e7d32;
+          outline-offset: -2px;
+        }
+      }
+
+      .mat-sort-header-arrow {
+        color: #2e7d32;
+      }
+    }
+
+    .device-name-cell {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      .device-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+
+      span {
+        font-weight: 500;
+      }
+    }
+
+    .status-chip {
+      font-weight: 600;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.75rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      min-width: 90px;
+      justify-content: center;
+
+      .status-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+      }
+
+      &.online {
+        background: #4caf50;
+        color: white;
+      }
+
+      &.offline {
+        background: #f44336;
+        color: white;
+      }
+
+      &.maintenance {
+        background: #ff9800;
+        color: white;
+      }
+    }
+
+    button {
+      margin: 0 0.25rem;
+
+      &:focus-visible {
+        outline: 2px solid #2e7d32;
+        outline-offset: 2px;
+      }
+    }
+
+    .table-actions {
+      display: inline-flex;
+      gap: 0.35rem;
+      align-items: center;
+
+      button {
+        margin: 0;
+      }
+    }
+  }
+
+  ::ng-deep {
+    .mat-mdc-paginator {
+      background: transparent;
+      border-top: 1px solid var(--header-border);
+      color: var(--header-text);
+
+      .mat-mdc-paginator-container {
+        padding: 0.75rem 1rem;
+        min-height: 56px;
+      }
+
+      .mat-mdc-select-value,
+      .mat-mdc-paginator-range-label {
+        color: var(--header-text);
+      }
+
+      .mat-mdc-icon-button {
+        &:focus-visible {
+          outline: 2px solid #2e7d32;
+          outline-offset: 2px;
+        }
+      }
+    }
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .table-container {
+    border-radius: 8px;
+
+    .devices-table {
+      ::ng-deep {
+        .mat-mdc-header-cell,
+        .mat-mdc-cell {
+          padding: 0.75rem 0.5rem;
+          font-size: 0.8125rem;
+        }
+
+        .mat-mdc-header-cell {
+          font-size: 0.75rem;
+        }
+      }
+
+      .device-name-cell {
+        gap: 0.5rem;
+
+        .device-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+        }
+      }
+
+      .status-chip {
+        font-size: 0.6875rem;
+        padding: 0.2rem 0.5rem;
+        min-width: 80px;
+      }
+
+      .table-actions {
+        gap: 0.25rem;
+
+        button {
+          width: 36px;
+          height: 36px;
+        }
+      }
+    }
+
+    ::ng-deep {
+      .mat-mdc-paginator {
+        .mat-mdc-paginator-container {
+          flex-wrap: wrap;
+          gap: 0.5rem;
+          padding: 0.5rem;
+        }
+
+        .mat-mdc-paginator-page-size {
+          margin: 0;
+        }
+      }
+    }
+  }
+}
+
+/* Hide specific columns on mobile */
+@media (max-width: 480px) {
+  .devices-table {
+    ::ng-deep {
+      .mat-column-type,
+      .mat-column-location {
+        display: none;
+      }
+    }
+  }
+}
+
+/* Dark Theme Support */
+body.dark-theme {
+  .table-container {
+    .devices-table {
+      ::ng-deep {
+        .mat-mdc-header-row {
+          background: linear-gradient(135deg, #0f172a, #1e293b) !important;
+        }
+
+        .mat-mdc-header-cell {
+          color: #f1f5f9 !important;
+          font-weight: 700 !important;
+          border-bottom: 2px solid rgba(16, 185, 129, 0.3) !important;
+        }
+
+        .mat-mdc-cell {
+          color: #e2e8f0 !important;
+          border-bottom-color: #334155 !important;
+        }
+
+        .mat-mdc-row:hover {
+          background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1)) !important;
+        }
+      }
+
+      .device-name-cell span {
+        color: #f1f5f9 !important;
+      }
+    }
+
+    ::ng-deep .mat-mdc-paginator {
+      border-top-color: #334155 !important;
+
+      .mat-mdc-select-value,
+      .mat-mdc-paginator-range-label,
+      .mat-mdc-icon-button {
+        color: #e2e8f0 !important;
+      }
+    }
+  }
+}

@@ -1,0 +1,432 @@
+/**
+ * Modern Glassmorphic Toast Notifications
+ * Matches the SmartFarm login glassmorphism aesthetic
+ */
+
+// ===========================
+// Toast Container & Positioning
+// ===========================
+.swal2-container {
+  z-index: 99999 !important;
+
+  &.swal2-top-end {
+    top: 24px !important;
+    right: 24px !important;
+  }
+
+  &.swal2-top {
+    top: 24px !important;
+  }
+
+  &.swal2-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+// ===========================
+// Toast Base Styles (Glassmorphism)
+// ===========================
+.swal2-popup.swal2-toast {
+  // Glassmorphic effect
+  background: rgba(255, 255, 255, 0.25) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+
+  // Border & shadows
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 16px !important;
+
+  // Soft neumorphic shadows
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.15),
+    0 2px 6px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+
+  // Spacing
+  padding: 16px 20px !important;
+  min-width: 320px;
+  max-width: 400px;
+
+  // Animation
+  animation: slideInRight 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+
+  // Transitions
+  transition: all 300ms ease-in-out;
+
+  &:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow:
+      0 6px 16px rgba(0, 0, 0, 0.2),
+      0 3px 8px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+  }
+}
+
+// ===========================
+// Toast Icons (Modern Style)
+// ===========================
+.swal2-toast {
+  .swal2-icon {
+    width: 32px !important;
+    height: 32px !important;
+    margin: 0 12px 0 0 !important;
+    border: none !important;
+
+    // Icon styles
+    &.swal2-success {
+      background: rgba(76, 175, 80, 0.15) !important;
+      border-radius: 50%;
+
+      .swal2-success-ring {
+        border-color: #4caf50 !important;
+        border-width: 2px !important;
+      }
+
+      .swal2-success-line-long,
+      .swal2-success-line-tip {
+        background-color: #4caf50 !important;
+        width: 3px !important;
+      }
+    }
+
+    &.swal2-error {
+      background: rgba(244, 67, 54, 0.15) !important;
+      border-radius: 50%;
+
+      .swal2-x-mark-line-left,
+      .swal2-x-mark-line-right {
+        background-color: #f44336 !important;
+        width: 3px !important;
+        height: 18px !important;
+      }
+    }
+
+    &.swal2-warning {
+      background: rgba(255, 152, 0, 0.15) !important;
+      border-radius: 50%;
+      color: #ff9800 !important;
+      border-color: #ff9800 !important;
+      font-size: 24px !important;
+    }
+
+    &.swal2-info {
+      background: rgba(33, 150, 243, 0.15) !important;
+      border-radius: 50%;
+      color: #2196f3 !important;
+      border-color: #2196f3 !important;
+      font-size: 24px !important;
+    }
+  }
+}
+
+// ===========================
+// Toast Title & Content
+// ===========================
+.swal2-toast {
+  .swal2-title {
+    color: #ffffff !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    margin: 0 0 4px 0 !important;
+    text-align: left !important;
+    text-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.8),
+      0 1px 2px rgba(0, 0, 0, 0.9) !important;
+    line-height: 1.4 !important;
+  }
+
+  .swal2-html-container {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-size: 0.85rem !important;
+    font-weight: 400 !important;
+    margin: 0 !important;
+    text-align: left !important;
+    text-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.8),
+      0 1px 2px rgba(0, 0, 0, 0.9) !important;
+    line-height: 1.5 !important;
+  }
+}
+
+// ===========================
+// Toast Progress Bar
+// ===========================
+.swal2-toast {
+  .swal2-timer-progress-bar {
+    height: 3px !important;
+    background: rgba(255, 255, 255, 0.3) !important;
+    border-radius: 0 0 16px 16px !important;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100%;
+      background: linear-gradient(90deg, #4caf50 0%, #66bb6a 100%);
+      border-radius: 0 0 16px 0;
+      animation: progressShine 2s ease-in-out infinite;
+    }
+  }
+}
+
+@keyframes progressShine {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+// ===========================
+// Toast Close Button
+// ===========================
+.swal2-toast {
+  .swal2-close {
+    position: absolute !important;
+    top: 12px !important;
+    right: 12px !important;
+    width: 24px !important;
+    height: 24px !important;
+    color: #ffffff !important;
+    font-size: 20px !important;
+    line-height: 24px !important;
+    opacity: 0.7 !important;
+    transition: all 300ms ease-in-out !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 50% !important;
+
+    &:hover {
+      opacity: 1 !important;
+      background: rgba(255, 255, 255, 0.2) !important;
+      transform: scale(1.1) rotate(90deg) !important;
+    }
+
+    &:active {
+      transform: scale(0.95) rotate(90deg) !important;
+    }
+  }
+}
+
+// ===========================
+// Toast Type Variants
+// ===========================
+
+// Success Toast
+.swal2-toast.swal2-icon-success {
+  border-left: 4px solid #4caf50 !important;
+
+  &:hover {
+    box-shadow:
+      0 6px 16px rgba(76, 175, 80, 0.3),
+      0 3px 8px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+  }
+}
+
+// Error Toast
+.swal2-toast.swal2-icon-error {
+  border-left: 4px solid #f44336 !important;
+
+  &:hover {
+    box-shadow:
+      0 6px 16px rgba(244, 67, 54, 0.3),
+      0 3px 8px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+  }
+}
+
+// Warning Toast
+.swal2-toast.swal2-icon-warning {
+  border-left: 4px solid #ff9800 !important;
+
+  &:hover {
+    box-shadow:
+      0 6px 16px rgba(255, 152, 0, 0.3),
+      0 3px 8px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+  }
+}
+
+// Info Toast
+.swal2-toast.swal2-icon-info {
+  border-left: 4px solid #2196f3 !important;
+
+  &:hover {
+    box-shadow:
+      0 6px 16px rgba(33, 150, 243, 0.3),
+      0 3px 8px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+  }
+}
+
+// ===========================
+// Animations
+// ===========================
+@keyframes slideInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(100px) scale(0.9);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(-10px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes slideOutRight {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100px) scale(0.9);
+  }
+}
+
+// ===========================
+// Mobile Responsive
+// ===========================
+@media (max-width: 768px) {
+  .swal2-container.swal2-top-end {
+    top: 16px !important;
+    right: 16px !important;
+    left: 16px !important;
+  }
+
+  .swal2-popup.swal2-toast {
+    min-width: auto !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .swal2-container.swal2-top-end {
+    top: 12px !important;
+    right: 12px !important;
+    left: 12px !important;
+  }
+
+  .swal2-popup.swal2-toast {
+    padding: 12px 16px !important;
+    font-size: 0.85rem !important;
+
+    .swal2-title {
+      font-size: 0.9rem !important;
+    }
+
+    .swal2-html-container {
+      font-size: 0.8rem !important;
+    }
+  }
+}
+
+// ===========================
+// Dark Background Support - Full Theme Integration
+// ===========================
+body.dark-theme .swal2-popup.swal2-toast,
+.swal2-popup.swal2-toast.dark-theme {
+  background: var(--glass-bg, rgba(30, 41, 59, 0.95)) !important;
+  border: 1px solid var(--glass-border, rgba(100, 116, 139, 0.4)) !important;
+
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.4),
+    0 2px 6px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(100, 116, 139, 0.2) !important;
+
+  .swal2-title {
+    color: var(--text-primary, #f1f5f9) !important;
+  }
+
+  .swal2-html-container {
+    color: var(--text-secondary, #cbd5e1) !important;
+  }
+
+  .swal2-close {
+    color: var(--text-secondary, rgba(255, 255, 255, 0.7)) !important;
+
+    &:hover {
+      color: var(--text-primary, #ffffff) !important;
+      background: rgba(255, 255, 255, 0.15) !important;
+    }
+  }
+
+  // Success toast in dark theme
+  &.swal2-icon-success {
+    border-left-color: var(--success, #10b981) !important;
+    
+    .swal2-icon.swal2-success {
+      background: rgba(16, 185, 129, 0.2) !important;
+      
+      .swal2-success-ring {
+        border-color: var(--success, #10b981) !important;
+      }
+      
+      .swal2-success-line-long,
+      .swal2-success-line-tip {
+        background-color: var(--success, #10b981) !important;
+      }
+    }
+  }
+
+  // Error toast in dark theme
+  &.swal2-icon-error {
+    border-left-color: var(--danger, #ef4444) !important;
+    
+    .swal2-icon.swal2-error {
+      background: rgba(239, 68, 68, 0.2) !important;
+      
+      .swal2-x-mark-line-left,
+      .swal2-x-mark-line-right {
+        background-color: var(--danger, #ef4444) !important;
+      }
+    }
+  }
+
+  // Warning toast in dark theme
+  &.swal2-icon-warning {
+    border-left-color: var(--warning, #f59e0b) !important;
+    
+    .swal2-icon.swal2-warning {
+      background: rgba(245, 158, 11, 0.2) !important;
+      color: var(--warning, #f59e0b) !important;
+      border-color: var(--warning, #f59e0b) !important;
+    }
+  }
+
+  // Info toast in dark theme
+  &.swal2-icon-info {
+    border-left-color: var(--primary-blue, #3b82f6) !important;
+    
+    .swal2-icon.swal2-info {
+      background: rgba(59, 130, 246, 0.2) !important;
+      color: var(--primary-blue, #3b82f6) !important;
+      border-color: var(--primary-blue, #3b82f6) !important;
+    }
+  }
+}
+
+// ===========================
+// Reduced Motion Support
+// ===========================
+@media (prefers-reduced-motion: reduce) {
+  .swal2-popup.swal2-toast {
+    animation: none !important;
+    transition: opacity 150ms ease !important;
+  }
+
+  .swal2-toast .swal2-close:hover {
+    transform: none !important;
+  }
+}
+

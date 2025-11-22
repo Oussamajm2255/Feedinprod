@@ -1,0 +1,18 @@
+<!-- Beautiful Loading Screen -->
+<app-smart-loading-screen
+  [isLoading]="isLoading"
+  [message]="'Growing your smart network…'">
+</app-smart-loading-screen>
+
+<!-- Global Alerts Component - Glassmorphic Design -->
+<app-alerts></app-alerts>
+
+<div class="app-container">
+  <app-header *ngIf="isAuthenticated()"></app-header>
+
+  <main class="main-content" [class.with-header]="isAuthenticated()">
+    <router-outlet></router-outlet>
+</main>
+
+  <app-footer *ngIf="isAuthenticated()"></app-footer>
+</div>

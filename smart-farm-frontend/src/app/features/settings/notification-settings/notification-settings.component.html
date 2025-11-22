@@ -1,0 +1,329 @@
+<!-- Notification Settings Container -->
+<div class="notification-settings-container" [attr.dir]="languageService.getCurrentLanguage().direction">
+
+  <!-- Header Card -->
+  <div class="settings-header-card">
+    <div class="header-content">
+      <div class="header-icon-wrapper">
+        <mat-icon class="header-icon">notifications_active</mat-icon>
+      </div>
+      <div class="header-text">
+        <h1>{{ 'notifications.settingsPage.title' | translate }}</h1>
+        <p class="subtitle">{{ 'notifications.settingsPage.subtitle' | translate }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Content -->
+  <div class="settings-content">
+
+    <!-- Quiet Hours Section -->
+    <mat-card class="settings-section">
+      <div class="section-header">
+        <div class="section-title">
+          <div class="section-icon quiet-hours">
+            <mat-icon>nightlight</mat-icon>
+          </div>
+          <div>
+            <h2>{{ 'notifications.quietHours' | translate }}</h2>
+            <p class="section-description">{{ 'notifications.settingsPage.quietHoursDescription' | translate }}</p>
+          </div>
+        </div>
+        <mat-slide-toggle
+          [(ngModel)]="quietEnabled"
+          color="primary"
+          class="section-toggle">
+        </mat-slide-toggle>
+      </div>
+
+      <mat-card-content *ngIf="quietEnabled">
+        <div class="quiet-hours-config">
+          <div class="time-config-card">
+            <mat-icon class="time-icon">bedtime</mat-icon>
+            <div class="time-info">
+              <span class="time-label">{{ 'notifications.startHour' | translate }}</span>
+              <mat-form-field appearance="outline" class="time-field">
+                <input
+                  matInput
+                  type="number"
+                  [(ngModel)]="startHour"
+                  min="0"
+                  max="23"
+                  [placeholder]="'notifications.settingsPage.placeholders.startHour' | translate">
+                <span matSuffix>{{ 'notifications.settingsPage.labels.hourSuffix' | translate }}</span>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="time-separator">
+            <mat-icon>arrow_forward</mat-icon>
+          </div>
+
+          <div class="time-config-card">
+            <mat-icon class="time-icon">wb_twilight</mat-icon>
+            <div class="time-info">
+              <span class="time-label">{{ 'notifications.endHour' | translate }}</span>
+              <mat-form-field appearance="outline" class="time-field">
+                <input
+                  matInput
+                  type="number"
+                  [(ngModel)]="endHour"
+                  min="0"
+                  max="23"
+                  [placeholder]="'notifications.settingsPage.placeholders.endHour' | translate">
+                <span matSuffix>{{ 'notifications.settingsPage.labels.hourSuffix' | translate }}</span>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <mat-icon>info_outline</mat-icon>
+          <span [innerHTML]="'notifications.settingsPage.quietHoursInfo' | translate:{ start: (startHour + ':00'), end: (endHour + ':00') }"></span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Cooldown Section -->
+    <mat-card class="settings-section">
+      <div class="section-header">
+        <div class="section-title">
+          <div class="section-icon cooldown">
+            <mat-icon>schedule</mat-icon>
+          </div>
+          <div>
+            <h2>{{ 'notifications.cooldown' | translate }}</h2>
+            <p class="section-description">{{ 'notifications.settingsPage.cooldownDescription' | translate }}</p>
+          </div>
+        </div>
+      </div>
+
+      <mat-card-content>
+        <div class="cooldown-config">
+          <mat-icon class="cooldown-icon">timer</mat-icon>
+          <div class="cooldown-slider">
+            <mat-form-field appearance="outline" class="cooldown-field">
+              <mat-label>{{ 'notifications.cooldownMinutes' | translate }}</mat-label>
+              <input
+                matInput
+                type="number"
+                [(ngModel)]="cooldown"
+                min="0"
+                max="120"
+                [placeholder]="'notifications.settingsPage.placeholders.cooldown' | translate">
+              <span matSuffix>{{ 'notifications.settingsPage.labels.minutes' | translate }}</span>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <mat-icon>info_outline</mat-icon>
+          <span [innerHTML]="'notifications.settingsPage.cooldownInfo' | translate:{ minutes: cooldown }"></span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Notification Levels Section -->
+    <mat-card class="settings-section">
+      <div class="section-header">
+        <div class="section-title">
+          <div class="section-icon levels">
+            <mat-icon>priority_high</mat-icon>
+          </div>
+          <div>
+            <h2>{{ 'notifications.settingsPage.levelsTitle' | translate }}</h2>
+            <p class="section-description">{{ 'notifications.settingsPage.levelsDescription' | translate }}</p>
+          </div>
+        </div>
+      </div>
+
+      <mat-card-content>
+        <div class="toggle-grid">
+          <div class="toggle-card critical" [class.enabled]="levels.critical">
+            <div class="toggle-icon-wrapper">
+              <mat-icon>error</mat-icon>
+            </div>
+            <div class="toggle-info">
+              <span class="toggle-label">{{ 'notifications.critical' | translate }}</span>
+              <span class="toggle-description">{{ 'notifications.settingsPage.levelDescriptions.critical' | translate }}</span>
+            </div>
+            <mat-slide-toggle
+              [(ngModel)]="levels.critical"
+              color="warn">
+            </mat-slide-toggle>
+          </div>
+
+          <div class="toggle-card warning" [class.enabled]="levels.warning">
+            <div class="toggle-icon-wrapper">
+              <mat-icon>warning</mat-icon>
+            </div>
+            <div class="toggle-info">
+              <span class="toggle-label">{{ 'notifications.warning' | translate }}</span>
+              <span class="toggle-description">{{ 'notifications.settingsPage.levelDescriptions.warning' | translate }}</span>
+            </div>
+            <mat-slide-toggle
+              [(ngModel)]="levels.warning"
+              color="accent">
+            </mat-slide-toggle>
+          </div>
+
+          <div class="toggle-card info" [class.enabled]="levels.info">
+            <div class="toggle-icon-wrapper">
+              <mat-icon>info</mat-icon>
+            </div>
+            <div class="toggle-info">
+              <span class="toggle-label">{{ 'notifications.info' | translate }}</span>
+              <span class="toggle-description">{{ 'notifications.settingsPage.levelDescriptions.info' | translate }}</span>
+            </div>
+            <mat-slide-toggle
+              [(ngModel)]="levels.info"
+              color="primary">
+            </mat-slide-toggle>
+          </div>
+
+          <div class="toggle-card success" [class.enabled]="levels.success">
+            <div class="toggle-icon-wrapper">
+              <mat-icon>check_circle</mat-icon>
+            </div>
+            <div class="toggle-info">
+              <span class="toggle-label">{{ 'notifications.success' | translate }}</span>
+              <span class="toggle-description">{{ 'notifications.settingsPage.levelDescriptions.success' | translate }}</span>
+            </div>
+            <mat-slide-toggle
+              [(ngModel)]="levels.success"
+              color="primary">
+            </mat-slide-toggle>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Notification Sources Section -->
+    <mat-card class="settings-section">
+      <div class="section-header">
+        <div class="section-title">
+          <div class="section-icon sources">
+            <mat-icon>source</mat-icon>
+          </div>
+          <div>
+            <h2>{{ 'notifications.settingsPage.sourcesTitle' | translate }}</h2>
+            <p class="section-description">{{ 'notifications.settingsPage.sourcesDescription' | translate }}</p>
+          </div>
+        </div>
+      </div>
+
+      <mat-card-content>
+        <div class="toggle-grid">
+          <div class="toggle-card source" [class.enabled]="sources.sensor">
+            <div class="toggle-icon-wrapper">
+              <mat-icon>sensors</mat-icon>
+            </div>
+            <div class="toggle-info">
+              <span class="toggle-label">{{ 'notifications.sensors' | translate }}</span>
+              <span class="toggle-description">{{ 'notifications.settingsPage.sourceDescriptions.sensors' | translate }}</span>
+            </div>
+            <mat-slide-toggle
+              [(ngModel)]="sources.sensor"
+              color="primary">
+            </mat-slide-toggle>
+          </div>
+
+          <div class="toggle-card source" [class.enabled]="sources.device">
+            <div class="toggle-icon-wrapper">
+              <mat-icon>devices</mat-icon>
+            </div>
+            <div class="toggle-info">
+              <span class="toggle-label">{{ 'notifications.devices' | translate }}</span>
+              <span class="toggle-description">{{ 'notifications.settingsPage.sourceDescriptions.devices' | translate }}</span>
+            </div>
+            <mat-slide-toggle
+              [(ngModel)]="sources.device"
+              color="primary">
+            </mat-slide-toggle>
+          </div>
+
+          <div class="toggle-card source" [class.enabled]="sources.action">
+            <div class="toggle-icon-wrapper">
+              <mat-icon>bolt</mat-icon>
+            </div>
+            <div class="toggle-info">
+              <span class="toggle-label">{{ 'notifications.actions' | translate }}</span>
+              <span class="toggle-description">{{ 'notifications.settingsPage.sourceDescriptions.actions' | translate }}</span>
+            </div>
+            <mat-slide-toggle
+              [(ngModel)]="sources.action"
+              color="primary">
+            </mat-slide-toggle>
+          </div>
+
+          <div class="toggle-card source" [class.enabled]="sources.system">
+            <div class="toggle-icon-wrapper">
+              <mat-icon>computer</mat-icon>
+            </div>
+            <div class="toggle-info">
+              <span class="toggle-label">{{ 'notifications.system' | translate }}</span>
+              <span class="toggle-description">{{ 'notifications.settingsPage.sourceDescriptions.system' | translate }}</span>
+            </div>
+            <mat-slide-toggle
+              [(ngModel)]="sources.system"
+              color="primary">
+            </mat-slide-toggle>
+          </div>
+
+          <div class="toggle-card source" [class.enabled]="sources.maintenance">
+            <div class="toggle-icon-wrapper">
+              <mat-icon>build</mat-icon>
+            </div>
+            <div class="toggle-info">
+              <span class="toggle-label">{{ 'notifications.maintenance' | translate }}</span>
+              <span class="toggle-description">{{ 'notifications.settingsPage.sourceDescriptions.maintenance' | translate }}</span>
+            </div>
+            <mat-slide-toggle
+              [(ngModel)]="sources.maintenance"
+              color="primary">
+            </mat-slide-toggle>
+          </div>
+
+          <div class="toggle-card source" [class.enabled]="sources.security">
+            <div class="toggle-icon-wrapper">
+              <mat-icon>security</mat-icon>
+            </div>
+            <div class="toggle-info">
+              <span class="toggle-label">{{ 'notifications.security' | translate }}</span>
+              <span class="toggle-description">{{ 'notifications.settingsPage.sourceDescriptions.security' | translate }}</span>
+            </div>
+            <mat-slide-toggle
+              [(ngModel)]="sources.security"
+              color="primary">
+            </mat-slide-toggle>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Save Actions -->
+    <div class="actions-bar">
+      <div class="actions-info">
+        <mat-icon>auto_awesome</mat-icon>
+        <span>{{ 'notifications.settingsPage.actionsInfo' | translate }}</span>
+      </div>
+      <button
+        mat-raised-button
+        color="primary"
+        class="save-button"
+        (click)="save()">
+        <mat-icon>save</mat-icon>
+        <span>{{ 'notifications.saveSettings' | translate }}</span>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+
+
+
+

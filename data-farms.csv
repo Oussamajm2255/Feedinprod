@@ -1,0 +1,5 @@
+"farm_id","name","location","owner_id","created_at","updated_at","latitude","longitude"
+"farm-green-valley-001","Green Valley Organic Farm","Sacramento Valley, California, USA","3bc1df04-b660-4318-ae67-e0408189d354","2025-11-14 21:43:51.331158","2025-11-15 14:50:34.593202","38.58160000","-121.49440000"
+"farm-sunset-orchards-001","Sunset Orchards","Fresno County, California, USA","3bc1df04-b660-4318-ae67-e0408189d354","2025-11-14 21:43:51.331158","2025-11-15 14:50:34.593202","36.73780000","-119.78710000"
+"farm-highland-greenhouse-001","Highland Greenhouse Complex","Denver, Colorado, USA","94515776-8715-45f5-808f-e3e7adad142a","2025-11-14 21:43:51.331158","2025-11-15 14:50:34.593202","39.73920000","-104.99030000"
+"farm-coastal-hydroponics-001","Coastal Hydroponics","San Diego, California, USA","94515776-8715-45f5-808f-e3e7adad142a","2025-11-14 21:43:51.331158","2025-11-15 14:50:34.593202","32.71570000","-117.16110000"

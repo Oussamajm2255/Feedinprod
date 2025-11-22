@@ -1,0 +1,466 @@
+// ===== AGRICULTURAL IOT FOOTER =====
+.agri-footer {
+  position: relative;
+  background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 50%, #388E3C 100%);
+  color: #E8F5E9;
+  min-height: 80px;
+  border-top: 3px solid #4CAF50;
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  box-shadow: 0 -4px 20px rgba(46, 125, 50, 0.3);
+  z-index: 900;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  
+  // Hide main footer on tablet and mobile (≤1024px) - navigation moved to bottom nav
+  @media (max-width: 1024px) {
+    display: none;
+  }
+}
+
+:host-context(body.dark-theme) .agri-footer,
+:host-context(.dark-theme) .agri-footer {
+  background: linear-gradient(135deg, #0a1f0f 0%, #0f2e17 50%, #1a4d2e 100%);
+  border-top-color: #1a4d2e;
+  box-shadow:
+    0 -4px 24px rgba(26, 77, 46, 0.6),
+    0 -2px 12px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(129, 199, 132, 0.1);
+  color: rgba(232, 245, 233, 0.95);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.footer-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+// Left Section - Brand & Copyright
+.footer-left {
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.footer-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+  color: #A5D6A7;
+  transition: color 0.3s ease;
+}
+
+:host-context(body.dark-theme) .footer-icon,
+:host-context(.dark-theme) .footer-icon {
+  color: #81C784;
+}
+
+.footer-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #E8F5E9;
+  letter-spacing: 0.5px;
+  transition: color 0.3s ease;
+}
+
+:host-context(body.dark-theme) .footer-title,
+:host-context(.dark-theme) .footer-title {
+  color: rgba(232, 245, 233, 0.9);
+}
+
+.footer-copyright {
+  font-size: 0.85rem;
+  color: #C8E6C9;
+  opacity: 0.9;
+  transition: color 0.3s ease, opacity 0.3s ease;
+}
+
+:host-context(body.dark-theme) .footer-copyright,
+:host-context(.dark-theme) .footer-copyright {
+  color: rgba(200, 230, 201, 0.7);
+  opacity: 0.85;
+}
+
+// Center Section - Status
+.footer-center {
+  flex: 0 0 auto;
+}
+
+.footer-status {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 0.9rem;
+  color: #E8F5E9;
+  transition: all 0.3s ease;
+}
+
+:host-context(body.dark-theme) .status-indicator,
+:host-context(.dark-theme) .status-indicator {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(129, 199, 132, 0.3);
+  color: rgba(232, 245, 233, 0.9);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4CAF50;
+  box-shadow: 0 0 8px #4CAF50;
+  animation: pulse-dot 2s ease-in-out infinite;
+  transition: all 0.3s ease;
+}
+
+:host-context(body.dark-theme) .status-dot,
+:host-context(.dark-theme) .status-dot {
+  background: #66BB6A;
+  box-shadow: 0 0 10px #66BB6A;
+  animation: pulse-dot-dark 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% {
+    box-shadow: 0 0 8px #4CAF50;
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 16px #4CAF50;
+    transform: scale(1.1);
+  }
+}
+
+
+@keyframes pulse-dot-dark {
+  0%, 100% {
+    box-shadow: 0 0 10px #66BB6A;
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px #66BB6A;
+    transform: scale(1.15);
+  }
+}
+
+// Right Section - Version & Links
+.footer-right {
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.footer-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.version-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.4rem 0.75rem;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #E8F5E9;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: #81C784;
+    transition: color 0.3s ease;
+  }
+}
+
+:host-context(body.dark-theme) .version-badge,
+:host-context(.dark-theme) .version-badge {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(129, 199, 132, 0.3);
+  color: rgba(232, 245, 233, 0.9);
+
+  mat-icon {
+    color: #66BB6A;
+  }
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footer-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: #E8F5E9;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+    mat-icon {
+      transform: scale(1.1);
+    }
+  }
+}
+
+:host-context(body.dark-theme) .footer-link,
+:host-context(.dark-theme) .footer-link {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(232, 245, 233, 0.85);
+
+  &:hover {
+    background: rgba(129, 199, 132, 0.2);
+    box-shadow: 0 4px 16px rgba(26, 77, 46, 0.4);
+  }
+}
+
+// Decorative Leaf Pattern
+.footer-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  opacity: 0.1;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.leaf-icon {
+  position: absolute;
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #C8E6C9;
+  animation: float-leaf 10s ease-in-out infinite;
+  transition: color 0.3s ease;
+}
+
+:host-context(body.dark-theme) .leaf-icon,
+:host-context(.dark-theme) .leaf-icon {
+  color: rgba(129, 199, 132, 0.15);
+}
+
+.leaf-1 {
+  top: -10px;
+  left: 15%;
+  animation-delay: 0s;
+}
+
+.leaf-2 {
+  top: 10px;
+  right: 20%;
+  animation-delay: 2s;
+  transform: rotate(45deg);
+}
+
+.leaf-3 {
+  bottom: -15px;
+  left: 50%;
+  animation-delay: 4s;
+  transform: rotate(-30deg);
+}
+
+@keyframes float-leaf {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(5deg);
+  }
+}
+
+// ===== RESPONSIVE DESIGN =====
+
+// Desktop only (≥1025px) - Footer is hidden on tablet/mobile
+@media (min-width: 1025px) {
+  .agri-footer {
+    display: block;
+  }
+}
+
+// Tablet and small desktop (≤1024px) - Footer hidden, navigation in bottom nav
+@media (max-width: 1024px) {
+  .agri-footer {
+    display: none; // Hidden - navigation moved to bottom nav in header
+  }
+}
+
+// Mobile landscape
+@media (max-width: 768px) {
+  .agri-footer {
+    min-height: 120px;
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+  }
+
+  .footer-content {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+    padding: 1.5rem 1rem;
+  }
+
+  .footer-section {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .footer-left {
+    align-items: center;
+  }
+
+  .footer-right {
+    justify-content: center;
+  }
+
+  .footer-info {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .footer-center {
+    order: -1;
+  }
+
+  .leaf-icon {
+    font-size: 36px;
+    width: 36px;
+    height: 36px;
+  }
+}
+
+// Mobile portrait
+@media (max-width: 480px) {
+  .agri-footer {
+    min-height: 140px;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+  }
+
+  .footer-content {
+    padding: 1rem 0.75rem;
+    gap: 0.75rem;
+  }
+
+  .footer-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  .footer-title {
+    font-size: 0.95rem;
+  }
+
+  .footer-copyright {
+    font-size: 0.75rem;
+    line-height: 1.4;
+  }
+
+  .status-indicator {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .version-badge {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.65rem;
+  }
+
+  .footer-link {
+    width: 32px;
+    height: 32px;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .leaf-icon {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+  }
+}
+
+// Very small screens
+@media (max-width: 360px) {
+  .agri-footer {
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+  }
+
+  .footer-content {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .footer-title {
+    font-size: 0.9rem;
+  }
+
+  .footer-copyright {
+    font-size: 0.7rem;
+  }
+
+  .status-indicator {
+    font-size: 0.75rem;
+  }
+}

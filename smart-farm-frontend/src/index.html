@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Smart Farm Management System</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Smart Farm Management System - Monitor and manage your agricultural operations with IoT sensors and real-time data.">
+  <meta name="keywords" content="smart farm, agriculture, IoT, sensors, farming, management">
+  <meta name="author" content="Smart Farm Team">
+
+  <!-- Favicons - Multiple sizes for different devices and browsers -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
+  <link rel="manifest" href="site.webmanifest">
+
+  <!-- Security Headers -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' http://localhost:3000 ws://localhost:3000 https://api.smartfarm.com wss://api.smartfarm.com https://thorough-optimism-production.up.railway.app wss://thorough-optimism-production.up.railway.app; worker-src 'self' blob:;">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#10b981">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Smart Farm">
+
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="Smart Farm Management System">
+  <meta property="og:description" content="Monitor and manage your agricultural operations with IoT sensors and real-time data.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://your-domain.com">
+  <meta property="og:image" content="https://your-domain.com/assets/og-image.png">
+
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Smart Farm Management System">
+  <meta name="twitter:description" content="Monitor and manage your agricultural operations with IoT sensors and real-time data.">
+  <meta name="twitter:image" content="https://your-domain.com/assets/twitter-image.png">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <app-root></app-root>
+
+  <!-- Initial Loading Indicator - Agriculture Theme -->
+  <!-- This shows immediately while Angular bootstraps -->
+  <div id="initial-loading" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 50%, #388E3C 75%, #2E7D32 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    overflow: hidden;
+  ">
+    <!-- Agriculture SVG Animation -->
+    <svg class="agriculture-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" style="
+      width: 280px;
+      height: 280px;
+      stroke: #A5D6A7;
+      stroke-width: 4;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10;
+      filter: drop-shadow(0 0 20px rgba(165, 214, 167, 0.6));
+    ">
+      <g id="initial-circle">
+        <path d="M100 197.6c-53.9 0-97.6-43.7-97.6-97.6S46.1 2.4 100 2.4s97.6 43.7 97.6 97.6-43.7 97.6-97.6 97.6z"/>
+      </g>
+      <path id="initial-leafs1" d="M100 197.5v-32.8c-.1-5.1-1.1-12.4-5.8-17.1-7.3-7.3-23-5.4-23-5.4s-2.5 15 5.4 23c3.5 3.5 8.8 4.9 13.5 5.4m9.9 26.9v-32.8c.1-5.1 1.1-12.4 5.8-17.1 7.3-7.3 23-5.4 23-5.4s2.5 15-5.4 23c-3.5 3.5-8.8 4.9-13.5 5.4"/>
+      <path id="initial-leafs2" d="M100 162.5v-32.8c-.1-5.1-1.1-12.4-5.8-17.1-7.3-7.3-23-5.4-23-5.4s-2.5 15 5.4 23c3.5 3.5 8.8 4.9 13.5 5.4m9.9 26.9v-32.8c.1-5.1 1.1-12.4 5.8-17.1 7.3-7.3 23-5.4 23-5.4s2.5 15-5.4 23c-3.5 3.5-8.8 4.9-13.5 5.4"/>
+      <path id="initial-leafs3" d="M100 129.5V93.7c-.1-5.1-1.1-12.4-5.8-17.1-7.3-7.3-23-5.4-23-5.4s-2.5 15 5.4 23c3.5 3.5 8.8 4.9 13.5 5.4m9.9 29.9V93.7c.1-5.1 1.1-12.4 5.8-17.1 7.3-7.3 23-5.4 23-5.4s2.5 15-5.4 23c-3.5 3.5-8.8 4.9-13.5 5.4"/>
+      <path id="initial-leaf4" d="M112.4 51.4c0 10.5-12.4 20.1-12.4 20.1s-12.4-9-12.4-20.1C87.6 41 100 31.3 100 31.3s12.4 8.9 12.4 20.1z"/>
+    </svg>
+
+    <!-- Loading Message -->
+    <p style="
+      color: #E8F5E9;
+      font-family: 'Poppins', 'Roboto', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 400;
+      margin: 2rem 0 0 0;
+      text-align: center;
+      letter-spacing: 1.5px;
+      text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5), 0 0 40px rgba(165, 214, 167, 0.4);
+      animation: textGlow 3s ease-in-out infinite;
+    ">Growing your smart network…</p>
+
+    <!-- Progress Dots -->
+    <div style="display: flex; gap: 12px; margin-top: 1.5rem;">
+      <div style="
+        width: 12px;
+        height: 12px;
+        background: #A5D6A7;
+        border-radius: 50%;
+        box-shadow: 0 0 15px rgba(165, 214, 167, 0.8);
+        animation: dotBounce 1.5s ease-in-out infinite;
+      "></div>
+      <div style="
+        width: 12px;
+        height: 12px;
+        background: #A5D6A7;
+        border-radius: 50%;
+        box-shadow: 0 0 15px rgba(165, 214, 167, 0.8);
+        animation: dotBounce 1.5s ease-in-out 0.2s infinite;
+      "></div>
+      <div style="
+        width: 12px;
+        height: 12px;
+        background: #A5D6A7;
+        border-radius: 50%;
+        box-shadow: 0 0 15px rgba(165, 214, 167, 0.8);
+        animation: dotBounce 1.5s ease-in-out 0.4s infinite;
+      "></div>
+    </div>
+  </div>
+
+  <style>
+    /* Gradient animation */
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* SVG line drawing animations */
+    #initial-circle path {
+      stroke-dasharray: 620;
+      stroke-dashoffset: 620;
+      animation: drawLine 3s ease-in-out infinite;
+      animation-delay: 0s;
+    }
+    #initial-leafs1 {
+      stroke-dasharray: 620;
+      stroke-dashoffset: 620;
+      animation: drawLine 3s ease-in-out infinite;
+      animation-delay: 0.3s;
+    }
+    #initial-leafs2 {
+      stroke-dasharray: 620;
+      stroke-dashoffset: 620;
+      animation: drawLine 3s ease-in-out infinite;
+      animation-delay: 0.6s;
+    }
+    #initial-leafs3 {
+      stroke-dasharray: 620;
+      stroke-dashoffset: 620;
+      animation: drawLine 3s ease-in-out infinite;
+      animation-delay: 0.9s;
+    }
+    #initial-leaf4 {
+      stroke-dasharray: 620;
+      stroke-dashoffset: 620;
+      animation: drawLine 3s ease-in-out infinite;
+      animation-delay: 1.2s;
+    }
+
+    @keyframes drawLine {
+      0% {
+        stroke-dashoffset: 620;
+        opacity: 0;
+      }
+      15% {
+        opacity: 1;
+      }
+      40% {
+        stroke-dashoffset: 0;
+      }
+      90% {
+        stroke-dashoffset: 0;
+        opacity: 1;
+      }
+      100% {
+        stroke-dashoffset: 620;
+        opacity: 0;
+      }
+    }
+
+    /* Text glow animation */
+    @keyframes textGlow {
+      0%, 100% {
+        text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5), 0 0 40px rgba(165, 214, 167, 0.4);
+      }
+      50% {
+        text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6), 0 0 50px rgba(165, 214, 167, 0.6);
+      }
+    }
+
+    /* Dot bounce animation */
+    @keyframes dotBounce {
+      0%, 60%, 100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+      30% {
+        transform: translateY(-15px) scale(1.2);
+        opacity: 0.7;
+      }
+    }
+
+    /* Responsive sizing */
+    @media (max-width: 768px) {
+      .agriculture-svg {
+        width: 220px !important;
+        height: 220px !important;
+      }
+    }
+  </style>
+
+  <script>
+    // Hide initial loading when Angular is ready
+    window.addEventListener('DOMContentLoaded', function() {
+      // Wait a bit longer to ensure smooth transition to Angular loader
+      setTimeout(function() {
+        const loading = document.getElementById('initial-loading');
+        if (loading) {
+          // Fade out smoothly
+          loading.style.transition = 'opacity 0.6s ease-in-out';
+          loading.style.opacity = '0';
+          setTimeout(function() {
+            loading.style.display = 'none';
+          }, 600);
+        }
+      }, 500); // Wait 500ms before starting fade out
+    });
+  </script>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</body>
+</html>

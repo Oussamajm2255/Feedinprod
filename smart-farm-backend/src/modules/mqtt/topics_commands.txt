@@ -1,0 +1,12 @@
+C:\Program Files\mosquitto>cd "C:\Program Files\mosquitto"  
+
+Publish :
+
+C:\Program Files\mosquitto>mosquitto_pub -h i37c1733.ala.us-east-1.emqxsl.com -p 8883 -u oussama2255 -P Oussama2255 --cafile "C:\Users\oussama\Desktop\Smart-farm\certs\emqxsl-ca.crt" -t smartfarm/sensors/dht11 -m "45.5C,80.2%"      
+
+
+
+
+Subscribe to 
+
+C:\Program Files\mosquitto>mosquitto_sub -h i37c1733.ala.us-east-1.emqxsl.com -p 8883 -u oussama2255 -P Oussama2255 --cafile "C:\Users\oussama\Desktop\Smart-farm\certs\emqxsl-ca.crt" -t "smartfarm/actuators/dht11h/+"

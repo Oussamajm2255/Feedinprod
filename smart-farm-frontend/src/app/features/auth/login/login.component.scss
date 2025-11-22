@@ -1,0 +1,1371 @@
+@use 'sass:color';
+
+// Design System Variables
+$primary-color: #10b981;
+$success-color: #10b981;
+$error-color: #ef4444;
+$background-light: #ecf0f3;
+$background-dark: #3c3e41;
+
+// Glassmorphism
+$glass-color: rgba(255, 255, 255, 0.1);
+$glass-border: 1px solid rgba(255, 255, 255, 0.2);
+$glass-backdrop: blur(10px);
+
+// Animation timings
+$transition-standard: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-emphasized: 0.4s ease-in-out;
+$transition-neumorphic: 0.3s cubic-bezier(0.4, 0, 0.2, 1); // Smooth
+
+// Neumorphism shadows - Subtle but visible
+:root {
+  // Idle state - Soft visible shadow
+  --neumorphic-idle-shadow:
+    0 0 0 2px rgba(16, 185, 129, 0.2),
+    0 8px 24px rgba(0, 0, 0, 0.4),
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    0 2px 6px rgba(0, 0, 0, 0.25),
+    0 0 40px rgba(16, 185, 129, 0.1);
+
+  // Hover state - Lifted with gentle glow
+  --neumorphic-hover-shadow:
+    0 0 0 3px rgba(16, 185, 129, 0.4),
+    0 12px 36px rgba(0, 0, 0, 0.5),
+    0 8px 24px rgba(0, 0, 0, 0.4),
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    0 0 60px rgba(16, 185, 129, 0.3),
+    0 0 30px rgba(16, 185, 129, 0.2);
+
+  // Pressed state - Subtle inner shadow
+  --neumorphic-pressed-shadow:
+    inset 0 0 0 2px rgba(0, 0, 0, 0.3),
+    inset 0 6px 16px rgba(0, 0, 0, 0.5),
+    inset 0 4px 12px rgba(0, 0, 0, 0.4),
+    inset 0 2px 8px rgba(0, 0, 0, 0.3);
+
+  // Active state (focused inputs) - Gentle glow
+  --neumorphic-active-shadow:
+    0 0 0 3px rgba(16, 185, 129, 0.5),
+    0 10px 30px rgba(0, 0, 0, 0.45),
+    0 6px 18px rgba(0, 0, 0, 0.35),
+    0 0 50px rgba(16, 185, 129, 0.4),
+    0 0 30px rgba(16, 185, 129, 0.3);
+
+  // Input inner shadow
+  --input-inner-shadow:
+    inset 2px 2px 5px rgba(0, 0, 0, 0.1),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.3);
+}
+
+// Container
+.login-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 1s ease-in;
+
+  &.video-loaded {
+    opacity: 1;
+  }
+
+  &.video-error {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    opacity: 1;
+  }
+}
+
+// Video background
+.video-background {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  z-index: 0;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+}
+
+// Glassmorphism overlay
+.glass-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background-color: rgba(0, 0, 0, 0.4);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+// Login card - Neumorphic Press & Lift Effect
+.login-card {
+  z-index: 10;
+  padding: 32px 36px;
+  border-radius: 18px;
+  max-width: 420px;
+  width: 90%;
+  text-align: center;
+  // Add vertical spacing (up and down)
+  margin-top: clamp(40px, 8vh, 80px);
+  margin-bottom: clamp(40px, 8vh, 80px);
+  // MORE SOLID background for shadow visibility
+  background: linear-gradient(145deg,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.15) 100%);
+  // VISIBLE border
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+
+  // 🟢 Idle state - No movement, just colors and shadows
+  box-shadow: var(--neumorphic-idle-shadow);
+  transition:
+    box-shadow $transition-neumorphic,
+    background $transition-neumorphic,
+    border $transition-neumorphic;
+
+  // Subtle breathing animation
+  animation: cardBreathing 4s ease-in-out infinite;
+
+  // 🟢 Hover state - Just green color, no movement
+  &:hover {
+    animation: none;  // Stop breathing animation on hover
+    box-shadow: var(--neumorphic-hover-shadow);
+    // NO transform - keep card in place!
+    // Subtle glowing background
+    background: linear-gradient(145deg,
+      rgba(16, 185, 129, 0.15) 0%,
+      rgba(255, 255, 255, 0.2) 100%);
+    // Subtle green border
+    border: 3px solid rgba(16, 185, 129, 0.5);
+
+    // Subtle inner glow
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      background: radial-gradient(
+        circle at center,
+        rgba(16, 185, 129, 0.15) 0%,
+        rgba(16, 185, 129, 0.08) 30%,
+        transparent 70%
+      );
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity $transition-neumorphic;
+    }
+  }
+
+  // 🟢 Active state (when form inputs are focused) - Subtle glow
+  &[data-state="active"] {
+    box-shadow: var(--neumorphic-active-shadow);
+    // NO transform - keep card in place!
+    // Subtle green background
+    background: linear-gradient(145deg,
+      rgba(16, 185, 129, 0.2) 0%,
+      rgba(255, 255, 255, 0.2) 100%);
+    // Subtle green border
+    border: 3px solid rgba(16, 185, 129, 0.6);
+  }
+
+  // Position relative for pseudo-element glow
+  position: relative;
+
+  &::before {
+    opacity: 0;
+    transition: opacity $transition-neumorphic;
+  }
+}
+
+// Logo section
+.logo-section {
+  margin-bottom: 24px;
+  color: white;
+
+  img {
+    max-width: 120px;
+    height: auto;
+    margin-bottom: 8px;
+    object-fit: contain;
+  }
+
+  .fallback-icon {
+    font-size: 52px;
+    width: 52px;
+    height: 52px;
+    margin-bottom: 12px;
+    color: $primary-color;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.6em;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 4px 0 0;
+    font-size: 0.95em;
+    opacity: 0.8;
+  }
+}
+
+// Form styling
+.login-form {
+  .full-width {
+    width: 100%;
+    margin-bottom: 16px;
+
+    ::ng-deep {
+      .mat-mdc-form-field-subscript-wrapper {
+        padding-bottom: 0.5em;
+      }
+
+      .mat-mdc-text-field-wrapper {
+        border-radius: 22px !important;
+        background-color: transparent !important;
+        padding: 4px !important;
+        transition: all $transition-standard;
+      }
+
+      // Notched outline
+      .mdc-notched-outline {
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+          border-color: rgba(255, 255, 255, 0.28) !important;
+          border-width: 1.5px !important;
+          transition: border-color 0.25s ease, border-width 0.25s ease;
+        }
+
+        .mdc-notched-outline__leading {
+          border-right: 0 !important;
+          border-radius: 22px 0 0 22px !important;
+        }
+
+        .mdc-notched-outline__notch {
+          border-left: 0 !important;
+        }
+
+        .mdc-notched-outline__trailing {
+          border-radius: 0 22px 22px 0 !important;
+        }
+      }
+
+      // Input text
+      .mat-mdc-input-element {
+        color: white !important;
+        caret-color: $primary-color;
+        background-color: transparent !important;
+
+        &::placeholder {
+          color: rgba(255, 255, 255, 0.4) !important;
+        }
+
+        // Remove autofill styling
+        &:-webkit-autofill,
+        &:-webkit-autofill:hover,
+        &:-webkit-autofill:focus,
+        &:-webkit-autofill:active {
+          -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+          -webkit-text-fill-color: white !important;
+          transition: background-color 5000s ease-in-out 0s;
+          background-color: transparent !important;
+          // Trigger animation to detect autofill
+          animation-name: onAutoFillStart;
+        }
+
+        // Animation to detect autofill (browsers trigger this)
+        @keyframes onAutoFillStart {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 0;
+          }
+        }
+      }
+
+      // Label
+      .mat-mdc-floating-label {
+        color: rgba(255, 255, 255, 0.9) !important;
+        transition: all $transition-standard;
+        font-size: 1.1rem !important;
+        font-weight: 800;
+        line-height: 1.4;
+
+        &.mdc-floating-label--float-above {
+          font-size: 1rem !important;
+          font-weight: 800;
+          letter-spacing: 0.2px;
+          padding: 0 4px;
+          margin-left: 6px;
+        }
+      }
+
+      // Icons
+      .mat-mdc-form-field-icon-prefix,
+      .mat-mdc-form-field-icon-suffix {
+        color: rgba(255, 255, 255, 0.5);
+        transition: color $transition-standard;
+      }
+    }
+
+    // Valid state
+    &.mat-form-field-valid:not(.mat-form-field-disabled) {
+      ::ng-deep {
+        .mdc-notched-outline {
+          .mdc-notched-outline__leading,
+          .mdc-notched-outline__notch,
+          .mdc-notched-outline__trailing {
+            border-color: $success-color !important;
+            border-width: 2px !important;
+          }
+        }
+
+        .mat-mdc-floating-label,
+        .mat-mdc-form-field-icon-prefix mat-icon {
+          color: $success-color !important;
+        }
+      }
+    }
+
+    // Invalid state
+    &.mat-form-field-invalid {
+      ::ng-deep {
+        .mdc-notched-outline {
+          .mdc-notched-outline__leading,
+          .mdc-notched-outline__notch,
+          .mdc-notched-outline__trailing {
+            border-color: $error-color !important;
+            border-width: 2px !important;
+          }
+        }
+
+        .mat-mdc-floating-label,
+        .mat-mdc-form-field-icon-prefix mat-icon {
+          color: $error-color !important;
+        }
+      }
+    }
+
+    // Focus state
+    &.mat-focused {
+      ::ng-deep {
+        .mat-mdc-text-field-wrapper {
+          background-color: transparent !important;
+          box-shadow: 0 0 0 2px rgba($primary-color, 0.18);
+        }
+
+        .mdc-notched-outline {
+          .mdc-notched-outline__leading,
+          .mdc-notched-outline__notch,
+          .mdc-notched-outline__trailing {
+            border-color: $primary-color !important;
+            border-width: 2px !important;
+          }
+          .mdc-notched-outline__leading { border-right: 0 !important; }
+          .mdc-notched-outline__notch { border-left: 0 !important; }
+        }
+
+        .mat-mdc-floating-label,
+        .mat-mdc-form-field-icon-prefix mat-icon {
+          color: $primary-color !important;
+        }
+
+        .mat-mdc-floating-label {
+          font-weight: 500;
+        }
+      }
+    }
+
+    // Error text
+    ::ng-deep .mat-mdc-form-field-error {
+      color: $error-color !important;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      animation: slideInError 0.3s ease;
+    }
+  }
+}
+
+// Error animation
+@keyframes slideInError {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Subtle breathing/pulse animation (idle state) - NO MOVEMENT
+@keyframes cardBreathing {
+  0%, 100% {
+    box-shadow: var(--neumorphic-idle-shadow);
+  }
+  50% {
+    box-shadow:
+      0 0 0 2px rgba(16, 185, 129, 0.25),    // Gentle green ring pulse
+      0 10px 28px rgba(0, 0, 0, 0.45),
+      0 5px 14px rgba(0, 0, 0, 0.35),
+      0 2px 7px rgba(0, 0, 0, 0.3),
+      0 0 45px rgba(16, 185, 129, 0.15);
+  }
+}
+
+// Neumorphic subtle pulse on hover
+@keyframes neumorphicPulse {
+  0%, 100% {
+    box-shadow: var(--neumorphic-hover-shadow);
+  }
+  50% {
+    box-shadow:
+      0 20px 56px rgba(0, 0, 0, 0.55),
+      0 10px 28px rgba(0, 0, 0, 0.45),
+      0 5px 14px rgba(0, 0, 0, 0.35),
+      0 0 100px rgba(16, 185, 129, 0.5),
+      0 0 50px rgba(16, 185, 129, 0.4);
+  }
+}
+
+// Options row - Perfect alignment
+.options-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  font-size: 0.875em;
+  color: white;
+  min-height: 36px; // Ensure consistent height
+
+  .forgot-password-link {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: color $transition-standard;
+    line-height: 24px; // Match checkbox height
+    display: flex;
+    align-items: center;
+
+    &:hover {
+      color: $primary-color;
+      text-decoration: underline;
+    }
+  }
+
+  ::ng-deep .mat-mdc-checkbox {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+
+    // Reset Material checkbox layout to align checkbox and text
+    .mdc-form-field {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      gap: 8px;
+    }
+
+    .mdc-checkbox {
+      padding: 0;
+      margin: 0;
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      flex-shrink: 0; // Prevent checkbox from shrinking
+
+      .mdc-checkbox__background {
+        border-color: rgba(255, 255, 255, 0.4) !important;
+        background-color: transparent !important;
+        border-width: 2px !important;
+        border-radius: 4px;
+        transition: all $transition-standard;
+        margin: 0;
+        top: 0;
+        left: 0;
+      }
+
+      .mdc-checkbox__native-control {
+        top: 0;
+        left: 0;
+        margin: 0;
+      }
+
+      .mdc-checkbox__checkmark {
+        color: white !important;
+      }
+
+      .mdc-checkbox__mixedmark {
+        border-color: white !important;
+      }
+    }
+
+    &.mat-mdc-checkbox-checked .mdc-checkbox__background {
+      background-color: $primary-color !important;
+      border-color: $primary-color !important;
+    }
+
+    .mdc-checkbox:hover .mdc-checkbox__background {
+      border-color: rgba(255, 255, 255, 0.6) !important;
+    }
+
+    .mdc-label {
+      color: rgba(255, 255, 255, 0.9) !important;
+      font-size: 0.9em;
+      padding: 0;
+      margin: 0;
+      line-height: 1.2;
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+    }
+
+    // Fix Material's internal spacing
+    .mdc-checkbox__ripple {
+      display: none; // Remove ripple for cleaner alignment
+    }
+  }
+}
+
+// Submit button - Alive and animated
+.login-button {
+  background: linear-gradient(135deg, $primary-color 0%, color.adjust($primary-color, $lightness: -10%) 100%) !important;
+  color: white !important;
+  height: 48px;
+  font-size: 1.05em;
+  font-weight: 600;
+  border-radius: 14px !important;
+  box-shadow: 0 6px 18px rgba($primary-color, 0.4);
+  transition: all $transition-standard;
+  position: relative;
+  overflow: hidden;
+  
+  // Pulsing glow animation - makes it look alive
+  animation: buttonPulse 2.5s ease-in-out infinite;
+
+  // Shimmer effect
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent
+    );
+    transition: left 0.5s;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  &:hover:not([disabled]) {
+    box-shadow: 0 12px 30px rgba($primary-color, 0.6),
+                0 0 40px rgba($primary-color, 0.4);
+    transform: translateY(-3px) scale(1.02);
+    animation: buttonPulseHover 1.5s ease-in-out infinite;
+
+    &::after {
+      left: 100%;
+    }
+
+    &::before {
+      width: 300px;
+      height: 300px;
+    }
+  }
+
+  &:active:not([disabled]) {
+    transform: translateY(-1px) scale(0.98);
+    animation: none;
+    box-shadow: 0 4px 12px rgba($primary-color, 0.5);
+  }
+
+  &[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    animation: none;
+  }
+
+  ::ng-deep mat-progress-spinner circle {
+    stroke: white !important;
+  }
+}
+
+// Pulsing animation for button - makes it look alive
+@keyframes buttonPulse {
+  0%, 100% {
+    box-shadow: 0 6px 18px rgba($primary-color, 0.4),
+                0 0 20px rgba($primary-color, 0.2);
+  }
+  50% {
+    box-shadow: 0 6px 18px rgba($primary-color, 0.5),
+                0 0 30px rgba($primary-color, 0.3);
+  }
+}
+
+// Enhanced pulse on hover
+@keyframes buttonPulseHover {
+  0%, 100% {
+    box-shadow: 0 12px 30px rgba($primary-color, 0.6),
+                0 0 40px rgba($primary-color, 0.4),
+                0 0 60px rgba($primary-color, 0.2);
+  }
+  50% {
+    box-shadow: 0 12px 30px rgba($primary-color, 0.7),
+                0 0 50px rgba($primary-color, 0.5),
+                0 0 80px rgba($primary-color, 0.3);
+  }
+}
+
+// Register prompt
+.register-prompt {
+  margin-top: 16px;
+  font-size: 0.9em;
+  color: rgba(255, 255, 255, 0.8);
+
+  a {
+    color: $primary-color;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 5px;
+    transition: all $transition-standard;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: $primary-color;
+      transition: width $transition-standard;
+    }
+
+    &:hover {
+      color: color.adjust($primary-color, $lightness: 10%);
+
+      &::after {
+        width: 100%;
+      }
+    }
+  }
+}
+
+// ============================================
+// RESPONSIVE DESIGN - Multi-Breakpoint System
+// ============================================
+
+// Breakpoints
+$breakpoint-xs: 320px;   // Extra small phones
+$breakpoint-sm: 480px;   // Small phones
+$breakpoint-md: 600px;   // Large phones
+$breakpoint-lg: 768px;   // Tablets portrait
+$breakpoint-xl: 1024px;  // Tablets landscape / Small desktop
+$breakpoint-2xl: 1440px; // Desktop
+$breakpoint-3xl: 1920px; // Large screens
+$breakpoint-4xl: 2560px; // Ultra-wide
+
+// ============================================
+// BASE STYLES (Mobile-First Approach)
+// ============================================
+
+.login-container {
+  // Ensure proper padding on small screens
+  padding: clamp(10px, 3vw, 20px);
+  min-height: -webkit-fill-available; // iOS Safari fix
+  min-height: 100vh;
+}
+
+.login-card {
+  // Fluid sizing with constraints
+  width: min(95%, 450px);
+  max-width: 450px;
+  padding: clamp(24px, 5vw, 40px);
+  margin: auto;
+
+  // Ensure card doesn't touch viewport edges - maintain vertical spacing
+  margin-top: clamp(40px, 8vh, 80px);
+  margin-bottom: clamp(40px, 8vh, 80px);
+}
+
+.logo-section {
+  margin-bottom: clamp(20px, 4vh, 30px);
+
+  img {
+    // Fluid logo sizing
+    max-width: clamp(100px, 30vw, 150px);
+    height: auto;
+    margin-bottom: clamp(8px, 1.5vh, 10px);
+  }
+
+  .fallback-icon {
+    // Fluid icon sizing
+    font-size: clamp(48px, 12vw, 60px);
+    width: clamp(48px, 12vw, 60px);
+    height: clamp(48px, 12vw, 60px);
+    margin-bottom: clamp(10px, 2vh, 15px);
+  }
+
+  h2 {
+    // Fluid typography
+    font-size: clamp(1.4rem, 4vw, 1.8rem);
+    line-height: 1.3;
+  }
+
+  p {
+    font-size: clamp(0.85rem, 2.5vw, 1rem);
+    margin: clamp(4px, 1vh, 5px) 0 0;
+  }
+}
+
+.login-form {
+  .full-width {
+    margin-bottom: clamp(16px, 3vh, 20px);
+  }
+}
+
+.options-row {
+  margin-bottom: clamp(20px, 4vh, 25px);
+  gap: clamp(8px, 2vw, 12px);
+
+  // Ensure text doesn't break awkwardly
+  .forgot-password-link {
+    white-space: nowrap;
+    font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+  }
+
+  ::ng-deep .mat-mdc-checkbox .mdc-label {
+    font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+  }
+}
+
+.login-button {
+  // Fluid button sizing with proper touch targets
+  height: clamp(48px, 10vw, 54px);
+  min-height: 48px; // Accessibility minimum
+  font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+  padding: 0 clamp(16px, 4vw, 24px);
+}
+
+.register-prompt {
+  margin-top: clamp(16px, 3vh, 20px);
+  font-size: clamp(0.85rem, 2.2vw, 0.95rem);
+
+  a {
+    // Ensure link is easily tappable
+    display: inline-block;
+    min-height: 44px;
+    line-height: 44px;
+    padding: 0 4px;
+  }
+}
+
+// ============================================
+// SMALL MOBILE (320px - 480px)
+// ============================================
+@media (max-width: $breakpoint-sm) {
+  .login-card {
+    width: 95%;
+    padding: 20px 16px;
+    border-radius: 16px;
+
+    // Reduce shadows on very small screens
+    &:hover:not([data-pressed="true"]) {
+      transform: translateY(-2px) scale(1.005);
+    }
+  }
+
+  .logo-section {
+    margin-bottom: 20px;
+
+    img {
+      max-width: 100px;
+    }
+
+    .fallback-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+    }
+
+    h2 {
+      font-size: 1.4rem;
+    }
+
+    p {
+      font-size: 0.85rem;
+    }
+  }
+
+  .login-form {
+    ::ng-deep {
+      // Slightly smaller label on tiny screens
+      .mat-mdc-floating-label {
+        font-size: 1rem !important;
+
+        &.mdc-floating-label--float-above {
+          font-size: 0.9rem !important;
+        }
+      }
+
+      // Smaller icons
+      .mat-mdc-form-field-icon-prefix mat-icon,
+      .mat-mdc-form-field-icon-suffix mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+
+  .options-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 20px;
+
+    .forgot-password-link {
+      // Full width tappable area
+      width: 100%;
+      text-align: left;
+      padding: 8px 0;
+    }
+
+    ::ng-deep .mat-mdc-checkbox {
+      width: 100%;
+
+      .mdc-checkbox {
+        // Larger touch target
+        padding: 8px;
+      }
+    }
+  }
+
+  .login-button {
+    height: 48px;
+    font-size: 0.95rem;
+    border-radius: 12px !important;
+  }
+
+  .register-prompt {
+    font-size: 0.85rem;
+
+    // Stack on new line for easier tapping
+    a {
+      display: block;
+      margin-left: 0;
+      margin-top: 8px;
+      text-align: center;
+    }
+  }
+}
+
+// ============================================
+// MOBILE LARGE (481px - 600px)
+// ============================================
+@media (min-width: calc($breakpoint-sm + 1px)) and (max-width: $breakpoint-md) {
+  .login-card {
+    width: 92%;
+    padding: 28px 20px;
+    border-radius: 18px;
+  }
+
+  .logo-section {
+    margin-bottom: 24px;
+
+    h2 {
+      font-size: 1.6rem;
+    }
+  }
+
+  .options-row {
+    flex-wrap: wrap;
+    gap: 10px;
+
+    .forgot-password-link {
+      padding: 6px 0;
+    }
+  }
+
+  .login-button {
+    height: 50px;
+    font-size: 1rem;
+  }
+}
+
+// ============================================
+// TABLET PORTRAIT (601px - 768px)
+// ============================================
+@media (min-width: calc($breakpoint-md + 1px)) and (max-width: $breakpoint-lg) {
+  .login-card {
+    width: 85%;
+    max-width: 480px;
+    padding: 32px 24px;
+    border-radius: 20px;
+  }
+
+  .logo-section {
+    margin-bottom: 28px;
+
+    img {
+      max-width: 130px;
+    }
+
+    h2 {
+      font-size: 1.7rem;
+    }
+  }
+
+  .options-row {
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .login-button {
+    height: 52px;
+    font-size: 1.05rem;
+  }
+}
+
+// ============================================
+// TABLET LANDSCAPE / SMALL DESKTOP (769px - 1024px)
+// ============================================
+@media (min-width: calc($breakpoint-lg + 1px)) and (max-width: $breakpoint-xl) {
+  .login-card {
+    width: 75%;
+    max-width: 500px;
+    padding: 36px 28px;
+    border-radius: 20px;
+  }
+
+  .logo-section {
+    margin-bottom: 30px;
+
+    img {
+      max-width: 140px;
+    }
+
+    .fallback-icon {
+      font-size: 56px;
+      width: 56px;
+      height: 56px;
+    }
+
+    h2 {
+      font-size: 1.75rem;
+    }
+  }
+
+  .login-form {
+    .full-width {
+      margin-bottom: 22px;
+    }
+  }
+
+  .login-button {
+    height: 54px;
+    font-size: 1.08rem;
+  }
+}
+
+// ============================================
+// DESKTOP (1025px - 1440px) - OPTIMAL
+// ============================================
+@media (min-width: calc($breakpoint-xl + 1px)) and (max-width: $breakpoint-2xl) {
+  .login-card {
+    width: 60%;
+    max-width: 450px;
+    padding: 40px 32px;
+    border-radius: 20px;
+
+    // Enhanced hover effects on desktop
+    &:hover:not([data-pressed="true"]) {
+      transform: translateY(-6px) scale(1.015);
+    }
+  }
+
+  .logo-section {
+    margin-bottom: 32px;
+
+    img {
+      max-width: 150px;
+    }
+
+    .fallback-icon {
+      font-size: 60px;
+      width: 60px;
+      height: 60px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+    }
+
+    p {
+      font-size: 1rem;
+    }
+  }
+
+  .options-row {
+    margin-bottom: 26px;
+  }
+
+  .login-button {
+    height: 54px;
+    font-size: 1.1rem;
+
+    &:hover:not([disabled]) {
+      transform: translateY(-4px);
+    }
+  }
+
+  .register-prompt {
+    font-size: 0.95rem;
+  }
+}
+
+// ============================================
+// LARGE DESKTOP (1441px - 1920px)
+// ============================================
+@media (min-width: calc($breakpoint-2xl + 1px)) and (max-width: $breakpoint-3xl) {
+  .login-container {
+    // Center with max-width on large screens
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .login-card {
+    width: 50%;
+    max-width: 480px;
+    padding: 44px 36px;
+    border-radius: 22px;
+
+    &:hover:not([data-pressed="true"]) {
+      transform: translateY(-8px) scale(1.02);
+    }
+  }
+
+  .logo-section {
+    margin-bottom: 34px;
+
+    img {
+      max-width: 160px;
+    }
+
+    h2 {
+      font-size: 1.9rem;
+    }
+  }
+
+  .login-form {
+    .full-width {
+      margin-bottom: 24px;
+
+      ::ng-deep {
+        .mat-mdc-floating-label {
+          font-size: 1.15rem !important;
+
+          &.mdc-floating-label--float-above {
+            font-size: 1.05rem !important;
+          }
+        }
+      }
+    }
+  }
+
+  .options-row {
+    margin-bottom: 28px;
+    font-size: 0.95rem;
+  }
+
+  .login-button {
+    height: 56px;
+    font-size: 1.15rem;
+    border-radius: 18px !important;
+  }
+
+  .register-prompt {
+    font-size: 1rem;
+  }
+}
+
+// ============================================
+// ULTRA-WIDE (1920px+)
+// ============================================
+@media (min-width: calc($breakpoint-3xl + 1px)) {
+  .login-container {
+    // Prevent excessive stretching
+    max-width: 2560px;
+    margin: 0 auto;
+  }
+
+  .login-card {
+    width: 40%;
+    max-width: 500px;
+    padding: 48px 40px;
+    border-radius: 24px;
+
+    &:hover:not([data-pressed="true"]) {
+      transform: translateY(-10px) scale(1.025);
+    }
+  }
+
+  .logo-section {
+    margin-bottom: 36px;
+
+    img {
+      max-width: 170px;
+    }
+
+    .fallback-icon {
+      font-size: 64px;
+      width: 64px;
+      height: 64px;
+    }
+
+    h2 {
+      font-size: 2rem;
+    }
+
+    p {
+      font-size: 1.05rem;
+    }
+  }
+
+  .login-form {
+    .full-width {
+      margin-bottom: 26px;
+
+      ::ng-deep {
+        .mat-mdc-floating-label {
+          font-size: 1.2rem !important;
+
+          &.mdc-floating-label--float-above {
+            font-size: 1.08rem !important;
+          }
+        }
+
+        .mat-mdc-form-field-icon-prefix mat-icon,
+        .mat-mdc-form-field-icon-suffix mat-icon {
+          font-size: 26px;
+          width: 26px;
+          height: 26px;
+        }
+      }
+    }
+  }
+
+  .options-row {
+    margin-bottom: 30px;
+    font-size: 1rem;
+  }
+
+  .login-button {
+    height: 58px;
+    font-size: 1.2rem;
+    border-radius: 20px !important;
+  }
+
+  .register-prompt {
+    font-size: 1.05rem;
+  }
+}
+
+// ============================================
+// LANDSCAPE ORIENTATION (Mobile/Tablet)
+// ============================================
+@media (max-height: 600px) and (orientation: landscape) {
+  .login-container {
+    padding: 10px;
+
+    // Allow scrolling on short landscape screens
+    overflow-y: auto;
+    align-items: flex-start;
+  }
+
+  .login-card {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 16px 24px;
+    max-height: 95vh;
+    overflow-y: auto;
+
+    // Reduce animations in landscape for better UX
+    &:hover:not([data-pressed="true"]) {
+      transform: translateY(-2px) scale(1.005);
+    }
+  }
+
+  .logo-section {
+    margin-bottom: 12px;
+
+    img {
+      max-width: 80px;
+      margin-bottom: 6px;
+    }
+
+    .fallback-icon {
+      font-size: 36px;
+      width: 36px;
+      height: 36px;
+      margin-bottom: 8px;
+    }
+
+    h2 {
+      font-size: 1.2rem;
+    }
+
+    p {
+      display: none; // Hide subtitle in landscape to save space
+    }
+  }
+
+  .login-form {
+    .full-width {
+      margin-bottom: 12px;
+    }
+  }
+
+  .options-row {
+    margin-bottom: 16px;
+    font-size: 0.85rem;
+  }
+
+  .login-button {
+    height: 44px;
+    font-size: 0.95rem;
+  }
+
+  .register-prompt {
+    margin-top: 12px;
+    font-size: 0.85rem;
+  }
+}
+
+// ============================================
+// HIGH DPI / RETINA DISPLAYS
+// ============================================
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .login-card {
+    // Slightly thinner borders look better on retina
+    border-width: 0.5px;
+  }
+
+  .logo-section img {
+    // Ensure crisp logo rendering for high DPI displays
+    image-rendering: -webkit-optimize-contrast;
+    -ms-interpolation-mode: nearest-neighbor;
+  }
+}
+
+// ============================================
+// ACCESSIBILITY - REDUCED MOTION
+// ============================================
+@media (prefers-reduced-motion: reduce) {
+  .login-card {
+    transition: none;
+    animation: none;
+
+    &:hover:not([data-pressed="true"]) {
+      transform: none;
+    }
+
+    &[data-releasing="true"] {
+      animation: none;
+    }
+  }
+
+  .login-button {
+    transition: none;
+
+    &::before {
+      transition: none;
+    }
+
+    &:hover:not([disabled]) {
+      transform: none;
+    }
+  }
+
+  @keyframes slideInError {
+    from, to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes neumorphicRelease {
+    from, to {
+      transform: translateY(0) scale(1);
+    }
+  }
+}
+
+// ============================================
+// ACCESSIBILITY - HIGH CONTRAST MODE
+// ============================================
+@media (prefers-contrast: high) {
+  .login-card {
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .options-row,
+  .logo-section,
+  .register-prompt {
+    color: white;
+  }
+
+  .forgot-password-link {
+    text-decoration: underline;
+  }
+}
+
+// ============================================
+// PRINT STYLES (Just in case)
+// ============================================
+@media print {
+  .login-container {
+    background: white;
+  }
+
+  .video-background,
+  .glass-overlay {
+    display: none;
+  }
+
+  .login-card {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+}

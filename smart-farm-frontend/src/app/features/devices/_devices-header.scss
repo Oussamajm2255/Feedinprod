@@ -1,0 +1,123 @@
+/**
+ * Devices Header Styles
+ * Styles for the page header with title and actions
+ */
+
+.devices-header {
+  background: var(--header-bg-gradient);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--header-shadow);
+  border: 1px solid var(--header-border);
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .header-info {
+    flex: 1;
+    min-width: 250px;
+
+    h1 {
+      color: var(--header-text);
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 0 0 0.5rem 0;
+      line-height: 1.2;
+    }
+
+    p {
+      color: var(--header-text-secondary);
+      font-size: 1.1rem;
+      margin: 0;
+      line-height: 1.5;
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .action-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--header-text);
+    transition: all 0.2s ease;
+    border-radius: 8px;
+
+    &:hover:not(:disabled) {
+      background: var(--nav-item-hover);
+      transform: translateY(-1px);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--header-text);
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &.refreshing {
+      mat-icon {
+        animation: spin var(--refresh-animation-duration, 1s) linear infinite;
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .devices-header {
+    padding: 1.5rem;
+
+    .header-content {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .header-info {
+      h1 {
+        font-size: 2rem;
+      }
+
+      p {
+        font-size: 1rem;
+      }
+    }
+
+    .header-actions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .devices-header {
+    padding: 1rem;
+
+    .header-info {
+      h1 {
+        font-size: 1.75rem;
+      }
+    }
+  }
+}

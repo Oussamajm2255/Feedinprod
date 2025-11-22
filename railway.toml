@@ -1,0 +1,12 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "echo 'Please deploy smart-farm-backend and smart-farm-frontend as separate services'"
+healthcheckPath = "/"
+healthcheckTimeout = 300
+
+# This file indicates this is a monorepo
+# Deploy services separately:
+# 1. Backend: Root Directory = smart-farm-backend
+# 2. Frontend: Root Directory = smart-farm-frontend

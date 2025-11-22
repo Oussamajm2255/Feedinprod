@@ -1,0 +1,96 @@
+<div class="device-form-dialog">
+  <div class="dialog-header">
+    <h2>{{ isEditMode ? languageService.t()('devices.editDevice') : languageService.t()('devices.addDevice') }}</h2>
+    <p>{{ isEditMode ? languageService.t()('devices.editDeviceDescription') : languageService.t()('devices.addDeviceDescription') }}</p>
+  </div>
+
+  <mat-card class="form-card">
+    <mat-card-content>
+      <form [formGroup]="deviceForm" (ngSubmit)="onSubmit()" class="device-form">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ languageService.t()('devices.deviceName') }}</mat-label>
+            <input matInput formControlName="name" [placeholder]="languageService.t()('devices.deviceNamePlaceholder')" [attr.aria-label]="languageService.t()('devices.deviceName')">
+            <mat-error *ngIf="getFieldError('name')">{{ getFieldError('name') }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ languageService.t()('devices.location') }}</mat-label>
+            <input matInput formControlName="location" [placeholder]="languageService.t()('devices.locationPlaceholder')" [attr.aria-label]="languageService.t()('devices.location')">
+            <mat-error *ngIf="getFieldError('location')">{{ getFieldError('location') }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>{{ languageService.t()('devices.deviceType') }}</mat-label>
+            <mat-select formControlName="device_type">
+              <mat-option *ngFor="let type of deviceTypes" [value]="type">
+                {{ getDeviceTypeTranslation(type) }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="getFieldError('device_type')">{{ getFieldError('device_type') }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>{{ languageService.t()('devices.status') }}</mat-label>
+            <mat-select formControlName="status">
+              <mat-option *ngFor="let status of deviceStatuses" [value]="status">
+                {{ getStatusTranslation(status) }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="getFieldError('status')">{{ getFieldError('status') }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ languageService.t()('devices.description') }}</mat-label>
+            <textarea matInput formControlName="description" rows="3" [placeholder]="languageService.t()('devices.descriptionPlaceholder')" [attr.aria-label]="languageService.t()('devices.description')"></textarea>
+            <mat-error *ngIf="getFieldError('description')">{{ getFieldError('description') }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-section">
+          <h3>{{ languageService.t()('devices.networkSettings') }}</h3>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>{{ languageService.t()('devices.ipAddress') }}</mat-label>
+              <input matInput formControlName="ip_address" [placeholder]="languageService.t()('devices.ipAddressPlaceholder')" [attr.aria-label]="languageService.t()('devices.ipAddress')">
+              <mat-error *ngIf="getFieldError('ip_address')">{{ getFieldError('ip_address') }}</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>{{ languageService.t()('devices.macAddress') }}</mat-label>
+              <input matInput formControlName="mac_address" [placeholder]="languageService.t()('devices.macAddressPlaceholder')" [attr.aria-label]="languageService.t()('devices.macAddress')">
+              <mat-error *ngIf="getFieldError('mac_address')">{{ getFieldError('mac_address') }}</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>{{ languageService.t()('devices.firmwareVersion') }}</mat-label>
+              <input matInput formControlName="firmware_version" [placeholder]="languageService.t()('devices.firmwareVersionPlaceholder')" [attr.aria-label]="languageService.t()('devices.firmwareVersion')">
+              <mat-error *ngIf="getFieldError('firmware_version')">{{ getFieldError('firmware_version') }}</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="dialog-actions">
+    <button mat-button (click)="onCancel()" [disabled]="isLoading">
+      {{ languageService.t()('common.cancel') }}
+    </button>
+
+    <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="deviceForm.invalid || isLoading">
+      <mat-spinner *ngIf="isLoading" diameter="20" class="button-spinner"></mat-spinner>
+      <mat-icon *ngIf="!isLoading">{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+      {{ isEditMode ? languageService.t()('common.update') : languageService.t()('common.create') }}
+    </button>
+  </div>
+</div>

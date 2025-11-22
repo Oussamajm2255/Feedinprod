@@ -1,0 +1,373 @@
+<div class="devices-container" role="main" [attr.aria-label]="languageService.t()('devices.pageAriaLabel')">
+  <!-- Enhanced Header with Floating UI -->
+  <div class="devices-header">
+    <div class="header-content">
+      <div class="header-info">
+        <h1 id="page-title">{{ languageService.t()('devices.title') }}</h1>
+        <p>{{ languageService.t()('devices.subtitle') }}</p>
+      </div>
+      <div
+        class="header-actions"
+        role="toolbar"
+        [attr.aria-label]="languageService.t()('devices.aria.headerActions')">
+        <!-- View Mode Toggle -->
+        <button
+          mat-icon-button
+          (click)="toggleViewMode()"
+          class="action-btn"
+          [attr.aria-label]="languageService.t()('devices.aria.toggleViewTo', { view: viewMode === 'table' ? languageService.t()('devices.viewModes.cards') : languageService.t()('devices.viewModes.table') })"
+          [attr.title]="languageService.t()('devices.toggleView')"
+          aria-live="polite"
+          type="button">
+          <mat-icon aria-hidden="true">{{ viewMode === 'table' ? 'view_module' : 'table_view' }}</mat-icon>
+          <span class="cdk-visually-hidden">{{ languageService.t()('devices.toggleView') }}</span>
+        </button>
+
+        <!-- Refresh Button -->
+        <button
+          mat-icon-button
+          (click)="refreshDevices()"
+          [disabled]="isLoading"
+          class="action-btn"
+          [class.refreshing]="isLoading"
+          [attr.aria-label]="languageService.t()('common.refresh')"
+          [attr.title]="languageService.t()('common.refresh')"
+          [attr.aria-busy]="isLoading"
+          type="button">
+          <mat-icon aria-hidden="true">refresh</mat-icon>
+          <span class="cdk-visually-hidden">{{ languageService.t()('common.refresh') }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enhanced Filters Panel -->
+  <div
+    class="filters-panel"
+    role="search"
+    [attr.aria-label]="languageService.t()('devices.aria.filters')">
+    <div class="filters-content">
+      <div class="filters-header">
+        <h3>
+          <mat-icon aria-hidden="true">filter_list</mat-icon>
+          {{ languageService.t()('devices.searchAndFilter') }}
+          <button
+            mat-icon-button
+            (click)="clearFilters()"
+            [disabled]="!hasActiveFilters"
+            class="clear-btn-icon"
+            [attr.aria-label]="languageService.t()('devices.clearAllFilters')"
+            [attr.title]="languageService.t()('devices.clearAllFilters')"
+            type="button">
+            <mat-icon aria-hidden="true">clear</mat-icon>
+          <span class="cdk-visually-hidden">{{ languageService.t()('devices.clearAllFilters') }}</span>
+          </button>
+        </h3>
+        <span *ngIf="activeFilterCount > 0" class="active-filters-badge" aria-live="polite">
+          {{ languageService.t()('devices.activeFiltersCount', { count: activeFilterCount }) }}
+        </span>
+      </div>
+
+      <div
+        class="filters-grid"
+        role="group"
+        [attr.aria-label]="languageService.t()('devices.aria.filterControls')">
+        <label class="cdk-visually-hidden" [attr.for]="'device-search-input'">
+          {{ languageService.t()('devices.search') }}
+        </label>
+        <mat-form-field
+          appearance="outline"
+          class="search-field"
+          [ngClass]="{ 'is-active': !!searchTerm }">
+          <mat-label id="device-search-label">{{ languageService.t()('devices.search') }}</mat-label>
+          <mat-icon matPrefix aria-hidden="true">search</mat-icon>
+          <input
+            matInput
+            [(ngModel)]="searchTerm"
+            (input)="onSearchChange()"
+            placeholder="{{ languageService.t()('devices.searchPlaceholder') }}"
+            [attr.aria-label]="languageService.t()('devices.search')"
+            [attr.aria-labelledby]="'device-search-label'"
+            [attr.title]="languageService.t()('devices.searchPlaceholder')"
+            role="searchbox"
+            id="device-search-input"
+            name="device-search"
+            type="search"
+            autocomplete="off">
+        </mat-form-field>
+
+        <mat-form-field
+          appearance="outline"
+          class="filter-field"
+          [ngClass]="{ 'is-active': !!statusFilter }">
+          <mat-label>{{ languageService.t()('devices.filterByStatus') }}</mat-label>
+          <mat-select
+            [(ngModel)]="statusFilter"
+            (selectionChange)="onFilterChange()"
+            [attr.aria-label]="languageService.t()('devices.filterByStatus')">
+            <mat-option value="">{{ languageService.t()('devices.allStatuses') }}</mat-option>
+            <mat-option *ngFor="let status of availableStatuses" [value]="status">
+              {{ getStatusTranslation(status) }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field
+          appearance="outline"
+          class="filter-field"
+          [ngClass]="{ 'is-active': !!deviceTypeFilter }">
+          <mat-label>{{ languageService.t()('devices.filterByType') }}</mat-label>
+          <mat-select
+            [(ngModel)]="deviceTypeFilter"
+            (selectionChange)="onFilterChange()"
+            [attr.aria-label]="languageService.t()('devices.filterByType')">
+            <mat-option value="">{{ languageService.t()('devices.allTypes') }}</mat-option>
+            <mat-option *ngFor="let type of availableDeviceTypes" [value]="type">
+              {{ getDeviceTypeTranslation(type) }}
+            </mat-option>
+          </mat-select>
+          <mat-hint align="end" *ngIf="typeOptionsAreFarmScoped">
+            {{ languageService.t()('devices.filterByTypeScopedHint') }}
+          </mat-hint>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+
+  <!-- Skeleton Loader -->
+  <div class="skeleton-container" *ngIf="isLoading && !devices.length">
+    <div class="skeleton-grid" *ngIf="viewMode === 'cards'">
+      <div class="skeleton-card" *ngFor="let item of [1,2,3,4,5,6]">
+        <div class="skeleton-header">
+          <div class="skeleton-avatar"></div>
+          <div class="skeleton-title"></div>
+        </div>
+        <div class="skeleton-content">
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line"></div>
+          <div class="skeleton-line short"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Device Cards View -->
+  <div
+    class="devices-grid"
+    *ngIf="viewMode === 'cards' && !isLoading"
+    role="list"
+    aria-live="polite">
+    <mat-card
+      *ngFor="let device of paginatedDevices; trackBy: trackByDeviceId"
+      class="device-card"
+      [class.offline]="device.status === 'offline'"
+      [class.maintenance]="device.status === 'maintenance'"
+      [class.online]="device.status === 'online'"
+      tabindex="0"
+      role="listitem"
+      [attr.aria-labelledby]="'device-title-' + device.device_id"
+      [attr.aria-describedby]="'device-status-' + device.device_id"
+      [attr.aria-label]="getDeviceCardAriaLabel(device)">
+
+      <div class="device-card__header">
+        <div class="device-card__identity">
+          <div
+            class="device-avatar"
+            [style.background]="getDeviceTypeGradient(device.device_type || 'unknown')"
+            aria-hidden="true">
+            <mat-icon>{{ getDeviceIcon(device.device_type || 'unknown') }}</mat-icon>
+          </div>
+          <div class="device-card__text">
+            <h3
+              class="device-card__title"
+              [id]="'device-title-' + device.device_id"
+              [matTooltip]="device.name"
+              matTooltipShowDelay="600">
+              {{ device.name }}
+            </h3>
+            <p
+              class="device-card__location"
+              [attr.aria-label]="getDeviceLocationLabel(device)"
+              [matTooltip]="device.location"
+              matTooltipShowDelay="600">
+              <mat-icon aria-hidden="true">place</mat-icon>
+              <span>{{ device.location }}</span>
+            </p>
+          </div>
+        </div>
+
+        <div
+          class="device-card__status"
+          role="status"
+          [attr.aria-label]="getDeviceCardStatusLabel(device)"
+          [attr.id]="'device-status-' + device.device_id">
+          <mat-chip
+            [class]="'status-chip ' + device.status">
+            <mat-icon class="status-icon">{{ getStatusIcon(device.status) }}</mat-icon>
+            {{ getStatusTranslation(device.status) }}
+          </mat-chip>
+        </div>
+      </div>
+
+      <mat-card-content class="device-card__content">
+        <dl class="device-card__info" role="presentation">
+          <div class="info-item">
+            <dt>{{ languageService.t()('devices.type') }}</dt>
+            <dd>{{ getDeviceTypeTranslation(device.device_type || 'unknown') }}</dd>
+          </div>
+          <div class="info-item">
+            <dt>{{ languageService.t()('devices.deviceId') }}</dt>
+            <dd class="code">{{ device.device_id }}</dd>
+          </div>
+          <div class="info-item">
+            <dt>{{ languageService.t()('devices.lastSeen') }}</dt>
+            <dd>{{ formatLastSeen(device.last_seen) }}</dd>
+          </div>
+          <div class="info-item" *ngIf="device.description">
+            <dt>{{ languageService.t()('devices.description') }}</dt>
+            <dd class="info-item__description">{{ device.description }}</dd>
+          </div>
+        </dl>
+      </mat-card-content>
+
+      <mat-card-actions class="device-card__actions" [attr.aria-label]="languageService.t()('devices.card.actionsAria')">
+        <button
+          mat-raised-button
+          color="primary"
+          class="view-details-btn"
+          (click)="viewDeviceDetails(device)"
+          [attr.aria-label]="languageService.t()('devices.card.viewDetailsAria', { name: device.name })">
+          <mat-icon>visibility</mat-icon>
+          {{ languageService.t()('common.view') }}
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <!-- Table View -->
+  <div class="table-container" *ngIf="viewMode === 'table' && !isLoading">
+    <table mat-table [dataSource]="dataSource" matSort (matSortChange)="onSortChange($event)" class="devices-table">
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ languageService.t()('devices.name') }}
+        </th>
+        <td mat-cell *matCellDef="let device">
+          <div class="device-name-cell">
+            <mat-icon class="device-icon" [style.color]="getDeviceIconColor(device.device_type)">
+              {{ getDeviceIcon(device.device_type || 'unknown') }}
+            </mat-icon>
+            <span>{{ device.name }}</span>
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ languageService.t()('devices.type') }}
+        </th>
+        <td mat-cell *matCellDef="let device">
+          {{ getDeviceTypeTranslation(device.device_type || 'unknown') }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="location">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ languageService.t()('devices.location') }}
+        </th>
+        <td mat-cell *matCellDef="let device">
+          {{ device.location }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ languageService.t()('devices.status') }}
+        </th>
+        <td mat-cell *matCellDef="let device">
+          <mat-chip
+            [class]="'status-chip ' + device.status">
+            <mat-icon class="status-icon">{{ getStatusIcon(device.status) }}</mat-icon>
+            {{ getStatusTranslation(device.status) }}
+          </mat-chip>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="lastSeen">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ languageService.t()('devices.lastSeen') }}
+        </th>
+        <td mat-cell *matCellDef="let device">
+          <span>
+            {{ formatLastSeen(device.last_seen) }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>
+          {{ languageService.t()('common.actions') }}
+        </th>
+        <td mat-cell *matCellDef="let device">
+          <div class="table-actions">
+            <button
+              mat-icon-button
+              (click)="viewDeviceDetails(device)"
+              [attr.aria-label]="languageService.t()('devices.card.viewDetailsAria', { name: device.name })">
+              <mat-icon>visibility</mat-icon>
+            </button>
+
+            <button
+              mat-icon-button
+              (click)="toggleDeviceStatus(device)"
+              [disabled]="device.status === 'maintenance' || isTogglingStatus[device.device_id]"
+              [attr.aria-label]="getDeviceToggleAriaLabel(device)">
+              <mat-spinner *ngIf="isTogglingStatus[device.device_id]" diameter="20"></mat-spinner>
+              <mat-icon *ngIf="!isTogglingStatus[device.device_id]">{{ getToggleActionIcon(device) }}</mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></tr>
+    </table>
+
+    <mat-paginator
+      [length]="totalDevices"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      (page)="onPageChange($event)"
+      [showFirstLastButtons]="true"
+      [attr.aria-label]="languageService.t()('common.pagination')">
+    </mat-paginator>
+  </div>
+
+  <!-- Loading Overlay for Refresh -->
+  <div class="loading-overlay" *ngIf="isLoading && devices.length > 0" aria-live="assertive">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>{{ languageService.t()('common.loading') }}</p>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!isLoading && filteredDevices.length === 0 && devices.length > 0">
+    <mat-icon class="empty-icon">search_off</mat-icon>
+    <h3>{{ languageService.t()('devices.noResultsFound') }}</h3>
+    <p>{{ languageService.t()('devices.tryAdjustingFilters') }}</p>
+    <button mat-raised-button color="primary" (click)="clearFilters()">
+      <mat-icon>clear</mat-icon>
+      {{ languageService.t()('devices.clearFilters') }}
+    </button>
+  </div>
+
+  <!-- No Devices State -->
+  <div class="empty-state" *ngIf="!isLoading && devices.length === 0">
+    <mat-icon class="empty-icon">sensors</mat-icon>
+    <h3>{{ languageService.t()('devices.noDevicesFound') }}</h3>
+    <p>{{ languageService.t()('devices.noDevicesDescription') }}</p>
+    <button mat-raised-button color="primary" (click)="refreshDevices()">
+      <mat-icon>refresh</mat-icon>
+      {{ languageService.t()('common.refresh') }}
+    </button>
+  </div>
+</div>
+

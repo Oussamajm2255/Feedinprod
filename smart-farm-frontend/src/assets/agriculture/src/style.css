@@ -1,0 +1,44 @@
+svg {
+  width: 300px;
+  stroke: #719367;
+  stroke-width: 4;
+}
+
+#circle {
+  stroke-dasharray: 620;
+	stroke-dashoffset: 620;
+	animation: lines 2s ease-in-out forwards;
+}
+
+#leafs1 {
+  stroke-dasharray: 620;
+	stroke-dashoffset: 620;
+	animation: lines 2s ease-in-out forwards;
+}
+
+#leafs2 {
+  stroke-dasharray: 620;
+	stroke-dashoffset: 620;
+	animation: lines 2s ease-in-out .3s forwards;
+}
+
+#leafs3 {
+  stroke-dasharray: 620;
+	stroke-dashoffset: 620;
+	animation: lines 2s ease-in-out .6s forwards;
+}
+
+#leaf4 {
+  stroke-dasharray: 620;
+	stroke-dashoffset: 620;
+	animation: lines 2s ease-in-out 1.2s forwards;
+}
+
+@keyframes lines {
+  from {
+    stroke-dashoffset: 620;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}

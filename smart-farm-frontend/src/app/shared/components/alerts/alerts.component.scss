@@ -1,0 +1,376 @@
+/* Alerts Container - Fixed positioning */
+.alerts-container {
+  position: fixed;
+  top: 80px; /* Below header */
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 420px;
+  width: calc(100vw - 48px);
+  pointer-events: none;
+
+  // RTL Support
+  &.rtl {
+    right: auto;
+    left: 24px;
+  }
+
+  @media (max-width: 768px) {
+    top: 70px;
+    right: 16px;
+    max-width: calc(100vw - 32px);
+    gap: 8px;
+
+    &.rtl {
+      right: auto;
+      left: 16px;
+    }
+  }
+}
+
+/* Individual Alert Card - Glassmorphic Design */
+.alert-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 20px;
+  border-radius: 16px;
+  pointer-events: auto;
+  cursor: default;
+  position: relative;
+  overflow: hidden;
+  
+  /* Glassmorphic base styles */
+  background: rgba(255, 255, 255, 0.85);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 1px rgba(255, 255, 255, 0.8);
+  
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Hover effect */
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.15),
+      inset 0 1px 1px rgba(255, 255, 255, 0.9);
+  }
+
+  /* Dark theme adjustments */
+  .dark-theme & {
+    background: var(--glass-bg, rgba(30, 41, 59, 0.9));
+    border: 1px solid var(--glass-border, rgba(100, 116, 139, 0.4));
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      inset 0 1px 1px rgba(100, 116, 139, 0.3);
+
+    &:hover {
+      box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.4),
+        inset 0 1px 1px rgba(100, 116, 139, 0.4);
+    }
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 768px) {
+    padding: 14px 16px;
+    gap: 10px;
+    border-radius: 12px;
+  }
+}
+
+/* Alert Icon */
+.alert-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  font-weight: bold;
+  transition: transform 0.3s ease;
+
+  .icon-symbol {
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  @media (max-width: 768px) {
+    width: 36px;
+    height: 36px;
+
+    .icon-symbol {
+      font-size: 20px;
+    }
+  }
+}
+
+/* Alert Content */
+.alert-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.alert-title {
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.4;
+  margin: 0;
+  transition: color 0.3s ease;
+  color: var(--text-primary, #1f2937);
+
+  .dark-theme & {
+    color: var(--text-primary, #f1f5f9);
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
+}
+
+.alert-message {
+  font-size: 13px;
+  line-height: 1.5;
+  opacity: 0.9;
+  margin: 0;
+  transition: color 0.3s ease, opacity 0.3s ease;
+  color: var(--text-secondary, #6b7280);
+
+  .dark-theme & {
+    color: var(--text-secondary, #cbd5e1);
+  }
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
+}
+
+/* Close Button */
+.alert-close {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 24px;
+  line-height: 1;
+  padding: 0;
+  transition: all 0.2s ease;
+  color: inherit;
+  opacity: 0.6;
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  &:hover {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.1);
+    transform: rotate(90deg);
+  }
+
+  &:active {
+    transform: rotate(90deg) scale(0.9);
+  }
+
+  .dark-theme & {
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  @media (max-width: 768px) {
+    width: 24px;
+    height: 24px;
+    font-size: 20px;
+  }
+}
+
+/* Alert Type Styles - Success */
+.alert-card.success {
+  .alert-icon {
+    background: linear-gradient(135deg, var(--success, #10b981), #059669);
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  }
+
+  .alert-title {
+    color: var(--success, #047857);
+  }
+
+  .alert-message {
+    color: #065f46;
+    opacity: 0.9;
+  }
+
+  .dark-theme & {
+    .alert-title {
+      color: #6ee7b7;
+    }
+
+    .alert-message {
+      color: #a7f3d0;
+      opacity: 0.85;
+    }
+  }
+}
+
+/* Alert Type Styles - Error */
+.alert-card.error {
+  .alert-icon {
+    background: linear-gradient(135deg, var(--danger, #ef4444), #dc2626);
+    color: white;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  }
+
+  .alert-title {
+    color: var(--danger, #b91c1c);
+  }
+
+  .alert-message {
+    color: #991b1b;
+    opacity: 0.9;
+  }
+
+  .dark-theme & {
+    .alert-title {
+      color: #fca5a5;
+    }
+
+    .alert-message {
+      color: #fecaca;
+      opacity: 0.85;
+    }
+  }
+}
+
+/* Alert Type Styles - Warning */
+.alert-card.warning {
+  .alert-icon {
+    background: linear-gradient(135deg, var(--warning, #f59e0b), #d97706);
+    color: white;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+  }
+
+  .alert-title {
+    color: var(--warning, #b45309);
+  }
+
+  .alert-message {
+    color: #92400e;
+    opacity: 0.9;
+  }
+
+  .dark-theme & {
+    .alert-title {
+      color: #fcd34d;
+    }
+
+    .alert-message {
+      color: #fde68a;
+      opacity: 0.85;
+    }
+  }
+}
+
+/* Alert Type Styles - Info */
+.alert-card.info {
+  .alert-icon {
+    background: linear-gradient(135deg, var(--primary-blue, #3b82f6), #2563eb);
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+
+  .alert-title {
+    color: var(--primary-blue, #1e40af);
+  }
+
+  .alert-message {
+    color: #1e3a8a;
+    opacity: 0.9;
+  }
+
+  .dark-theme & {
+    .alert-title {
+      color: #93c5fd;
+    }
+
+    .alert-message {
+      color: #bfdbfe;
+      opacity: 0.85;
+    }
+  }
+}
+
+/* Pulse animation for icons on hover */
+.alert-card:hover .alert-icon {
+  animation: iconPulse 0.6s ease-in-out;
+}
+
+@keyframes iconPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* Accessibility - Focus visible */
+.alert-close:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* RTL Text Alignment */
+.alerts-container.rtl {
+  .alert-content {
+    text-align: right;
+  }
+
+  .alert-title,
+  .alert-message {
+    direction: rtl;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .alert-card,
+  .alert-icon,
+  .alert-close {
+    transition: none;
+    animation: none;
+  }
+
+  .alert-card:hover {
+    transform: none;
+  }
+
+  .alert-close:hover {
+    transform: none;
+  }
+}
+

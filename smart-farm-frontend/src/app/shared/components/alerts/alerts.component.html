@@ -1,0 +1,42 @@
+<!-- Alerts Container - Fixed at top-right with RTL support -->
+<div class="alerts-container" 
+     [class.rtl]="isRtl"
+     [class.dark-theme]="isDarkTheme">
+  
+  <!-- Individual Alert Cards -->
+  <div *ngFor="let alert of alerts"
+       class="alert-card"
+       [class.success]="alert.type === 'success'"
+       [class.error]="alert.type === 'error'"
+       [class.warning]="alert.type === 'warning'"
+       [class.info]="alert.type === 'info'"
+       [@slideIn]
+       (mouseenter)="onMouseEnter(alert)"
+       (mouseleave)="onMouseLeave(alert)"
+       role="alert"
+       [attr.aria-live]="alert.type === 'error' ? 'assertive' : 'polite'">
+    
+    <!-- Icon -->
+    <div class="alert-icon" [attr.aria-hidden]="true">
+      <span class="icon-symbol">{{ getIcon(alert.type) }}</span>
+    </div>
+    
+    <!-- Content -->
+    <div class="alert-content">
+      <div class="alert-title">{{ translate(alert.title) }}</div>
+      <div class="alert-message">{{ translate(alert.message) }}</div>
+    </div>
+    
+    <!-- Close Button -->
+    <button *ngIf="alert.dismissible !== false"
+            class="alert-close"
+            (click)="dismiss(alert.id)"
+            [attr.aria-label]="translate('common.close')"
+            title="Close alert"
+            type="button">
+      <span class="visually-hidden">Close</span>
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+</div>
+

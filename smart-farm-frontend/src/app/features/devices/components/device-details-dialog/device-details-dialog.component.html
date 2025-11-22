@@ -1,0 +1,309 @@
+<div
+  class="device-details-dialog glass-dialog"
+  role="dialog"
+  [attr.aria-modal]="true"
+  [attr.aria-labelledby]="dialogTitleId"
+  [attr.aria-describedby]="dialogContentId"
+  [attr.aria-label]="languageService.t()('devices.dialog.ariaLabel', { name: device.name })"
+  [@dialogAnimation]>
+  <!-- Epic Header Section -->
+  <div class="dialog-header">
+    <div class="device-icon-wrapper" [style.background]="getDeviceTypeGradient(device.device_type || 'unknown')">
+      <mat-icon class="device-icon">{{ getDeviceIcon(device.device_type || 'unknown') }}</mat-icon>
+      <div class="status-indicator" [style.background]="getStatusColor(device.status)"></div>
+    </div>
+    <div class="header-content">
+      <h2 class="dialog-title" [attr.id]="dialogTitleId">{{ device.name }}</h2>
+      <p class="dialog-subtitle">{{ device.location }}</p>
+      <div class="header-badges">
+        <mat-chip
+          class="status-chip"
+          [style.background]="getStatusColor(device.status) + '20'"
+          [style.color]="getStatusColor(device.status)">
+          <mat-icon class="status-icon">{{ getStatusIcon(device.status) }}</mat-icon>
+          {{ getStatusTranslation(device.status) }}
+        </mat-chip>
+        <mat-chip class="type-chip">
+          <mat-icon class="type-icon">{{ getDeviceIcon(device.device_type || 'unknown') }}</mat-icon>
+          {{ getDeviceTypeTranslation(device.device_type || 'unknown') }}
+        </mat-chip>
+      </div>
+    </div>
+    <button
+      mat-icon-button
+      (click)="onClose()"
+      class="close-header-btn"
+      [attr.aria-label]="languageService.t()('common.close')">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Content Section -->
+  <mat-dialog-content class="dialog-content" [@contentAnimation] [attr.id]="dialogContentId">
+    <mat-tab-group class="device-tabs" animationDuration="300ms">
+      <!-- Overview Tab -->
+      <mat-tab [label]="languageService.t()('devices.tabs.overview')">
+      <div class="tab-content">
+          <!-- Quick Stats Grid -->
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-icon" [style.background]="getStatusColor(device.status) + '20'">
+                <mat-icon [style.color]="getStatusColor(device.status)">{{ getStatusIcon(device.status) }}</mat-icon>
+              </div>
+              <div class="metric-content">
+                <span class="metric-label">{{ languageService.t()('devices.status') }}</span>
+                <span class="metric-value">{{ getStatusTranslation(device.status) }}</span>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon" style="background: rgba(59, 130, 246, 0.2);">
+                <mat-icon style="color: #3b82f6;">sensors</mat-icon>
+              </div>
+              <div class="metric-content">
+                <span class="metric-label">{{ languageService.t()('devices.sensors') }}</span>
+                <span class="metric-value">{{ sensorCount() }}</span>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon" style="background: rgba(16, 185, 129, 0.2);">
+                <mat-icon style="color: #10b981;">schedule</mat-icon>
+              </div>
+              <div class="metric-content">
+                <span class="metric-label">{{ languageService.t()('devices.uptime') }}</span>
+                <span class="metric-value">{{ calculateUptime() }}</span>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon" style="background: rgba(245, 158, 11, 0.2);">
+                <mat-icon style="color: #f59e0b;">history</mat-icon>
+              </div>
+              <div class="metric-content">
+                <span class="metric-label">{{ languageService.t()('devices.lastSeen') }}</span>
+                <span class="metric-value">{{ formatRelativeTime(device.last_seen) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Device Information -->
+          <div class="details-section">
+            <h3 class="section-title">
+              <mat-icon>info</mat-icon>
+              {{ languageService.t()('devices.deviceInformation') }}
+            </h3>
+            <div class="details-grid">
+              <div class="detail-item">
+                <div class="detail-icon">
+                  <mat-icon>fingerprint</mat-icon>
+                </div>
+                <div class="detail-content">
+                  <span class="detail-label">{{ languageService.t()('devices.deviceId') }}</span>
+                  <span class="detail-value code">{{ device.device_id }}</span>
+                </div>
+              </div>
+
+              <div class="detail-item" *ngIf="device.ip_address">
+                <div class="detail-icon">
+                  <mat-icon>router</mat-icon>
+                </div>
+                <div class="detail-content">
+                  <span class="detail-label">{{ languageService.t()('devices.ipAddress') }}</span>
+                  <span class="detail-value code">{{ device.ip_address }}</span>
+                </div>
+              </div>
+
+              <div class="detail-item" *ngIf="device.mac_address">
+                <div class="detail-icon">
+                  <mat-icon>network_check</mat-icon>
+                </div>
+                <div class="detail-content">
+                  <span class="detail-label">{{ languageService.t()('devices.macAddress') }}</span>
+                  <span class="detail-value code">{{ device.mac_address }}</span>
+                </div>
+              </div>
+
+              <div class="detail-item" *ngIf="device.firmware_version">
+                <div class="detail-icon">
+                  <mat-icon>memory</mat-icon>
+                </div>
+                <div class="detail-content">
+                  <span class="detail-label">{{ languageService.t()('devices.firmwareVersion') }}</span>
+                  <span class="detail-value">{{ device.firmware_version }}</span>
+                </div>
+              </div>
+
+              <div class="detail-item" *ngIf="device.description">
+                <div class="detail-icon">
+                  <mat-icon>description</mat-icon>
+                </div>
+                <div class="detail-content">
+                  <span class="detail-label">{{ languageService.t()('devices.description') }}</span>
+                  <span class="detail-value">{{ device.description }}</span>
+                </div>
+              </div>
+
+              <div class="detail-item">
+                <div class="detail-icon">
+                  <mat-icon>calendar_today</mat-icon>
+                </div>
+                <div class="detail-content">
+                  <span class="detail-label">{{ languageService.t()('devices.createdAt') }}</span>
+                  <span class="detail-value">{{ formatDate(device.created_at) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+    </mat-tab>
+
+    <!-- Sensors Tab -->
+      <mat-tab [label]="languageService.t()('devices.tabs.sensors', { count: sensorCount() })">
+      <div class="tab-content">
+          <div *ngIf="isLoadingSensors()" class="loading-container">
+            <mat-spinner diameter="50"></mat-spinner>
+          <p>{{ languageService.t()('common.loading') }}</p>
+        </div>
+
+          <div *ngIf="!isLoadingSensors() && sensors().length === 0" class="empty-state">
+            <mat-icon class="empty-icon">sensors_off</mat-icon>
+          <h3>{{ languageService.t()('devices.noSensors') }}</h3>
+          <p>{{ languageService.t()('devices.noSensorsDescription') }}</p>
+        </div>
+
+          <div *ngIf="!isLoadingSensors() && sensors().length > 0" class="sensors-grid">
+            <div *ngFor="let sensor of sensors()" class="sensor-card">
+              <div class="sensor-header">
+                <div class="sensor-icon-wrapper" [style.background]="getSensorTypeColor(sensor.type) + '20'">
+                  <mat-icon [style.color]="getSensorTypeColor(sensor.type)">{{ getSensorTypeIcon(sensor.type) }}</mat-icon>
+                </div>
+                <div class="sensor-title">
+                  <h4>{{ getSensorTypeLabel(sensor.type) }}</h4>
+                  <p>{{ sensor.location || languageService.t()('devices.sensorLocationUnknown') }}</p>
+                </div>
+              </div>
+              <div class="sensor-details">
+                <div class="sensor-detail-row">
+                  <span class="label">{{ languageService.t()('devices.sensorId') }}:</span>
+                  <span class="value code">{{ sensor.sensor_id }}</span>
+                </div>
+                <div class="sensor-detail-row">
+                  <span class="label">{{ languageService.t()('devices.unit') }}:</span>
+                  <span class="value">{{ sensor.unit }}</span>
+                </div>
+                <div class="sensor-detail-row" *ngIf="sensor.min_critical !== undefined || sensor.max_critical !== undefined">
+                  <span class="label">{{ languageService.t()('devices.thresholds') }}:</span>
+                  <span class="value">
+                    {{ sensor.min_critical !== undefined ? sensor.min_critical : '-' }} - 
+                    {{ sensor.max_critical !== undefined ? sensor.max_critical : '-' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Recent Readings Tab -->
+      <mat-tab [label]="languageService.t()('devices.tabs.readings')">
+        <div class="tab-content">
+          <div *ngIf="isLoadingReadings()" class="loading-container">
+            <mat-spinner diameter="50"></mat-spinner>
+            <p>{{ languageService.t()('common.loading') }}</p>
+          </div>
+
+          <div *ngIf="!isLoadingReadings() && !hasReadings()" class="empty-state">
+            <mat-icon class="empty-icon">show_chart</mat-icon>
+            <h3>{{ languageService.t()('devices.noReadings') }}</h3>
+            <p>{{ languageService.t()('devices.noReadingsDescription') }}</p>
+          </div>
+
+          <div *ngIf="!isLoadingReadings() && hasReadings()" class="readings-list">
+            <div *ngFor="let reading of recentReadings()" class="reading-item">
+              <div class="reading-icon">
+                <mat-icon>data_usage</mat-icon>
+              </div>
+              <div class="reading-content">
+                <div class="reading-values">
+                  <span class="reading-value" *ngIf="reading.value1 !== undefined">
+                    <strong>{{ reading.value1 | number:'1.2-2' }}</strong>
+                    <span class="reading-label">{{ languageService.t()('devices.readings.value1') }}</span>
+                  </span>
+                  <span class="reading-value" *ngIf="reading.value2 !== undefined">
+                    <strong>{{ reading.value2 | number:'1.2-2' }}</strong>
+                    <span class="reading-label">{{ languageService.t()('devices.readings.value2') }}</span>
+                  </span>
+                </div>
+                <div class="reading-meta">
+                  <span class="reading-time">{{ formatRelativeTime(reading.createdAt) }}</span>
+                  <span class="reading-date">{{ formatDate(reading.createdAt) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+    </mat-tab>
+
+      <!-- Actions Tab -->
+      <mat-tab [label]="languageService.t()('devices.tabs.actions', { count: recentActionsCount() })">
+      <div class="tab-content">
+          <div *ngIf="isLoadingActions()" class="loading-container">
+            <mat-spinner diameter="50"></mat-spinner>
+          <p>{{ languageService.t()('common.loading') }}</p>
+        </div>
+
+          <div *ngIf="!isLoadingActions() && deviceActions().length === 0" class="empty-state">
+            <mat-icon class="empty-icon">history</mat-icon>
+            <h3>{{ languageService.t()('devices.noActions') }}</h3>
+            <p>{{ languageService.t()('devices.noActionsDescription') }}</p>
+        </div>
+
+          <div *ngIf="!isLoadingActions() && deviceActions().length > 0" class="actions-list">
+            <div *ngFor="let action of deviceActions()" class="action-item">
+              <div class="action-icon">
+                <mat-icon>{{ action.trigger_source === 'auto' ? 'smart_toy' : 'touch_app' }}</mat-icon>
+              </div>
+              <div class="action-content">
+                <div class="action-title">{{ action.action_type || action.action_uri }}</div>
+                <div class="action-meta">
+                  <span class="action-time">{{ formatRelativeTime(action.created_at) }}</span>
+                  <mat-chip class="action-status" [ngStyle]="getActionStatusStyle(action.status)">
+                    {{ getActionStatusTranslation(action.status) }}
+                  </mat-chip>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+  </mat-dialog-content>
+
+  <!-- Actions Footer -->
+  <mat-dialog-actions class="dialog-actions">
+    <div class="action-buttons-left">
+      <button mat-stroked-button (click)="onRestart()" class="action-btn">
+        <mat-icon>restart_alt</mat-icon>
+        {{ languageService.t()('devices.restart') }}
+      </button>
+      <button mat-stroked-button (click)="onUpdateFirmware()" class="action-btn">
+        <mat-icon>system_update</mat-icon>
+        {{ languageService.t()('devices.updateFirmware') }}
+      </button>
+    </div>
+    <div class="action-buttons-right">
+      <button mat-button (click)="onEdit()" class="edit-btn">
+        <mat-icon>edit</mat-icon>
+        {{ languageService.t()('common.edit') }}
+      </button>
+      <button mat-button (click)="onDelete()" class="delete-btn">
+        <mat-icon>delete</mat-icon>
+        {{ languageService.t()('common.delete') }}
+      </button>
+      <button mat-raised-button (click)="onClose()" class="close-btn">
+        {{ languageService.t()('common.close') }}
+      </button>
+    </div>
+  </mat-dialog-actions>
+</div>

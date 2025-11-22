@@ -1,0 +1,118 @@
+<div class="login-container"
+     [class.video-loaded]="isVideoLoaded()"
+     [class.video-error]="videoError()">
+
+  <!-- Background video -->
+  <video #bgVideo
+         class="video-background"
+         preload="auto"
+         playsinline
+         muted
+         *ngIf="!videoError()">
+    <source [src]="config.assets.loginVideo" type="video/mp4">
+  </video>
+
+  <!-- Glassmorphism overlay -->
+  <div class="glass-overlay"></div>
+
+  <!-- Login card -->
+  <mat-card #loginCard
+            class="login-card"
+            [@fadeInDown]
+            [attr.data-state]="isCardActive() ? 'active' : 'passive'">
+
+    <!-- Logo section -->
+    <div class="logo-section">
+      <mat-icon *ngIf="showFallbackIcon(); else logoImage" class="fallback-icon">
+        agriculture
+      </mat-icon>
+      <ng-template #logoImage>
+        <img [src]="config.assets.logo"
+             alt="Feedin Logo"
+             (error)="onLogoError($event)" />
+      </ng-template>
+    </div>
+
+    <!-- Login form -->
+    <form [formGroup]="loginForm"
+          (ngSubmit)="onSubmit()"
+          class="login-form">
+
+      <!-- Email field -->
+      <mat-form-field appearance="outline"
+                      class="full-width"
+                      (focusin)="onFocus($event)"
+                      (focusout)="onBlur($event)">
+        <mat-label>{{ languageService.t()('auth.email') || 'Email' }}</mat-label>
+        <input matInput
+               formControlName="email"
+               id="email-input"
+               type="email"
+               autocomplete="email"
+               required
+               placeholder="name@example.com">
+        <mat-icon matPrefix>alternate_email</mat-icon>
+        <mat-error *ngIf="hasError('email')">
+          {{ getErrorMessage('email') }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Password field -->
+      <mat-form-field appearance="outline"
+                      class="full-width"
+                      (focusin)="onFocus($event)"
+                      (focusout)="onBlur($event)">
+        <mat-label>{{ languageService.t()('auth.password') || 'Password' }}</mat-label>
+        <input matInput
+               formControlName="password"
+               [type]="hidePassword() ? 'password' : 'text'"
+               autocomplete="current-password"
+               required
+               placeholder="Enter your password">
+        <mat-icon matPrefix>lock_outline</mat-icon>
+        <button mat-icon-button
+                matSuffix
+                type="button"
+                (click)="togglePasswordVisibility()">
+          <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <mat-error *ngIf="hasError('password')">
+          {{ getErrorMessage('password') }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Options row -->
+      <div class="options-row">
+        <mat-checkbox formControlName="rememberMe" color="primary">
+          {{ languageService.t()('auth.rememberMe') || 'Remember Me' }}
+        </mat-checkbox>
+        <a routerLink="/forgot-password" class="forgot-password-link">
+          {{ languageService.t()('auth.forgotPassword') || 'Forgot Password?' }}
+        </a>
+      </div>
+
+      <!-- Submit button -->
+      <button mat-raised-button
+              color="primary"
+              type="submit"
+              class="login-button full-width">
+        <span *ngIf="!isLoading()">
+          {{ languageService.t()('auth.loginButton') || 'Log In' }}
+        </span>
+        <mat-progress-spinner *ngIf="isLoading()"
+                              [diameter]="24"
+                              mode="indeterminate">
+        </mat-progress-spinner>
+      </button>
+    </form>
+
+    <!-- Register prompt -->
+    <div class="register-prompt">
+      {{ languageService.t()('auth.noAccount') || "Don't have an account?" }}
+      <a routerLink="/register">
+        {{ languageService.t()('auth.registerNow') || 'Register Now' }}
+      </a>
+    </div>
+
+  </mat-card>
+</div>

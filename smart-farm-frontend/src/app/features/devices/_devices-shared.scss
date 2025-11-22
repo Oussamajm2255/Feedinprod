@@ -1,0 +1,248 @@
+/**
+ * Shared Devices Component Styles
+ * Global styles, variables, and utilities for devices feature
+ */
+
+.devices-container {
+  width: min(100%, 1400px);
+  padding: clamp(1.5rem, 3vw, 2.5rem) clamp(1rem, 3vw, 2.5rem) clamp(4rem, 6vw, 6rem);
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  min-height: calc(100vh - 5rem);
+  isolation: isolate;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.92);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 15;
+  border-radius: 18px;
+  backdrop-filter: blur(6px);
+  text-align: center;
+
+  p {
+    margin-top: 1rem;
+    color: var(--header-text-secondary);
+    font-weight: 500;
+  }
+}
+
+/* Skeleton Loader */
+.skeleton-container {
+  margin-bottom: 2rem;
+}
+
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.skeleton-card {
+  background: var(--user-menu-bg);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: var(--user-menu-shadow);
+  animation: pulse 1.5s ease-in-out infinite;
+
+  .skeleton-header {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+
+    .skeleton-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s ease-in-out infinite;
+    }
+
+    .skeleton-title {
+      flex: 1;
+      height: 24px;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s ease-in-out infinite;
+    }
+  }
+
+  .skeleton-content {
+    .skeleton-line {
+      height: 16px;
+      margin-bottom: 0.75rem;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s ease-in-out infinite;
+
+      &.short {
+        width: 60%;
+      }
+    }
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--header-text-secondary);
+
+  .empty-icon {
+    font-size: 4rem;
+    width: 4rem;
+    height: 4rem;
+    margin: 0 auto 1rem;
+    opacity: 0.5;
+    color: var(--header-text-secondary);
+  }
+
+  h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--header-text);
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0 0 1.5rem 0;
+    font-size: 1rem;
+  }
+
+  button {
+    min-width: 150px;
+  }
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+  padding: 8px 0;
+  min-width: 200px;
+  background: var(--user-menu-bg);
+  border-radius: 8px;
+  box-shadow: var(--user-menu-shadow);
+
+  .dropdown-item {
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--header-text);
+
+    mat-icon {
+      color: var(--header-text-secondary);
+      transition: color 0.2s ease;
+    }
+
+    &:hover,
+    &:focus {
+      background: rgba(46, 125, 50, 0.08);
+      color: #2e7d32;
+      outline: none;
+
+      mat-icon {
+        color: #2e7d32;
+      }
+    }
+
+    &:focus-visible {
+      outline: 2px solid #2e7d32;
+      outline-offset: -2px;
+    }
+  }
+}
+
+/* Ensure hidden dropdown menu template stays hidden */
+.dropdown-template {
+  display: none !important;
+  visibility: hidden !important;
+  position: absolute !important;
+  left: -9999px !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Button Spinner */
+.button-spinner {
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .devices-container {
+    padding: 1.25rem 1rem 3.5rem;
+  }
+
+  .skeleton-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .empty-state {
+    padding: 3rem 1rem;
+
+    .empty-icon {
+      font-size: 3rem;
+      width: 3rem;
+      height: 3rem;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+    }
+  }
+}
+
+/* Dark Theme Support */
+body.dark-theme {
+  .loading-overlay {
+    background: rgba(30, 41, 59, 0.95);
+  }
+
+  .skeleton-card {
+    .skeleton-header,
+    .skeleton-content {
+      .skeleton-avatar,
+      .skeleton-title,
+      .skeleton-line {
+        background: linear-gradient(90deg, #334155 25%, #475569 50%, #334155 75%);
+        background-size: 200% 100%;
+      }
+    }
+  }
+}

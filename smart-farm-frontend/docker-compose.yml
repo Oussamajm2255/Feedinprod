@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  smart-farm-frontend:
+    build: .
+    ports:
+      - "80:80"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - smart-farm-backend
+    networks:
+      - smart-farm-network
+
+  smart-farm-backend:
+    image: smart-farm-backend:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=smartfarm
+      - DB_PASS=smartfarm123
+      - DB_NAME=smart_farm
+      - MQTT_BROKER=mqtt://mosquitto:1883
+    depends_on:
+      - mysql
+      - mosquitto
+    networks:
+      - smart-farm-network
+
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root123
+      - MYSQL_DATABASE=smart_farm
+      - MYSQL_USER=smartfarm
+      - MYSQL_PASSWORD=smartfarm123
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - smart-farm-network
+
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_logs:/mosquitto/log
+    networks:
+      - smart-farm-network
+
+volumes:
+  mysql_data:
+  mosquitto_data:
+  mosquitto_logs:
+
+networks:
+  smart-farm-network:
+    driver: bridge

@@ -1,0 +1,79 @@
+<div class="farms-container">
+  <div class="farms-header">
+    <h1>Farm Management</h1>
+    <p>Manage your farms and their configurations</p>
+    <div class="header-actions">
+      <button mat-raised-button color="primary" (click)="addFarm()">
+        <mat-icon>add</mat-icon>
+        Add Farm
+      </button>
+      <button mat-icon-button (click)="refreshFarms()" [disabled]="isLoading">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="farms-content" *ngIf="!isLoading; else loadingTemplate">
+    <div class="farms-grid" *ngIf="farms.length > 0; else noFarms">
+      <mat-card *ngFor="let farm of farms" class="farm-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>home</mat-icon>
+            {{ farm.name }}
+          </mat-card-title>
+          <mat-card-subtitle>{{ farm.location || 'No location specified' }}</mat-card-subtitle>
+        </mat-card-header>
+        
+        <mat-card-content>
+          <div class="farm-stats">
+            <div class="farm-stat">
+              <mat-icon>devices</mat-icon>
+              <div class="stat-info">
+                <span class="stat-number">{{ farm.devices?.length || 0 }}</span>
+                <span class="stat-label">Devices</span>
+              </div>
+            </div>
+            
+            <div class="farm-stat">
+              <mat-icon>sensors</mat-icon>
+              <div class="stat-info">
+                <span class="stat-number">{{ farm.sensors?.length || 0 }}</span>
+                <span class="stat-label">Sensors</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="farm-actions">
+            <button mat-button color="primary" (click)="editFarm(farm)">
+              <mat-icon>edit</mat-icon>
+              Edit
+            </button>
+            <button mat-button color="warn" (click)="deleteFarm(farm)">
+              <mat-icon>delete</mat-icon>
+              Delete
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    
+    <ng-template #noFarms>
+      <div class="no-data">
+        <mat-icon>home</mat-icon>
+        <h3>No Farms Found</h3>
+        <p>Get started by creating your first farm to organize your agricultural operations.</p>
+        <button mat-raised-button color="primary" (click)="addFarm()">
+          <mat-icon>add</mat-icon>
+          Create Your First Farm
+        </button>
+      </div>
+    </ng-template>
+  </div>
+
+  <ng-template #loadingTemplate>
+    <div class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Loading farms...</p>
+    </div>
+  </ng-template>
+</div>

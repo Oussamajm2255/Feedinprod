@@ -1,0 +1,199 @@
+<!-- Settings Container with Dashboard-consistent styling -->
+<div class="settings-container" [attr.dir]="languageService.getCurrentLanguage().direction">
+
+  <!-- Settings Header -->
+  <div class="settings-header-card">
+    <div class="header-content">
+      <div class="header-title">
+        <mat-icon class="header-icon">settings</mat-icon>
+        <div>
+          <h1>{{ 'settings.title' | translate }}</h1>
+          <p class="subtitle">{{ 'settings.page.subtitle' | translate }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Content -->
+  <div class="settings-content">
+
+    <!-- Settings Grid/Cards -->
+    <div class="settings-grid">
+
+      <!-- Notifications Settings Card -->
+      <mat-card class="settings-card" routerLink="/settings/notifications">
+        <div class="card-icon-wrapper">
+          <div class="card-icon notifications">
+            <mat-icon>notifications_active</mat-icon>
+          </div>
+        </div>
+        <mat-card-header>
+          <mat-card-title>
+            <span>{{ 'settings.notificationSettings.title' | translate }}</span>
+            <mat-icon class="arrow-icon">arrow_forward</mat-icon>
+          </mat-card-title>
+          <mat-card-subtitle>
+            {{ 'settings.page.cards.notifications.subtitle' | translate }}
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="feature-tags">
+            <span class="feature-tag">{{ 'settings.page.cards.notifications.tags.quietHours' | translate }}</span>
+            <span class="feature-tag">{{ 'settings.page.cards.notifications.tags.categories' | translate }}</span>
+            <span class="feature-tag">{{ 'settings.page.cards.notifications.tags.cooldown' | translate }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Appearance Settings Card (Coming Soon) -->
+      <mat-card class="settings-card coming-soon">
+        <div class="card-icon-wrapper">
+          <div class="card-icon appearance">
+            <mat-icon>palette</mat-icon>
+          </div>
+        </div>
+        <mat-card-header>
+          <mat-card-title>
+            <span>{{ 'settings.page.cards.appearance.title' | translate }}</span>
+            <span class="badge-coming-soon">{{ 'settings.page.cards.badgeComingSoon' | translate }}</span>
+          </mat-card-title>
+          <mat-card-subtitle>
+            {{ 'settings.page.cards.appearance.subtitle' | translate }}
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="feature-tags">
+            <span class="feature-tag">{{ 'settings.page.cards.appearance.tags.theme' | translate }}</span>
+            <span class="feature-tag">{{ 'settings.page.cards.appearance.tags.darkMode' | translate }}</span>
+            <span class="feature-tag">{{ 'settings.page.cards.appearance.tags.colors' | translate }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Language Settings Card (Coming Soon) -->
+      <mat-card class="settings-card coming-soon">
+        <div class="card-icon-wrapper">
+          <div class="card-icon language">
+            <mat-icon>language</mat-icon>
+          </div>
+        </div>
+        <mat-card-header>
+          <mat-card-title>
+            <span>{{ 'settings.page.cards.languageRegion.title' | translate }}</span>
+            <span class="badge-coming-soon">{{ 'settings.page.cards.badgeComingSoon' | translate }}</span>
+          </mat-card-title>
+          <mat-card-subtitle>
+            {{ 'settings.page.cards.languageRegion.subtitle' | translate }}
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="feature-tags">
+            <span class="feature-tag">{{ 'settings.page.cards.languageRegion.tags.language' | translate }}</span>
+            <span class="feature-tag">{{ 'settings.page.cards.languageRegion.tags.timezone' | translate }}</span>
+            <span class="feature-tag">{{ 'settings.page.cards.languageRegion.tags.dateFormat' | translate }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Privacy & Security Card (Coming Soon) -->
+      <mat-card class="settings-card coming-soon">
+        <div class="card-icon-wrapper">
+          <div class="card-icon security">
+            <mat-icon>security</mat-icon>
+          </div>
+        </div>
+        <mat-card-header>
+          <mat-card-title>
+            <span>{{ 'settings.page.cards.privacy.title' | translate }}</span>
+            <span class="badge-coming-soon">{{ 'settings.page.cards.badgeComingSoon' | translate }}</span>
+          </mat-card-title>
+          <mat-card-subtitle>
+            {{ 'settings.page.cards.privacy.subtitle' | translate }}
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="feature-tags">
+            <span class="feature-tag">{{ 'settings.page.cards.privacy.tags.twoFactor' | translate }}</span>
+            <span class="feature-tag">{{ 'settings.page.cards.privacy.tags.sessions' | translate }}</span>
+            <span class="feature-tag">{{ 'settings.page.cards.privacy.tags.dataExport' | translate }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- System Settings Card (Coming Soon) -->
+      <mat-card class="settings-card coming-soon">
+        <div class="card-icon-wrapper">
+          <div class="card-icon system">
+            <mat-icon>tune</mat-icon>
+          </div>
+        </div>
+        <mat-card-header>
+          <mat-card-title>
+            <span>{{ 'settings.page.cards.system.title' | translate }}</span>
+            <span class="badge-coming-soon">{{ 'settings.page.cards.badgeComingSoon' | translate }}</span>
+          </mat-card-title>
+          <mat-card-subtitle>
+            {{ 'settings.page.cards.system.subtitle' | translate }}
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="feature-tags">
+            <span class="feature-tag">{{ 'settings.page.cards.system.tags.autoRefresh' | translate }}</span>
+            <span class="feature-tag">{{ 'settings.page.cards.system.tags.cache' | translate }}</span>
+            <span class="feature-tag">{{ 'settings.page.cards.system.tags.api' | translate }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Help & Support Card (Coming Soon) -->
+      <mat-card class="settings-card coming-soon">
+        <div class="card-icon-wrapper">
+          <div class="card-icon support">
+            <mat-icon>help_outline</mat-icon>
+          </div>
+        </div>
+        <mat-card-header>
+          <mat-card-title>
+            <span>{{ 'settings.page.cards.support.title' | translate }}</span>
+            <span class="badge-coming-soon">{{ 'settings.page.cards.badgeComingSoon' | translate }}</span>
+          </mat-card-title>
+          <mat-card-subtitle>
+            {{ 'settings.page.cards.support.subtitle' | translate }}
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="feature-tags">
+            <span class="feature-tag">{{ 'settings.page.cards.support.tags.docs' | translate }}</span>
+            <span class="feature-tag">{{ 'settings.page.cards.support.tags.faq' | translate }}</span>
+            <span class="feature-tag">{{ 'settings.page.cards.support.tags.contact' | translate }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+    </div>
+
+    <!-- Quick Info Section -->
+    <div class="info-section">
+      <mat-card class="info-card">
+        <mat-card-content>
+          <div class="info-content">
+            <mat-icon class="info-icon">info</mat-icon>
+            <div class="info-text">
+              <h3>{{ 'settings.page.info.title' | translate }}</h3>
+              <p>{{ 'settings.page.info.description' | translate }}</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+
+
+
+

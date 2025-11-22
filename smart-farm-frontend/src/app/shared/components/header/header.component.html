@@ -1,0 +1,499 @@
+<!-- Modern Feedin Header with Rounded Bottom Border -->
+<header class="feedin-header" *ngIf="isAuthenticated()" role="banner" [class.rtl]="isRTL()">
+  <div class="header-content">
+
+    <!-- LEFT: Logo + Farm Selector -->
+    <div class="logo-section">
+      <div class="logo-wrapper" routerLink="/dashboard" [attr.aria-label]="'Navigate to dashboard'">
+        <img
+          src="assets/images/logos/Feedin_pnglogo.png"
+          alt="Feedin Logo"
+          class="feedin-logo"
+          (error)="onLogoError($event)" />
+        <mat-icon class="logo-fallback" *ngIf="false">agriculture</mat-icon>
+      </div>
+
+      <!-- Desktop Farm Selector (hidden on mobile) -->
+      <div class="nav-farm-selector" *ngIf="!isMobile()">
+        <button
+          class="farm-selector-trigger"
+          (click)="toggleFarmSelector()"
+          [class.active]="showFarmSelector"
+          [attr.aria-label]="'Select farm'"
+          [attr.aria-expanded]="showFarmSelector"
+          type="button">
+          <svg class="selector-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z" />
+          </svg>
+          <span class="selector-text" [title]="getCurrentFarmName()">{{ getCurrentFarmName() }}</span>
+          <svg class="selector-arrow" [class.rotated]="showFarmSelector" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Mobile Farm Selector (shown only on mobile when nav becomes bottom bar) -->
+      <div class="mobile-farm-selector" *ngIf="isMobile()">
+        <button
+          class="mobile-farm-selector-trigger"
+          (click)="toggleFarmSelector()"
+          [class.active]="showFarmSelector"
+          [attr.aria-label]="'Select farm'"
+          [attr.aria-expanded]="showFarmSelector"
+          type="button">
+          <svg class="selector-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z" />
+          </svg>
+          <span class="selector-text" [title]="getCurrentFarmName()">{{ getCurrentFarmName() }}</span>
+          <svg class="selector-arrow" [class.rotated]="showFarmSelector" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- CENTER: Navigation Tabs -->
+    <div class="center-section">
+      <!-- Navigation Links -->
+      <nav class="header-nav" role="navigation" aria-label="Main navigation">
+        <div class="nav-links-wrapper">
+          <a *ngFor="let item of navItems"
+             class="nav-link"
+             [routerLink]="item.route"
+             routerLinkActive="active"
+             [attr.aria-current]="isRouteActive(item.route) ? 'page' : null">
+            <i [class]="item.fontAwesomeIcon" class="nav-icon-fa"></i>
+            <svg class="nav-icon" [class.solid]="isRouteActive(item.route)" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" [attr.d]="item.svgPath" />
+            </svg>
+            <span class="nav-text">{{ getNavLabel(item.translationKey) }}</span>
+          </a>
+        </div>
+      </nav>
+
+      <!-- "More" Menu for Tablet (768px - 1024px) -->
+      <div class="more-menu-wrapper" *ngIf="isTablet()">
+        <button
+          class="more-menu-trigger"
+          [matMenuTriggerFor]="moreMenu"
+          [attr.aria-label]="'More options'"
+          [attr.title]="'More options'"
+          type="button">
+          <svg class="more-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+          </svg>
+          <span class="sr-only">More options</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- RIGHT: Actions (Theme, Language, Notifications, Profile) -->
+    <div class="actions-section">
+
+      <!-- Theme Toggle -->
+      <button
+        class="action-btn"
+        (click)="toggleTheme()"
+        [attr.aria-label]="currentTheme() === 'light' ? 'Switch to dark mode' : 'Switch to light mode'"
+        [attr.title]="currentTheme() === 'light' ? 'Switch to dark mode' : 'Switch to light mode'"
+        [matTooltip]="currentTheme() === 'light' ? 'Dark Mode' : 'Light Mode'"
+        matTooltipPosition="below"
+        type="button">
+        <svg *ngIf="currentTheme() === 'light'" class="action-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+        </svg>
+        <svg *ngIf="currentTheme() === 'dark'" class="action-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+        </svg>
+        <span class="sr-only">{{ currentTheme() === 'light' ? 'Switch to dark mode' : 'Switch to light mode' }}</span>
+      </button>
+
+      <!-- Language Switcher -->
+      <div class="language-switcher">
+        <app-custom-dropdown
+          [title]="'Select Language'"
+          [headerIcon]="'language'"
+          [items]="languageDropdownItems"
+          [selectedItemId]="getSelectedLanguageId()"
+          (itemSelected)="onLanguageItemSelected($event)">
+
+          <div slot="trigger"
+               class="action-btn"
+               role="button"
+               [attr.aria-label]="'Change language'"
+               [attr.title]="'Change language'"
+               [matTooltip]="'Language'"
+               matTooltipPosition="below">
+            <svg class="action-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802" />
+            </svg>
+            <span class="sr-only">Change language</span>
+          </div>
+        </app-custom-dropdown>
+      </div>
+
+      <!-- Notifications -->
+      <button
+        class="action-btn"
+        [class.active]="isRouteActive('/notifications')"
+        (click)="navigateToNotifications()"
+        [attr.aria-label]="'Notifications'"
+        [attr.title]="'View notifications'"
+        [matTooltip]="'Notifications'"
+        matTooltipPosition="below"
+        type="button">
+        <svg class="action-icon" [class.active]="isRouteActive('/notifications')" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+        </svg>
+        <span class="notification-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+        <span class="sr-only">Notifications</span>
+      </button>
+
+      <!-- User Profile Avatar -->
+      <button
+        class="user-avatar"
+        [matMenuTriggerFor]="userMenu"
+        [attr.aria-label]="'User menu'"
+        [attr.title]="'Open user menu'"
+        [matTooltip]="(user()?.first_name || 'User') + ' ' + (user()?.last_name || '')"
+        matTooltipPosition="below"
+        type="button">
+        <div class="avatar-circle">
+          <span class="avatar-initials">{{ getInitials() }}</span>
+        </div>
+        <span class="sr-only">User menu</span>
+      </button>
+
+      <!-- Mobile Menu Toggle (Hidden on Desktop) -->
+      <button
+        class="mobile-menu-toggle"
+        (click)="toggleMobileMenu()"
+        [class.active]="showMobileMenu"
+        [attr.aria-label]="showMobileMenu ? 'Close menu' : 'Open menu'"
+        [attr.title]="showMobileMenu ? 'Close menu' : 'Open menu'"
+        [attr.aria-expanded]="showMobileMenu"
+        type="button">
+        <div class="hamburger-icon" [class.active]="showMobileMenu">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </div>
+        <span class="sr-only">{{ showMobileMenu ? 'Close menu' : 'Open menu' }}</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Farm Selector Modal with Blur Backdrop -->
+<div class="farm-selector-modal"
+     [class.active]="showFarmSelector"
+     *ngIf="isAuthenticated()"
+     (click)="closeFarmSelectorOnBackdrop($event)"
+     [@fadeIn]>
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">
+        <svg class="title-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z" />
+        </svg>
+        <span>{{ languageService.t()('dashboard.farmSelector.selectFarm') }}</span>
+      </h2>
+      <button
+        class="modal-close"
+        (click)="closeFarmSelector()"
+        [attr.aria-label]="'Close farm selector'"
+        [attr.title]="'Close'"
+        type="button">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+        <span class="sr-only">Close</span>
+      </button>
+    </div>
+
+    <!-- Search Bar inside Modal -->
+    <div class="modal-search">
+      <svg class="search-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+      </svg>
+      <label for="modalFarmSearch" class="sr-only">Search farms</label>
+      <input
+        type="text"
+        id="modalFarmSearch"
+        class="modal-search-input"
+        [(ngModel)]="farmSearchQuery"
+        (input)="filterFarms()"
+        placeholder="Search farms..."
+        [attr.aria-label]="'Search farms'"
+        [attr.title]="'Search farms by name or location'">
+    </div>
+
+    <!-- Farm List or Empty State -->
+    <div class="farm-list" *ngIf="filteredFarms.length > 0; else noFarms">
+      <button
+        *ngFor="let farm of filteredFarms"
+        class="farm-card"
+        [class.selected]="isSelectedFarm(farm)"
+        (click)="selectFarmFromModal(farm)"
+        type="button">
+        <div class="farm-icon">
+          <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z" />
+          </svg>
+        </div>
+        <div class="farm-info">
+          <h3 class="farm-name">{{ farm.name }}</h3>
+          <p class="farm-location">
+            <svg class="location-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+            </svg>
+            {{ farm.location || 'Location not set' }}
+          </p>
+          <div class="farm-stats">
+            <span class="stat">
+              <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 6.75v10.5a2.25 2.25 0 002.25 2.25zm.75-12h9v9h-9v-9z" />
+              </svg>
+              {{ getFarmDeviceCount(farm) }} devices
+            </span>
+          </div>
+        </div>
+        <div class="selection-indicator" *ngIf="isSelectedFarm(farm)">
+          <svg fill="currentColor" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+          </svg>
+        </div>
+      </button>
+    </div>
+
+    <!-- No Farms Placeholder -->
+    <ng-template #noFarms>
+      <div class="no-farms-state">
+        <svg class="empty-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z" />
+        </svg>
+        <p class="no-farms-message">No farms to display — this farmer has no registered farms yet.</p>
+      </div>
+    </ng-template>
+  </div>
+</div>
+
+<!-- User Menu Dropdown - Enhanced Professional Design -->
+<mat-menu #userMenu="matMenu" class="user-menu-dropdown" [class.rtl]="isRTL()">
+  <!-- Enhanced Header with User Info -->
+  <div class="user-menu-header" mat-menu-item disabled>
+    <div class="user-menu-avatar">
+      <span class="avatar-initials-large">{{ getInitials() }}</span>
+      <div class="avatar-status online"></div>
+    </div>
+    <div class="user-info">
+      <div class="user-name">{{ (user()?.first_name || 'User') + ' ' + (user()?.last_name || '') }}</div>
+      <div class="user-email">{{ user()?.email || 'user@example.com' }}</div>
+    </div>
+  </div>
+  <mat-divider class="menu-divider"></mat-divider>
+
+  <!-- Profile with Active Route Highlighting -->
+  <button
+    mat-menu-item
+    routerLink="/profile"
+    class="menu-item-compact"
+    [class.active]="isRouteActive('/profile')"
+    [matTooltip]="languageService.t()('navigation.profile')"
+    matTooltipPosition="right"
+    [attr.aria-label]="languageService.t()('navigation.profile')"
+    [attr.aria-current]="isRouteActive('/profile') ? 'page' : null">
+    <div class="item-icon-wrapper profile-icon">
+      <svg class="menu-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+      </svg>
+    </div>
+    <span class="menu-item-label">{{ languageService.t()('navigation.profile') }}</span>
+    <div class="active-indicator" *ngIf="isRouteActive('/profile')"></div>
+  </button>
+
+  <!-- Settings with Active Route Highlighting -->
+  <button
+    mat-menu-item
+    routerLink="/settings"
+    class="menu-item-compact"
+    [class.active]="isRouteActive('/settings')"
+    [matTooltip]="languageService.t()('navigation.settings')"
+    matTooltipPosition="right"
+    [attr.aria-label]="languageService.t()('navigation.settings')"
+    [attr.aria-current]="isRouteActive('/settings') ? 'page' : null">
+    <div class="item-icon-wrapper settings-icon">
+      <svg class="menu-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 011.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.56.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.893.149c-.425.07-.765.383-.93.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 01-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.397.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 01-.12-1.45l.527-.737c.25-.35.273-.806.108-1.204-.165-.397-.505-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.107-1.204l-.527-.738a1.125 1.125 0 01.12-1.45l.773-.773a1.125 1.125 0 011.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894z" />
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+    </div>
+    <span class="menu-item-label">{{ languageService.t()('navigation.settings') }}</span>
+    <div class="active-indicator" *ngIf="isRouteActive('/settings')"></div>
+  </button>
+
+  <mat-divider class="menu-divider"></mat-divider>
+
+  <!-- Theme Toggle in Menu -->
+  <button
+    mat-menu-item
+    (click)="toggleTheme()"
+    class="menu-item-compact theme-toggle-item"
+    [matTooltip]="currentTheme() === 'light' ? 'Switch to dark mode' : 'Switch to light mode'"
+    matTooltipPosition="right"
+    [attr.aria-label]="currentTheme() === 'light' ? 'Switch to dark mode' : 'Switch to light mode'">
+    <div class="item-icon-wrapper theme-icon">
+      <svg *ngIf="currentTheme() === 'light'" class="menu-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+      </svg>
+      <svg *ngIf="currentTheme() === 'dark'" class="menu-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+      </svg>
+    </div>
+    <span class="menu-item-label">{{ currentTheme() === 'light' ? 'Dark Mode' : 'Light Mode' }}</span>
+  </button>
+
+  <mat-divider class="menu-divider"></mat-divider>
+
+  <!-- Logout -->
+  <button
+    mat-menu-item
+    (click)="logout()"
+    class="menu-item-compact logout-item"
+    [matTooltip]="languageService.t()('navigation.logout')"
+    matTooltipPosition="right"
+    [attr.aria-label]="languageService.t()('navigation.logout')">
+    <div class="item-icon-wrapper logout-icon">
+      <svg class="menu-icon text-danger" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+      </svg>
+    </div>
+    <span class="menu-item-label text-danger">{{ languageService.t()('navigation.logout') }}</span>
+  </button>
+</mat-menu>
+
+<!-- More Menu Dropdown (Tablet) -->
+<mat-menu #moreMenu="matMenu" class="more-menu-dropdown">
+  <button mat-menu-item *ngFor="let item of secondaryNavItems" (click)="navigateTo(item.route)">
+    <svg class="menu-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" [attr.d]="item.svgPath" />
+    </svg>
+    <span>{{ getNavLabel(item.translationKey) }}</span>
+  </button>
+</mat-menu>
+
+<!-- Mobile Menu Panel -->
+<div class="mobile-menu-panel"
+     [class.active]="showMobileMenu"
+       *ngIf="showMobileMenu"
+     (click)="closeMobileMenu()">
+  <div class="mobile-menu-content" (click)="$event.stopPropagation()">
+      <nav class="mobile-nav">
+      <a class="mobile-nav-link"
+           routerLink="/dashboard"
+           routerLinkActive="active"
+           (click)="closeMobileMenu()">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+        </svg>
+        <span>{{ languageService.t()('navigation.dashboard') }}</span>
+      </a>
+      <a class="mobile-nav-link"
+           routerLink="/devices"
+           routerLinkActive="active"
+           (click)="closeMobileMenu()">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 6.75v10.5a2.25 2.25 0 002.25 2.25zm.75-12h9v9h-9v-9z" />
+        </svg>
+        <span>{{ languageService.t()('navigation.devices') }}</span>
+      </a>
+      <a class="mobile-nav-link"
+           routerLink="/sensors"
+           routerLinkActive="active"
+           (click)="closeMobileMenu()">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9.348 14.651a3.75 3.75 0 010-5.303m5.304 0a3.75 3.75 0 010 5.303m-7.425 2.122a6.75 6.75 0 010-9.546m9.546 0a6.75 6.75 0 010 9.546M5.106 18.894c-3.808-3.808-3.808-9.98 0-13.789m13.788 0c3.808 3.808 3.808 9.981 0 13.79M12 12h.008v.007H12V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+        </svg>
+        <span>{{ languageService.t()('navigation.sensors') }}</span>
+      </a>
+      <a class="mobile-nav-link"
+           routerLink="/sensor-readings"
+           routerLinkActive="active"
+           (click)="closeMobileMenu()">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6.75" />
+        </svg>
+        <span>{{ languageService.t()('navigation.liveReadings') }}</span>
+      </a>
+      <a class="mobile-nav-link"
+           routerLink="/actions"
+           routerLinkActive="active"
+           (click)="closeMobileMenu()">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+        </svg>
+        <span>{{ languageService.t()('navigation.actions') }}</span>
+      </a>
+      <a class="mobile-nav-link"
+           routerLink="/crops"
+           routerLinkActive="active"
+           (click)="closeMobileMenu()">
+        <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+        </svg>
+        <span>{{ languageService.t()('navigation.crops') }}</span>
+        </a>
+
+        <!-- Theme Toggle for Mobile -->
+        <div class="mobile-theme-section">
+          <button
+            class="mobile-nav-link mobile-theme-toggle"
+            (click)="toggleTheme(); closeMobileMenu()"
+            [attr.aria-label]="currentTheme() === 'light' ? 'Switch to dark mode' : 'Switch to light mode'"
+            type="button">
+            <svg *ngIf="currentTheme() === 'light'" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+            </svg>
+            <svg *ngIf="currentTheme() === 'dark'" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+            </svg>
+            <span>{{ currentTheme() === 'light' ? 'Dark Mode' : 'Light Mode' }}</span>
+          </button>
+        </div>
+
+        <!-- Language Switcher for Mobile -->
+        <div class="mobile-language-section">
+          <div class="mobile-language-header">
+            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802" />
+            </svg>
+            <span>{{ languageService.t()('language.select') }}</span>
+          </div>
+          <app-language-switcher></app-language-switcher>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+<!-- Mobile & Tablet Bottom Navigation Bar -->
+<nav class="mobile-bottom-nav" *ngIf="isAuthenticated() && (isMobile() || isTablet())" [@slideUp] role="navigation" aria-label="Mobile navigation" [class.rtl]="isRTL()">
+  <div class="bottom-nav-content">
+    <!-- All Navigation Items -->
+    <a *ngFor="let item of primaryNavItems"
+       class="bottom-nav-item"
+       [class.active]="isRouteActive(item.route)"
+       [routerLink]="item.route"
+       [attr.aria-current]="isRouteActive(item.route) ? 'page' : null"
+       [attr.aria-label]="getNavLabel(item.translationKey)">
+      <div class="nav-item-content">
+        <i [class]="item.fontAwesomeIcon" class="nav-item-icon-fa"></i>
+        <svg class="nav-item-icon" [class.active]="isRouteActive(item.route)" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" [attr.d]="item.svgPath" />
+        </svg>
+        <span class="nav-item-label">{{ getNavLabel(item.translationKey) }}</span>
+      </div>
+      <div class="active-indicator" *ngIf="isRouteActive(item.route)"></div>
+    </a>
+  </div>
+</nav>

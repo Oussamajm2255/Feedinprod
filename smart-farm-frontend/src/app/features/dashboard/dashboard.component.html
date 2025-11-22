@@ -1,0 +1,319 @@
+<div class="dashboard-container" [attr.dir]="languageService.getCurrentLanguage().direction">
+  <!-- Epic KPI Cards -->
+  <div class="kpi-row" *ngIf="!isLoading">
+    <div class="kpi-card">
+      <div class="kpi-icon">
+        <mat-icon>devices</mat-icon>
+      </div>
+      <div class="kpi-label">{{ languageService.t()('dashboard.statistics.totalDevices') || 'Total Devices' }}</div>
+      <div class="kpi-value">{{ devices.length }}</div>
+      <div class="kpi-subtext">
+        {{ getDeviceStatusCount('online') }} {{ 'common.online' | translate }}
+        <span class="separator">&bull;</span>
+        {{ getDeviceStatusCount('offline') }} {{ 'common.offline' | translate }}
+      </div>
+      <span class="status-badge success" *ngIf="getOnlinePercentage() >= 90">{{ 'dashboard.statusBadges.excellent' | translate }}</span>
+      <span class="status-badge warning" *ngIf="getOnlinePercentage() >= 70 && getOnlinePercentage() < 90">{{ 'dashboard.statusBadges.good' | translate }}</span>
+      <span class="status-badge danger" *ngIf="getOnlinePercentage() < 70">{{ 'dashboard.statusBadges.needsAttention' | translate }}</span>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon">
+        <mat-icon>signal_cellular_alt</mat-icon>
+      </div>
+      <div class="kpi-label">{{ languageService.t()('dashboard.statistics.onlineDevices') || 'Online Devices' }}</div>
+      <div class="kpi-value">{{ getDeviceStatusCount('online') }}</div>
+      <div class="kpi-subtext">
+        {{ getOnlinePercentage() }}% {{ 'dashboard.statistics.onlineRate' | translate }}
+      </div>
+      <span class="status-badge success">{{ 'dashboard.statusBadges.connected' | translate }}</span>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon">
+        <mat-icon>health_and_safety</mat-icon>
+      </div>
+      <div class="kpi-label">{{ languageService.t()('dashboard.statistics.systemHealth') || 'System Health' }}</div>
+      <div class="kpi-value">{{ getOnlinePercentage() }}%</div>
+      <div class="kpi-subtext">{{ 'dashboard.statusBadges.systemOperational' | translate }}</div>
+      <span class="status-badge success" *ngIf="getOnlinePercentage() >= 90">{{ 'dashboard.statusBadges.optimal' | translate }}</span>
+      <span class="status-badge warning" *ngIf="getOnlinePercentage() < 90">{{ 'dashboard.statusBadges.checkRequired' | translate }}</span>
+    </div>
+
+
+  </div>
+
+  <!-- Main Grid with New Sections -->
+  <div class="main-grid" *ngIf="!isLoading">
+    <!-- Farm Map -->
+    <div class="panel">
+      <div class="panel-title">
+        <mat-icon>map</mat-icon>
+        <span>{{ 'dashboard.sections.farmMap.title' | translate }}</span>
+      </div>
+      <div class="map-container" *ngIf="hasMapData(); else noMapData">
+        <div id="farm-map" class="farm-map"></div>
+        <div class="map-controls">
+          <button mat-button color="primary" (click)="openInGoogleMaps()" class="map-button">
+            <mat-icon>open_in_new</mat-icon>
+            {{ 'dashboard.sections.farmMap.openInMaps' | translate }}
+          </button>
+        </div>
+      </div>
+      <ng-template #noMapData>
+        <div class="no-data-message">
+          <mat-icon>location_off</mat-icon>
+          <p>{{ 'dashboard.sections.farmMap.noData' | translate }}</p>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Farm Details -->
+    <div class="panel">
+      <div class="panel-title">
+        <mat-icon>agriculture</mat-icon>
+        <span>{{ 'dashboard.sections.farmDetails.title' | translate }}</span>
+      </div>
+      <div class="details-container" *ngIf="farmDetails || selectedFarm; else noFarmData">
+        <div class="detail-item" *ngIf="(farmDetails || selectedFarm)?.name">
+          <div class="detail-label">
+            <mat-icon>home</mat-icon>
+            <span>{{ 'dashboard.sections.farmDetails.labels.name' | translate }}</span>
+          </div>
+          <div class="detail-value">{{ (farmDetails || selectedFarm)?.name }}</div>
+        </div>
+        <div class="detail-item" *ngIf="farmerName">
+          <div class="detail-label">
+            <mat-icon>person</mat-icon>
+            <span>{{ 'dashboard.sections.farmDetails.labels.owner' | translate }}</span>
+          </div>
+          <div class="detail-value">{{ farmerName }}</div>
+        </div>
+        <div class="detail-item" *ngIf="(farmDetails || selectedFarm)?.location">
+          <div class="detail-label">
+            <mat-icon>location_on</mat-icon>
+            <span>{{ 'dashboard.sections.farmDetails.labels.location' | translate }}</span>
+          </div>
+          <div class="detail-value">{{ (farmDetails || selectedFarm)?.location }}</div>
+        </div>
+        <div class="detail-item" *ngIf="(farmDetails || selectedFarm)?.latitude && (farmDetails || selectedFarm)?.longitude">
+          <div class="detail-label">
+            <mat-icon>gps_fixed</mat-icon>
+            <span>{{ 'dashboard.sections.farmDetails.labels.coordinates' | translate }}</span>
+          </div>
+          <div class="detail-value">{{ (farmDetails || selectedFarm)?.latitude }}, {{ (farmDetails || selectedFarm)?.longitude }}</div>
+        </div>
+        <div class="detail-item" *ngIf="(farmDetails || selectedFarm)?.farm_id">
+          <div class="detail-label">
+            <mat-icon>tag</mat-icon>
+            <span>{{ 'dashboard.sections.farmDetails.labels.id' | translate }}</span>
+          </div>
+          <div class="detail-value">{{ (farmDetails || selectedFarm)?.farm_id }}</div>
+        </div>
+        <div class="detail-item" *ngIf="(farmDetails || selectedFarm)?.created_at">
+          <div class="detail-label">
+            <mat-icon>calendar_today</mat-icon>
+            <span>{{ 'dashboard.sections.farmDetails.labels.created' | translate }}</span>
+          </div>
+          <div class="detail-value">{{ (farmDetails || selectedFarm)?.created_at | date:'medium' }}</div>
+        </div>
+        <div class="detail-item" *ngIf="(farmDetails || selectedFarm)?.updated_at">
+          <div class="detail-label">
+            <mat-icon>update</mat-icon>
+            <span>{{ 'dashboard.sections.farmDetails.labels.updated' | translate }}</span>
+          </div>
+          <div class="detail-value">{{ (farmDetails || selectedFarm)?.updated_at | date:'medium' }}</div>
+        </div>
+      </div>
+      <ng-template #noFarmData>
+        <div class="no-data-message">
+          <mat-icon>info</mat-icon>
+          <p>{{ 'dashboard.sections.farmDetails.noData' | translate }}</p>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Weather & AI Insights -->
+    <div class="panel">
+      <div class="panel-title">
+        <mat-icon>wb_sunny</mat-icon>
+        <span>{{ 'dashboard.sections.weather.title' | translate }}</span>
+      </div>
+      <div class="weather-container" *ngIf="weatherLoading">
+        <div class="weather-loading">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>{{ 'dashboard.sections.weather.loading' | translate }}</p>
+        </div>
+      </div>
+      <div class="weather-container" *ngIf="!weatherLoading && weatherData; else noWeatherData">
+        <!-- Current Weather -->
+        <div class="current-weather">
+          <div class="current-main">
+            <div class="weather-icon-large" *ngIf="weatherData.current.weather[0]">
+              <img [src]="getWeatherIconUrl(weatherData.current.weather[0].icon)" [alt]="weatherData.current.weather[0].description">
+            </div>
+            <div class="current-temp">
+              <div class="temp-value">{{ weatherData.current.temp | number:'1.0-0' }}°C</div>
+              <div class="temp-feels">
+                {{ 'dashboard.sections.weather.feelsLike' | translate:{ value: (weatherData.current.feels_like | number:'1.0-0') } }}
+              </div>
+              <div class="weather-description">{{ weatherData.current.weather[0]?.description | titlecase }}</div>
+            </div>
+          </div>
+          <div class="current-details-grid">
+            <div class="detail-box">
+              <mat-icon>water_drop</mat-icon>
+              <div class="detail-info">
+                <div class="detail-label">{{ 'dashboard.sections.weather.details.humidity' | translate }}</div>
+                <div class="detail-value">{{ weatherData.current.humidity }}%</div>
+              </div>
+            </div>
+            <div class="detail-box">
+              <mat-icon>air</mat-icon>
+              <div class="detail-info">
+                <div class="detail-label">{{ 'dashboard.sections.weather.details.wind' | translate }}</div>
+                <div class="detail-value">
+                  {{ weatherData.current.wind_speed | number:'1.1-1' }} {{ 'dashboard.sections.weather.units.wind' | translate }}
+                </div>
+              </div>
+            </div>
+            <div class="detail-box">
+              <mat-icon>cloud</mat-icon>
+              <div class="detail-info">
+                <div class="detail-label">{{ 'dashboard.sections.weather.details.clouds' | translate }}</div>
+                <div class="detail-value">{{ weatherData.current.clouds }}%</div>
+              </div>
+            </div>
+            <div class="detail-box" *ngIf="weatherData.hourly[0]">
+              <mat-icon>umbrella</mat-icon>
+              <div class="detail-info">
+                <div class="detail-label">{{ 'dashboard.sections.weather.details.rainChance' | translate }}</div>
+                <div class="detail-value">{{ (weatherData.hourly[0].pop * 100) | number:'0.0-0' }}%</div>
+              </div>
+            </div>
+            <div class="detail-box">
+              <mat-icon>wb_twilight</mat-icon>
+              <div class="detail-info">
+                <div class="detail-label">{{ 'dashboard.sections.weather.details.sunrise' | translate }}</div>
+                <div class="detail-value">{{ formatTime(weatherData.current.sunrise) }}</div>
+              </div>
+            </div>
+            <div class="detail-box">
+              <mat-icon>wb_twilight</mat-icon>
+              <div class="detail-info">
+                <div class="detail-label">{{ 'dashboard.sections.weather.details.sunset' | translate }}</div>
+                <div class="detail-value">{{ formatTime(weatherData.current.sunset) }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Next 24 Hours -->
+        <div class="hourly-forecast" *ngIf="weatherData.hourly && weatherData.hourly.length > 0">
+          <div class="forecast-title">
+            <mat-icon>schedule</mat-icon>
+            <span>{{ 'dashboard.sections.weather.hourlyTitle' | translate }}</span>
+          </div>
+          <div class="hourly-list">
+            <div class="hourly-item" *ngFor="let hour of weatherData.hourly.slice(0, 24)">
+              <div class="hour-time">{{ formatTime(hour.dt) }}</div>
+              <div class="hour-icon" *ngIf="hour.weather[0]">
+                <img [src]="getWeatherIconUrl(hour.weather[0].icon)" [alt]="hour.weather[0].description">
+              </div>
+              <div class="hour-temp">{{ hour.temp | number:'1.0-0' }}°</div>
+              <div class="hour-pop" *ngIf="hour.pop > 0">
+                <mat-icon>water_drop</mat-icon>
+                <span>{{ (hour.pop * 100) | number:'0.0-0' }}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7-Day Forecast -->
+        <div class="daily-forecast" *ngIf="weatherData.daily && weatherData.daily.length > 0">
+          <div class="forecast-title">
+            <mat-icon>calendar_today</mat-icon>
+            <span>{{ 'dashboard.sections.weather.dailyTitle' | translate }}</span>
+          </div>
+          <div class="daily-list">
+            <div class="daily-item" *ngFor="let day of weatherData.daily.slice(0, 7)">
+              <div class="day-date">{{ formatDate(day.dt) }}</div>
+              <div class="day-icon" *ngIf="day.weather[0]">
+                <img [src]="getWeatherIconUrl(day.weather[0].icon)" [alt]="day.weather[0].description">
+              </div>
+              <div class="day-temps">
+                <span class="day-max">{{ day.temp.max | number:'1.0-0' }}°</span>
+                <span class="day-min">{{ day.temp.min | number:'1.0-0' }}°</span>
+              </div>
+              <div class="day-pop" *ngIf="day.pop > 0">
+                <mat-icon>umbrella</mat-icon>
+                <span>{{ (day.pop * 100) | number:'0.0-0' }}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Insights -->
+        <div class="insights-section" *ngIf="aiInsights.length > 0">
+          <div class="insights-title">
+            <mat-icon>lightbulb</mat-icon>
+            <span>{{ 'dashboard.sections.weather.aiInsightsTitle' | translate }}</span>
+          </div>
+          <div class="insights-list">
+            <div class="insight-item" *ngFor="let insight of aiInsights">
+              <mat-icon>info</mat-icon>
+              <span>{{ insight }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ng-template #noWeatherData>
+        <div class="no-data-message">
+          <mat-icon>cloud_off</mat-icon>
+          <p *ngIf="weatherError">{{ weatherError }}</p>
+          <p *ngIf="!weatherError">{{ 'dashboard.sections.weather.noData' | translate }}</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <!-- Floating Action Button (FAB) with Perfect Circular Burst -->
+  <div class="fab-container" [class.elevated]="showFab">
+    <!-- Main FAB Button -->
+    <button class="fab-main"
+            [class.active]="showFab"
+            (click)="toggleFab()"
+            [attr.aria-label]="('dashboard.fab.quickActions' | translate)"
+            [matTooltip]="'dashboard.fab.quickActions' | translate"
+            matTooltipPosition="left">
+      <mat-icon class="fab-icon">agriculture</mat-icon>
+    </button>
+
+    <!-- Circular Burst Sub-buttons (Dynamically positioned) -->
+    <div class="fab-radial-menu" [class.active]="showFab">
+      <button *ngFor="let action of fabActions; let i = index"
+              class="fab-sub-button"
+              [style.--angle]="getAngle(i) + 'deg'"
+              [style.--distance]="circularDistance + 'px'"
+              [style.transition-delay]="(i * 50) + 'ms'"
+              [style.background]="action.gradient"
+              (click)="navigateAndCloseFab(action.route)"
+              [matTooltip]="action.labelKey | translate"
+              matTooltipPosition="left"
+              [attr.aria-label]="action.labelKey | translate">
+        <mat-icon [style.color]="action.iconColor">{{ action.icon }}</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- FAB Backdrop -->
+  <div class="fab-backdrop"
+       [class.active]="showFab"
+       (click)="closeFab()"></div>
+
+  <!-- Loading Template -->
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>{{ languageService.t()('dashboard.loadingData') || 'Loading your farm data...' }}</p>
+  </div>
+</div>
