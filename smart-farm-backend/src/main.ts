@@ -48,10 +48,45 @@ async function bootstrap() {
     app.setGlobalPrefix('api/v1');
 
     // ✅ Allow requests from your frontend
+    // CORS configuration: supports Railway domains, localhost, and custom origins
+    const corsOrigin = process.env.CORS_ORIGIN;
+    let allowedOrigins: any;
+    
+    if (corsOrigin === '*') {
+      allowedOrigins = true; // Allow all origins
+    } else if (corsOrigin) {
+      // Split comma-separated origins and include Railway domains
+      const customOrigins = corsOrigin.split(',').map(o => o.trim());
+      const railwayPattern = /^https:\/\/.*\.up\.railway\.app$/;
+      allowedOrigins = (origin: string, callback: (err: Error | null, allow?: boolean) => void) => {
+        // Allow if origin matches custom list or Railway domain pattern
+        if (!origin || customOrigins.includes(origin) || railwayPattern.test(origin) || 
+            /^http:\/\/localhost:\d+$/.test(origin) || /^http:\/\/127\.0\.0\.1:\d+$/.test(origin)) {
+          callback(null, true);
+        } else {
+          callback(null, false);
+        }
+      };
+    } else {
+      // Default: allow localhost and Railway domains
+      allowedOrigins = (origin: string, callback: (err: Error | null, allow?: boolean) => void) => {
+        if (!origin || 
+            /^http:\/\/localhost:\d+$/.test(origin) || 
+            /^http:\/\/127\.0\.0\.1:\d+$/.test(origin) ||
+            /^https:\/\/.*\.up\.railway\.app$/.test(origin)) {
+          callback(null, true);
+        } else {
+          callback(null, false);
+        }
+      };
+    }
+    
     app.enableCors({
-      origin: process.env.CORS_ORIGIN === '*' ? true : process.env.CORS_ORIGIN?.split(',') || ['http://127.0.0.1:4200', 'http://localhost:4200'],
+      origin: allowedOrigins,
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
       credentials: true,
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+      exposedHeaders: ['Authorization'],
     });
 
     const port = process.env.PORT || 3000;
