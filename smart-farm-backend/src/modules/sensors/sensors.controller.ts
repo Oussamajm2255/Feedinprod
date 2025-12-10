@@ -35,7 +35,11 @@ export class SensorsController {
     return this.sensorsService.findAll(shouldIncludeDevice, shouldIncludeFarm, shouldIncludeReadings, ownerId);
   }
 
-  // Specific routes must come before generic :id route to avoid route conflicts
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    return this.sensorsService.findOne(+id);
+  }
+
   @Get('by-sensor-id/:sensorId')
   async findBySensorId(@Param('sensorId') sensorId: string) {
     return this.sensorsService.findBySensorId(sensorId);
@@ -49,11 +53,6 @@ export class SensorsController {
   @Get('by-farm/:farmId')
   async findByFarm(@Param('farmId') farmId: string) {
     return this.sensorsService.findByFarm(farmId);
-  }
-
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return this.sensorsService.findOne(+id);
   }
 
   @Patch(':id')

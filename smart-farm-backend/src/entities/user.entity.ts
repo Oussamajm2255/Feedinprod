@@ -6,7 +6,7 @@ import * as bcrypt from 'bcrypt';
 export enum UserRole {
   ADMIN = 'admin',
   FARMER = 'farmer',
-  MODERATOR = 'moderator'
+  VIEWER = 'viewer'
 }
 
 export enum UserStatus {

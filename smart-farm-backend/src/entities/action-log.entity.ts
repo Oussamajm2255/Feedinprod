@@ -37,11 +37,7 @@ export class ActionLog {
   @Column({ type: 'varchar', length: 255 })
   action_uri: string;
 
-  @Column({
-    type: 'enum',
-    enum: ['queued', 'sent', 'ack', 'error', 'timeout', 'failed'],
-    enumName: 'action_status_enum',
-  })
+  @Column({ type: 'varchar', length: 50 })
   status: 'queued' | 'sent' | 'ack' | 'error' | 'timeout' | 'failed';
 
   @Column({ type: 'varchar', length: 255, nullable: true })
@@ -50,7 +46,7 @@ export class ActionLog {
   @Column({ type: 'text', nullable: true })
   error_message: string | null;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: 'json', nullable: true })
   payload: any | null;
 
   // Production-ready fields

@@ -15,14 +15,15 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSortModule, Sort, MatSort } from '@angular/material/sort';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { ApiService } from '../../core/services/api.service';
 import { FarmManagementService } from '../../core/services/farm-management.service';
 import { Device, DeviceStatus } from '../../core/models/farm.model';
 import { LanguageService } from '../../core/services/language.service';
 import { AlertService } from '../../core/services/alert.service';
+import { FloatingUIService } from '../../core/services/floating-ui.service';
 import { TooltipDirective } from '../../shared/directives/tooltip.directive';
+import { DropdownDirective } from '../../shared/directives/dropdown.directive';
 import { DeviceDetailsDialogComponent, DeviceDetailsDialogData } from './components/device-details-dialog/device-details-dialog.component';
 import * as DeviceUtils from './device.utils';
 import { DEVICES_CONFIG, DEVICE_TABLE_COLUMNS } from './devices.constants';
@@ -45,8 +46,8 @@ import { environment } from '../../../environments/environment';
     MatSelectModule,
     MatSortModule,
     MatPaginatorModule,
-    MatTooltipModule,
-    TooltipDirective
+    TooltipDirective,
+    DropdownDirective
   ],
   templateUrl: './devices.component.html',
   styleUrls: [
@@ -97,9 +98,7 @@ export class DevicesComponent implements OnInit, OnDestroy {
 
   // Available Options
   availableStatuses = [...DEVICES_CONFIG.DEVICE_STATUSES];
-  availableDeviceTypes: string[] = [...DEVICES_CONFIG.DEVICE_TYPES];
-  typeOptionsAreFarmScoped = false;
-  private readonly defaultDeviceTypes = [...DEVICES_CONFIG.DEVICE_TYPES];
+  availableDeviceTypes = [...DEVICES_CONFIG.DEVICE_TYPES];
 
   // Computed Properties
   get hasActiveFilters(): boolean {
@@ -118,6 +117,15 @@ export class DevicesComponent implements OnInit, OnDestroy {
     this.setupSearchDebounce();
     this.loadDevices();
     this.subscribeFarmChanges();
+    this.createDropdownMenu();
+  }
+
+  /**
+   * Create dropdown menu content programmatically
+   */
+  private createDropdownMenu(): void {
+    // The dropdown will be created when the button is clicked via the directive
+    // We don't need to create it here, but we ensure the element exists
   }
 
   ngOnDestroy(): void {
@@ -160,7 +168,6 @@ export class DevicesComponent implements OnInit, OnDestroy {
     const selectedFarm = this.farmManagement.getSelectedFarm();
     if (!selectedFarm) {
       this.devices = [];
-      this.updateAvailableDeviceTypes();
       this.applyFilters();
       this.cdr.markForCheck();
       return;
@@ -197,7 +204,6 @@ export class DevicesComponent implements OnInit, OnDestroy {
       )
       .subscribe(devices => {
         this.devices = devices || [];
-        this.updateAvailableDeviceTypes();
         this.applyFilters();
         this.cdr.markForCheck();
       });
@@ -272,35 +278,6 @@ export class DevicesComponent implements OnInit, OnDestroy {
     this.totalDevices = filtered.length;
     this.updatePagination();
     this.updateDataSource();
-  }
-
-  /**
-   * Build device type options based on current farm devices
-   */
-  private updateAvailableDeviceTypes(): void {
-    const normalizedTypes = new Map<string, string>();
-
-    this.devices.forEach(device => {
-      const type = device.device_type?.trim();
-      if (!type) {
-        return;
-      }
-      const key = type.toLowerCase();
-      if (!normalizedTypes.has(key)) {
-        normalizedTypes.set(key, type);
-      }
-    });
-
-    if (normalizedTypes.size) {
-      this.availableDeviceTypes = Array.from(normalizedTypes.values()).sort((a, b) =>
-        a.localeCompare(b, undefined, { sensitivity: 'base' })
-      );
-      this.typeOptionsAreFarmScoped = true;
-      return;
-    }
-
-    this.availableDeviceTypes = [...this.defaultDeviceTypes];
-    this.typeOptionsAreFarmScoped = false;
   }
 
   /**
@@ -391,12 +368,11 @@ this.currentPage = 0;
    */
   async viewDeviceDetails(device: Device): Promise<void> {
     const dialogRef = this.dialog.open(DeviceDetailsDialogComponent, {
-      width: 'min(900px, 95vw)',
-      maxWidth: '95vw',
+      width: '90vw',
+      maxWidth: '1200px',
       maxHeight: '90vh',
       data: { device } as DeviceDetailsDialogData,
-      panelClass: 'device-details-dialog-container',
-      backdropClass: 'device-details-dialog-backdrop'
+      panelClass: 'device-details-dialog-container'
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -498,23 +474,16 @@ this.currentPage = 0;
     }
 
     try {
-      const translate = this.languageService.t();
-      const headers = [
-        translate('devices.exportHeaders.name'),
-        translate('devices.exportHeaders.type'),
-        translate('devices.exportHeaders.location'),
-        translate('devices.exportHeaders.status'),
-        translate('devices.exportHeaders.lastSeen'),
-        translate('devices.exportHeaders.description')
-      ];
+      // Generate CSV content
+      const headers = ['Name', 'Type', 'Location', 'Status', 'Last Seen', 'Description'];
       const csvRows = [headers.join(',')];
 
       this.filteredDevices.forEach(device => {
         const row = [
           `"${device.name}"`,
-          `"${this.getDeviceTypeTranslation(device.device_type || 'unknown')}"`,
+          `"${device.device_type || ''}"`,
           `"${device.location}"`,
-          `"${this.getStatusTranslation(device.status)}"`,
+          `"${device.status}"`,
           `"${device.last_seen || ''}"`,
           `"${device.description || ''}"`
         ];
@@ -763,14 +732,9 @@ const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const selectedDevicesList = this.devices.filter(d => this.selectedDevices.has(d.device_id));
     const deviceNames = selectedDevicesList.map(d => d.name).join(', ');
 
-    const confirmMessage = this.languageService.translate('devices.confirmBulkDelete', {
-      count: this.selectedDevices.size,
-      names: deviceNames
-    });
-
     const result = await this.alertService.confirm(
       'devices.deleteDevice',
-      confirmMessage,
+      'devices.confirmBulkDelete',
       'common.delete',
       'common.cancel'
     );
@@ -798,9 +762,7 @@ this.devices = this.devices.filter(d => !this.selectedDevices.has(d.device_id));
 
       this.alertService.success(
         'devices.devicesDeleted',
-        this.languageService.translate('devices.devicesDeletedSuccess', {
-          count: selectedDevicesList.length
-        })
+        `${selectedDevicesList.length} devices deleted successfully`
       );
     } catch (error) {
       console.error('Error deleting devices:', error);
@@ -822,14 +784,9 @@ this.devices = this.devices.filter(d => !this.selectedDevices.has(d.device_id));
       return;
     }
 
-    const confirmMessage = this.languageService.translate('devices.confirmBulkStatusChange', {
-      count: this.selectedDevices.size,
-      status: this.getStatusTranslation(newStatus)
-    });
-
     const result = await this.alertService.confirm(
       'devices.changeStatus',
-      confirmMessage,
+      `Change status of ${this.selectedDevices.size} devices to ${newStatus}?`,
       'common.confirm',
       'common.cancel'
     );
@@ -860,10 +817,7 @@ this.devices = this.devices.filter(d => !this.selectedDevices.has(d.device_id));
 
       this.alertService.success(
         'devices.statusUpdated',
-        this.languageService.translate('devices.bulkStatusUpdated', {
-          count: statusPromises.length,
-          status: this.getStatusTranslation(newStatus)
-        })
+        `Status updated for ${statusPromises.length} devices`
       );
     } catch (error) {
       console.error('Error updating device status:', error);
@@ -876,28 +830,5 @@ this.devices = this.devices.filter(d => !this.selectedDevices.has(d.device_id));
 
      this.cdr.markForCheck();
     }
-  }
-  getDeviceCardAriaLabel(device: Device): string {
-    return this.languageService.translate('devices.card.ariaLabel', { name: device.name });
-  }
-
-  getDeviceCardStatusLabel(device: Device): string {
-    return this.languageService.translate('devices.card.statusLabel', {
-      status: this.getStatusTranslation(device.status),
-      lastSeen: this.formatLastSeen(device.last_seen)
-    });
-  }
-
-  getDeviceLocationLabel(device: Device): string {
-    return this.languageService.translate('devices.card.locationLabel', {
-      location: device.location
-    });
-  }
-
-  getDeviceToggleAriaLabel(device: Device): string {
-    const action = device.status === 'online' ? 'deactivate' : 'activate';
-    return this.languageService.translate(`devices.card.${action}ActionAria`, {
-      name: device.name
-    });
   }
 }

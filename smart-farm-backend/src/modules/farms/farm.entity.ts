@@ -1,5 +1,5 @@
 // src/modules/farms/farm.entity.ts
-import { Entity, PrimaryColumn, Column, OneToMany, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryColumn, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { Sensor } from '../../entities/sensor.entity';
 import { Device } from '../../entities/device.entity';
 
@@ -14,20 +14,8 @@ export class Farm {
   @Column({ type: 'text', nullable: true })
   location: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 8, nullable: true })
-  latitude: number;
-
-  @Column({ type: 'decimal', precision: 11, scale: 8, nullable: true })
-  longitude: number;
-
   @Column({ type: 'varchar', length: 36, nullable: true })
   owner_id: string;
-
-  @CreateDateColumn({ type: 'timestamp', precision: 6 })
-  created_at: Date;
-
-  @UpdateDateColumn({ type: 'timestamp', precision: 6 })
-  updated_at: Date;
 
   // Relationship with User (owner)
   @ManyToOne('User', (user: any) => user.farms)

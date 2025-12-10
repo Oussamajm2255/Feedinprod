@@ -11,69 +11,39 @@
 
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatIconModule } from '@angular/material/icon';
 import { SmartLoadingScreenSimpleComponent } from './shared/components/smart-loading-screen/smart-loading-screen-simple.component';
 
 @Component({
   selector: 'app-demo-loading-screen',
   standalone: true,
-  imports: [CommonModule, MatIconModule, SmartLoadingScreenSimpleComponent],
+  imports: [CommonModule, SmartLoadingScreenSimpleComponent],
   template: `
     <div class="demo-page">
       <!-- Control Panel -->
       <div class="control-panel" *ngIf="!isLoading">
         <div class="card">
-          <h1>
-            <mat-icon>eco</mat-icon>
-            Smart Loading Screen Demo
-          </h1>
+          <h1>🌱 Smart Loading Screen Demo</h1>
           <p class="subtitle">See the FULL animated loading screen in action!</p>
 
           <div class="features">
-            <h3>
-              <mat-icon>visibility</mat-icon>
-              What You'll See:
-            </h3>
+            <h3>✨ What You'll See:</h3>
             <ul>
-              <li>
-                <mat-icon>agriculture</mat-icon>
-                Agriculture SVG with line-drawing animation
-              </li>
-              <li>
-                <mat-icon>gradient</mat-icon>
-                Animated gradient background (15s loop)
-              </li>
-              <li>
-                <mat-icon>stars</mat-icon>
-                20 floating particles drifting upward
-              </li>
-              <li>
-                <mat-icon>loop</mat-icon>
-                Infinite seamless loop (3s cycle)
-              </li>
-              <li>
-                <mat-icon>radio_button_checked</mat-icon>
-                Three bouncing progress dots
-              </li>
-              <li>
-                <mat-icon>animation</mat-icon>
-                Smooth fade-in/fade-out transitions
-              </li>
-              <li>
-                <mat-icon>accessibility</mat-icon>
-                Accessibility-friendly (respects reduced motion)
-              </li>
+              <li>🌾 Agriculture SVG with line-drawing animation</li>
+              <li>🎨 Animated gradient background (15s loop)</li>
+              <li>✨ 20 floating particles drifting upward</li>
+              <li>🔄 Infinite seamless loop (3s cycle)</li>
+              <li>⚪ Three bouncing progress dots</li>
+              <li>💫 Smooth fade-in/fade-out transitions</li>
+              <li>♿ Accessibility-friendly (respects reduced motion)</li>
             </ul>
           </div>
 
           <div class="button-group">
             <button class="btn-primary" (click)="showLoading()">
-              <mat-icon>play_arrow</mat-icon>
-              Show Loading Screen
+              🚀 Show Loading Screen
             </button>
             <button class="btn-secondary" (click)="showLoadingTimed()">
-              <mat-icon>schedule</mat-icon>
-              Show for 5 Seconds
+              ⏱️ Show for 5 Seconds
             </button>
           </div>
 
@@ -94,8 +64,7 @@ import { SmartLoadingScreenSimpleComponent } from './shared/components/smart-loa
         *ngIf="isLoading"
         class="close-btn"
         (click)="hideLoading()">
-        <mat-icon>close</mat-icon>
-        Close Demo
+        ✕ Close Demo
       </button>
     </div>
   `,
@@ -139,16 +108,6 @@ import { SmartLoadingScreenSimpleComponent } from './shared/components/smart-loa
       color: #2e7d32;
       margin: 0 0 0.5rem 0;
       font-family: 'Roboto', sans-serif;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    h1 mat-icon {
-      font-size: 2.5rem;
-      width: 2.5rem;
-      height: 2.5rem;
-      color: #2e7d32;
     }
 
     .subtitle {
@@ -169,16 +128,6 @@ import { SmartLoadingScreenSimpleComponent } from './shared/components/smart-loa
       color: #2e7d32;
       margin: 0 0 1rem 0;
       font-size: 1.3rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .features h3 mat-icon {
-      font-size: 1.3rem;
-      width: 1.3rem;
-      height: 1.3rem;
-      color: #2e7d32;
     }
 
     .features ul {
@@ -193,15 +142,7 @@ import { SmartLoadingScreenSimpleComponent } from './shared/components/smart-loa
       color: #555;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-    }
-
-    .features li mat-icon {
-      font-size: 1.25rem;
-      width: 1.25rem;
-      height: 1.25rem;
-      color: #4caf50;
-      flex-shrink: 0;
+      gap: 0.5rem;
     }
 
     .button-group {
@@ -223,17 +164,6 @@ import { SmartLoadingScreenSimpleComponent } from './shared/components/smart-loa
       font-weight: 500;
       transition: all 0.3s ease;
       font-family: 'Roboto', sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    .btn-primary mat-icon,
-    .btn-secondary mat-icon {
-      font-size: 1.25rem;
-      width: 1.25rem;
-      height: 1.25rem;
     }
 
     .btn-primary {
@@ -288,15 +218,6 @@ import { SmartLoadingScreenSimpleComponent } from './shared/components/smart-loa
       backdrop-filter: blur(10px);
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
       transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .close-btn mat-icon {
-      font-size: 1.25rem;
-      width: 1.25rem;
-      height: 1.25rem;
     }
 
     .close-btn:hover {

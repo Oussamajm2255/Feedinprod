@@ -1,40 +1,39 @@
-import { Component, OnInit, OnDestroy, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
-import { MatBadgeModule } from '@angular/material/badge';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { trigger, state, style, transition, animate, query, stagger, keyframes } from '@angular/animations';
-
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { AlertService } from '../../../../core/services/alert.service';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
+import { trigger, state, style, transition, animate, query, stagger } from '@angular/animations';
 import { ApiService } from '../../../../core/services/api.service';
-import { NotificationService } from '../../../../core/services/notification.service';
 import { FarmManagementService } from '../../../../core/services/farm-management.service';
+import { Device, Farm, DeviceStatus, Sensor, SensorReading } from '../../../../core/models/farm.model';
 import { LanguageService } from '../../../../core/services/language.service';
-import { Device, Farm, DeviceStatus } from '../../../../core/models/farm.model';
-import { ExecuteActionRequest } from '../../../../core/models/action-log.model';
-import { Subject, takeUntil } from 'rxjs';
+import { ThemeService } from '../../../../core/services/theme.service';
+import { ActionConfirmationDialogComponent, ActionConfirmationData } from './action-confirmation-dialog/action-confirmation-dialog.component';
 
-interface ActionTemplate {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-  actionUri: string;
-  actionType: 'critical' | 'important' | 'normal';
-  category: string;
+interface DeviceControl {
+  device: Device;
+  isOn: boolean;
+  automationRules?: string[];
+  thresholds?: { [key: string]: number };
+  sensor?: Sensor;
+  sensorReading?: SensorReading;
 }
 
-interface PendingAction {
-  actionId: string;
-  deviceId: string;
-  actionName: string;
-  status: 'pending' | 'success' | 'failed' | 'timeout';
-  timestamp: Date;
-  error?: string;
+interface ControlKPIs {
+  devicesControlled: number;
+  safeMode: boolean;
 }
 
 @Component({
@@ -43,1610 +42,1801 @@ interface PendingAction {
   imports: [
     CommonModule,
     MatCardModule,
-    MatButtonModule,
     MatIconModule,
-    MatProgressSpinnerModule,
+    MatButtonModule,
     MatChipsModule,
+    MatProgressSpinnerModule,
+    MatTooltipModule,
     MatSnackBarModule,
-    MatBadgeModule,
-    MatTooltipModule
+    MatSlideToggleModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+    MatDialogModule,
   ],
   animations: [
-    trigger('fadeInUp', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(20px)' }),
-        animate('400ms cubic-bezier(0.4, 0, 0.2, 1)', style({ opacity: 1, transform: 'translateY(0)' }))
+    // Automation status fade transition
+    trigger('automationFade', [
+      transition('* => *', [
+        animate('400ms cubic-bezier(0.4, 0, 0.2, 1)')
       ])
     ]),
-    trigger('slideInRight', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateX(-30px)' }),
-        animate('300ms cubic-bezier(0.4, 0, 0.2, 1)', style({ opacity: 1, transform: 'translateX(0)' }))
-      ])
+    // Automation pulse animation
+    trigger('automationPulse', [
+      state('active', style({ 
+        transform: 'scale(1)',
+        boxShadow: '0 0 20px rgba(16, 185, 129, 0.3)'
+      })),
+      state('inactive', style({ 
+        transform: 'scale(1)',
+        boxShadow: '0 0 0px rgba(16, 185, 129, 0)'
+      })),
+      transition('inactive => active', [
+        animate('1000ms ease-in-out', style({ 
+          transform: 'scale(1.05)',
+          boxShadow: '0 0 30px rgba(16, 185, 129, 0.5)'
+        })),
+        animate('1000ms ease-in-out', style({ 
+          transform: 'scale(1)',
+          boxShadow: '0 0 20px rgba(16, 185, 129, 0.3)'
+        }))
+      ]),
+      transition('active => inactive', animate('300ms ease-in-out'))
     ]),
-    trigger('staggerCards', [
+    // Tile hover animation
+    trigger('tileHover', [
+      state('default', style({ transform: 'scale(1)' })),
+      state('hover', style({ transform: 'scale(1.05)' })),
+      transition('default <=> hover', animate('200ms cubic-bezier(0.4, 0, 0.2, 1)'))
+    ]),
+    // Glow animation for active devices
+    trigger('deviceGlow', [
+      state('inactive', style({ boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' })),
+      state('active', style({ boxShadow: '0 8px 24px rgba(16, 185, 129, 0.3)' })),
+      transition('inactive <=> active', animate('300ms ease-in-out'))
+    ]),
+    // Stagger animation for tiles
+    trigger('tileStagger', [
       transition('* => *', [
         query(':enter', [
-          style({ opacity: 0, transform: 'scale(0.9) translateY(20px)' }),
+          style({ opacity: 0, transform: 'translateY(20px)' }),
           stagger(100, [
-            animate('400ms cubic-bezier(0.4, 0, 0.2, 1)', style({ opacity: 1, transform: 'scale(1) translateY(0)' }))
+            animate('300ms cubic-bezier(0.4, 0, 0.2, 1)', style({ opacity: 1, transform: 'translateY(0)' }))
           ])
         ], { optional: true })
       ])
     ]),
-    trigger('pulse', [
-      state('normal', style({ transform: 'scale(1)' })),
-      state('pulse', style({ transform: 'scale(1.05)' })),
-      transition('normal <=> pulse', animate('300ms ease-in-out'))
-    ]),
-    trigger('statusChange', [
-      transition('* => success', [
-        animate('500ms ease-out', keyframes([
-          style({ transform: 'scale(1)', offset: 0 }),
-          style({ transform: 'scale(1.2)', offset: 0.5 }),
-          style({ transform: 'scale(1)', offset: 1 })
-        ]))
-      ]),
-      transition('* => failed', [
-        animate('500ms ease-out', keyframes([
-          style({ transform: 'translateX(0)', offset: 0 }),
-          style({ transform: 'translateX(-10px)', offset: 0.25 }),
-          style({ transform: 'translateX(10px)', offset: 0.5 }),
-          style({ transform: 'translateX(-10px)', offset: 0.75 }),
-          style({ transform: 'translateX(0)', offset: 1 })
-        ]))
+    // Log item animation
+    trigger('logItem', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateX(-20px)' }),
+        animate('200ms cubic-bezier(0.4, 0, 0.2, 1)', style({ opacity: 1, transform: 'translateX(0)' }))
       ])
     ]),
-    trigger('buttonHover', [
-      state('default', style({ transform: 'translateY(0) scale(1)' })),
-      state('hover', style({ transform: 'translateY(-4px) scale(1.02)' })),
-      transition('default <=> hover', animate('200ms cubic-bezier(0.4, 0, 0.2, 1)'))
+    // Slide in animation for automation banner
+    trigger('slideIn', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(-20px)' }),
+        animate('400ms cubic-bezier(0.4, 0, 0.2, 1)', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
     ])
   ],
   template: `
-    <div class="manual-actions-container">
-      <!-- Enhanced Header with Gradient -->
-      <div class="header" [@fadeInUp]>
-        <div class="header-content">
-          <div class="header-icon-wrapper">
-            <mat-icon class="header-icon">gamepad</mat-icon>
+    <div class="manual-control-container">
+      <!-- 1️⃣ Automation Status Header (always visible) -->
+      <div class="automation-status-header" [@slideIn]>
+        <div class="automation-banner glass-card" [@automationPulse]="automationEnabled() ? 'active' : 'inactive'">
+          <div class="automation-content">
+            <div class="automation-info">
+              <div class="automation-icon">
+                <mat-icon>{{ automationEnabled() ? 'smart_toy' : 'pause_circle' }}</mat-icon>
+              </div>
+              <div class="automation-text">
+                <h3>{{ languageService.t()('manualControl.automationStatus') }}: {{ automationEnabled() ? languageService.t()('manualControl.on') : languageService.t()('manualControl.off') }}</h3>
+                <p>{{ automationEnabled() ? languageService.t()('manualControl.automationOnSubtext') : languageService.t()('manualControl.automationOffSubtext') }}</p>
+              </div>
+            </div>
+            <div class="automation-toggle">
+              <mat-slide-toggle
+                [checked]="automationEnabled()"
+                [disabled]="isLoading()"
+                (change)="toggleAutomation($event.checked)"
+                class="automation-switch">
+                <span class="toggle-label">
+                  {{ automationEnabled() ? languageService.t()('manualControl.enabled') : languageService.t()('manualControl.disabled') }}
+                </span>
+              </mat-slide-toggle>
+            </div>
           </div>
-          <h2>{{ languageService.t()('manualControl.title') }}</h2>
-          <p class="header-subtitle">{{ languageService.t()('manualControl.subtitle') }}</p>
         </div>
       </div>
 
-      <!-- Enhanced Quick Stats with Glassmorphism -->
-      <div class="stats-grid" [@staggerCards]>
-        <mat-card class="stat-card glass-card" [@fadeInUp]>
-          <div class="stat-icon-wrapper online">
-            <mat-icon>devices</mat-icon>
-            <div class="pulse-ring" *ngIf="onlineDevicesCount() > 0"></div>
+      <!-- 2️⃣ Conditional Sections -->
+      <div class="conditional-content" [@automationFade]>
+        <!-- When Automation = ON -->
+        <div class="automation-active-section" *ngIf="automationEnabled()">
+          <div class="automation-info-card glass-card">
+            <div class="automation-icon-large">
+              <mat-icon>🌿⚙️</mat-icon>
+            </div>
+            <h2>{{ languageService.t()('manualControl.automationActive') }}</h2>
+            <p>{{ languageService.t()('manualControl.automationActiveDescription') }}</p>
+            
+            <!-- Safe Mode Toggle (always visible) -->
+            <div class="safe-mode-section">
+              <mat-slide-toggle
+                [checked]="safeModeEnabled()"
+                [disabled]="isLoading()"
+                (change)="toggleSafeMode($event.checked)"
+                class="safe-mode-toggle">
+                <span class="safe-mode-label">
+                  <mat-icon>security</mat-icon>
+                  {{ languageService.t()('manualControl.safeMode') }}: {{ safeModeEnabled() ? languageService.t()('manualControl.on') : languageService.t()('manualControl.off') }}
+                </span>
+              </mat-slide-toggle>
+            </div>
           </div>
-          <div class="stat-content">
-            <span class="stat-number">{{ onlineDevicesCount() }}</span>
-            <span class="stat-label">{{ languageService.t()('manualControl.onlineDevices') }}</span>
-          </div>
-        </mat-card>
+        </div>
 
-        <mat-card class="stat-card glass-card pending" *ngIf="pendingActionsCount() > 0" [@slideInRight]>
-          <div class="stat-icon-wrapper pending-icon">
-            <mat-icon>schedule</mat-icon>
-            <div class="pulse-ring"></div>
-          </div>
-          <div class="stat-content">
-            <span class="stat-number">{{ pendingActionsCount() }}</span>
-            <span class="stat-label">{{ languageService.t()('manualControl.pendingActions') }}</span>
-          </div>
-        </mat-card>
-      </div>
+        <!-- When Automation = OFF - Direct Action Panel -->
+        <div class="manual-control-section" *ngIf="!automationEnabled()">
+          <!-- Direct Action Panel Header -->
+          <div class="action-panel-header">
+            <h2>
+              <mat-icon>touch_app</mat-icon>
+              {{ languageService.t()('manualControl.directActionPanel') }}
+              </h2>
+            <p>{{ languageService.t()('manualControl.actionPanelDescription') }}</p>
+            </div>
 
-      <!-- Enhanced Pending Actions with Animations -->
-      <mat-card *ngIf="pendingActionsCount() > 0" class="pending-actions-card glass-card" [@fadeInUp]>
-        <mat-card-header class="pending-header">
-          <div class="header-title-wrapper">
-            <mat-icon class="header-title-icon">schedule</mat-icon>
-            <mat-card-title [matBadge]="pendingActionsCount()" [matBadgeHidden]="pendingActionsCount() === 0" matBadgeColor="accent" matBadgePosition="above after" class="pending-badge">
-              {{ languageService.t()('manualControl.pendingActions') }}
-            </mat-card-title>
-          </div>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="pending-actions-list">
-            <div
-              *ngFor="let action of pendingActionsArray(); trackBy: trackByActionId"
-              class="pending-action-item"
-              [@slideInRight]
-              [@statusChange]="action.status">
+          <!-- Direct Action Buttons Grid -->
+          <div class="action-buttons-grid" [@tileStagger] *ngIf="!isLoading(); else loadingState">
+            <div class="action-button glass-card"
+                   *ngFor="let control of filteredDeviceControls(); trackBy: trackByDeviceId; let i = index"
+                   [@tileHover]
+                   [@deviceGlow]="control.isOn ? 'active' : 'inactive'"
+                   [style.animation-delay]="i * 100 + 'ms'"
+                 [class.disabled]="safeModeEnabled()"
+                 (click)="executeDeviceAction(control.device, !control.isOn)">
+
+              <!-- Device Icon -->
+              <div class="action-icon">
+                <mat-icon>{{ getDeviceIcon(control.device) }}</mat-icon>
+              </div>
+
+              <!-- Device Info -->
               <div class="action-info">
-                <div class="action-icon-wrapper" [class]="'status-' + action.status">
-                  <mat-icon class="action-icon">{{ getActionIcon(action.actionName) }}</mat-icon>
-                  <div class="status-indicator" [class]="action.status"></div>
-                </div>
-                <div class="action-details">
-                  <h4>{{ getActionNameTranslation(action.actionName) }}</h4>
-                  <p>
-                    <mat-icon class="detail-icon">devices</mat-icon>
-                    {{ getDeviceDisplayName(action.deviceId) }}
-                    <span class="separator">•</span>
-                    <mat-icon class="detail-icon">schedule</mat-icon>
-                    {{ action.timestamp | date:'short' }}
-                  </p>
-                </div>
-              </div>
-              <div class="action-status">
-                <div class="status-animation-wrapper">
-                  <mat-spinner *ngIf="action.status === 'pending'" diameter="24" class="status-spinner"></mat-spinner>
-                  <mat-icon *ngIf="action.status === 'success'" class="status-icon status-success">check_circle</mat-icon>
-                  <mat-icon *ngIf="action.status === 'failed'" class="status-icon status-error">error</mat-icon>
-                  <mat-icon *ngIf="action.status === 'timeout'" class="status-icon status-warning">schedule</mat-icon>
-                </div>
-                <mat-chip [color]="getStatusColor(action.status)" class="status-chip">
-                  {{ getStatusText(action.status) }}
-                </mat-chip>
-              </div>
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-
-      <!-- Enhanced Device Cards with Stagger Animation -->
-      <div class="devices-grid" [@staggerCards]>
-        <mat-card
-          *ngFor="let device of devices(); trackBy: trackByDeviceId"
-          class="device-card glass-card"
-          [class.offline]="device.status !== DeviceStatus.ONLINE && device.status !== DeviceStatus.ACTIVE">
-          <mat-card-header class="device-header">
-            <div class="device-title-wrapper">
-              <div class="device-icon-wrapper" [class]="'status-' + device.status">
-                <mat-icon>{{ getDeviceIcon(device) }}</mat-icon>
-                <div class="device-status-dot" [class]="device.status"></div>
-              </div>
-              <div class="device-title-content">
-                <mat-card-title>{{ getDeviceDisplayName(device.name) }}</mat-card-title>
-                <mat-card-subtitle>
-                  <mat-chip
-                    [color]="(device.status === DeviceStatus.ONLINE || device.status === DeviceStatus.ACTIVE) ? 'accent' : 'warn'"
-                    class="device-status-chip">
-                    <div class="chip-indicator" [class]="device.status"></div>
-                    {{ getDeviceStatusTranslation(device.status) }}
-                  </mat-chip>
-                </mat-card-subtitle>
-              </div>
-            </div>
-          </mat-card-header>
-
-          <mat-card-content class="device-content">
-            <div class="actions-grid">
-              <button
-                *ngFor="let action of getActionsForDevice(device); trackBy: trackByActionTemplateId"
-                mat-raised-button
-                [color]="getActionColor(action.actionType)"
-                [disabled]="isActionExecuting(action.id) || (device.status !== DeviceStatus.ONLINE && device.status !== DeviceStatus.ACTIVE)"
-                (click)="executeAction(device, action)"
-                (mouseenter)="onButtonHover($event)"
-                (mouseleave)="onButtonLeave($event)"
-                class="action-button"
-                [class.executing]="isActionExecuting(action.id)"
-                [class.disabled]="device.status !== DeviceStatus.ONLINE && device.status !== DeviceStatus.ACTIVE"
-                [matTooltip]="getButtonTooltip(action, device)">
-
-                <div class="button-content">
-                  <div class="icon-wrapper">
-                    <mat-icon *ngIf="!isActionExecuting(action.id)" class="action-icon">{{ action.icon }}</mat-icon>
-                    <mat-spinner *ngIf="isActionExecuting(action.id)" diameter="24" class="button-spinner"></mat-spinner>
+                <!-- Device Name with Sensor Type/Value Title -->
+                <div class="device-title-row">
+                  <h3 class="device-name">{{ control.device.name }}</h3>
+                  <div class="sensor-value-title">
+                    <span class="sensor-type-label">{{ getConcernedValueType(control) }}</span>
+                    <span class="sensor-value" *ngIf="getConcernedValue(control) !== null">
+                      {{ getConcernedValue(control) }} {{ getConcernedValueUnit(control) }}
+                    </span>
+                    <span class="sensor-value no-data" *ngIf="getConcernedValue(control) === null">
+                      {{ languageService.t()('alerts.noRecentReading') || 'No reading' }}
+                    </span>
                   </div>
-                  <span class="action-label">{{ getActionNameTranslation(action.name) }}</span>
                 </div>
-                <div class="button-ripple"></div>
-              </button>
-            </div>
-          </mat-card-content>
-        </mat-card>
-      </div>
+                <p class="device-location">{{ control.device.location || languageService.t()('manualControl.noLocation') }}</p>
+                <div class="device-details">
+                  <div class="device-type">
+                    <mat-icon>{{ getDeviceTypeIcon(control.device) }}</mat-icon>
+                    <span>{{ getDeviceTypeName(control.device) }}</span>
+                    </div>
+                  <div class="device-specs" *ngIf="getDeviceSpecs(control.device)">
+                    <span class="spec-item" *ngFor="let spec of getDeviceSpecs(control.device)">
+                      {{ spec.label }}: {{ spec.value }}
+                    </span>
+                  </div>
+                  </div>
+                </div>
 
-      <!-- Empty State -->
-      <div *ngIf="devices().length === 0" class="empty-state" [@fadeInUp]>
-        <mat-icon class="empty-icon">devices_off</mat-icon>
-        <h3>No Devices Available</h3>
-        <p>Please select a farm to view available devices</p>
+              <!-- Status Badge -->
+              <div class="status-badge" [class]="getStatusBadgeClass(control)">
+                <mat-icon>{{ getStatusIcon(control) }}</mat-icon>
+                <span>{{ control.isOn ? languageService.t()('manualControl.on') : languageService.t()('manualControl.off') }}</span>
+                </div>
+
+              <!-- Action Button -->
+              <div class="action-control">
+                <button mat-raised-button 
+                        [class]="control.isOn ? 'action-button-on' : 'action-button-off'"
+                        [disabled]="isLoading() || safeModeEnabled()">
+                  <mat-icon>{{ control.isOn ? 'power_off' : 'power' }}</mat-icon>
+                  {{ control.isOn ? languageService.t()('manualControl.turnOff') : languageService.t()('manualControl.turnOn') }}
+                </button>
+              </div>
+
+              <!-- Last Action Timestamp -->
+              <div class="last-action-timestamp">
+                  <mat-icon>schedule</mat-icon>
+                  <span>{{ getLastUpdatedText(control) }}</span>
+                </div>
+              </div>
+            </div>
+
+          <!-- Empty State -->
+          <div class="empty-state" *ngIf="filteredDeviceControls().length === 0 && !isLoading()">
+            <mat-icon class="empty-icon">devices_other</mat-icon>
+            <h3>{{ languageService.t()('manualControl.noDevices') }}</h3>
+            <p>{{ languageService.t()('manualControl.noDevicesDescription') }}</p>
+          </div>
+        </div>
       </div>
     </div>
+
+    <!-- Loading State -->
+    <ng-template #loadingState>
+      <div class="loading-state">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>{{ languageService.t()('manualControl.loadingDevices') }}</p>
+      </div>
+    </ng-template>
   `,
   styles: [`
-    /* ===== Container & Layout ===== */
-    .manual-actions-container {
-      padding: 32px 24px;
-      max-width: 1400px;
+    .manual-control-container {
+      padding: 1.5rem 2rem;
+      max-width: 1600px;
       margin: 0 auto;
-      background: var(--header-bg-gradient, linear-gradient(135deg, #f8fafb 0%, #f0fdf4 100%));
       min-height: 100vh;
+      background: transparent;
     }
 
-    /* ===== Enhanced Header ===== */
-    .header {
-      text-align: center;
-      margin-bottom: 40px;
-      position: relative;
+    // 1️⃣ Automation Status Header
+    .automation-status-header {
+      margin-bottom: 2rem;
     }
 
-    .header-content {
-      position: relative;
-      z-index: 1;
-    }
-
-    .header-icon-wrapper {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 80px;
-      height: 80px;
-      margin-bottom: 20px;
-      background: linear-gradient(135deg, #2e7d32 0%, #10b981 100%);
-      border-radius: 50%;
-      box-shadow: 0 10px 30px rgba(46, 125, 50, 0.3);
-      animation: float 3s ease-in-out infinite;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
-    }
-
-    .header-icon {
-      font-size: 40px;
-      width: 40px;
-      height: 40px;
-      color: white;
-    }
-
-    .header h2 {
-      margin: 0 0 12px 0;
-      font-size: 32px;
-      font-weight: 700;
-      background: linear-gradient(135deg, #2e7d32 0%, #10b981 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      letter-spacing: -0.5px;
-    }
-
-    .header-subtitle {
-      margin: 0;
-      font-size: 16px;
-      color: #64748b;
-      font-weight: 400;
-    }
-
-    /* ===== Glassmorphism Cards ===== */
-    .glass-card {
+    .automation-banner {
+      padding: 1.5rem 2rem;
       background: var(--glass-bg, rgba(255, 255, 255, 0.7));
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid var(--glass-border, rgba(16, 185, 129, 0.2));
-      box-shadow: var(--shadow-md, 0 8px 32px rgba(0, 0, 0, 0.1));
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-radius: 20px;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .glass-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-lg, 0 12px 40px rgba(0, 0, 0, 0.15));
-      border-color: rgba(16, 185, 129, 0.3);
-    }
-
-    /* ===== Stats Cards ===== */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      margin-bottom: 32px;
-    }
-
-    .stat-card {
-      display: flex;
-      align-items: center;
-      padding: 24px;
-      gap: 20px;
+      border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.4));
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       overflow: hidden;
-    }
 
-    .stat-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, #2e7d32 0%, #10b981 100%);
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.3s ease;
-    }
-
-    .stat-card:hover::before {
-      transform: scaleX(1);
-    }
-
-    .stat-icon-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 64px;
-      height: 64px;
-      border-radius: 16px;
-      background: linear-gradient(135deg, #2e7d32 0%, #10b981 100%);
-      box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
-    }
-
-    .stat-icon-wrapper.online {
-      background: linear-gradient(135deg, #047857 0%, #10b981 100%);
-      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-    }
-
-    .stat-icon-wrapper.pending-icon {
-      background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
-      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
-    }
-
-    .stat-icon-wrapper mat-icon {
-      font-size: 32px;
-      width: 32px;
-      height: 32px;
-      color: white;
-      z-index: 1;
-    }
-
-    .pulse-ring {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border-radius: 16px;
-      border: 2px solid rgba(255, 255, 255, 0.6);
-      animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    }
-
-    @keyframes pulse-ring {
-      0% {
-        transform: scale(1);
-        opacity: 1;
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, var(--primary-green), transparent);
+        opacity: 0.8;
       }
-      100% {
-        transform: scale(1.5);
-        opacity: 0;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 32px rgba(16, 185, 129, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.7);
+        border-color: rgba(16, 185, 129, 0.3);
       }
     }
 
-    .stat-content {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-    }
-
-    .stat-number {
-      font-size: 32px;
-      font-weight: 700;
-      background: linear-gradient(135deg, #2e7d32 0%, #10b981 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1.2;
-    }
-
-    .stat-label {
-      font-size: 14px;
-      color: #64748b;
-      font-weight: 500;
-      margin-top: 4px;
-    }
-
-    /* ===== Pending Actions Card ===== */
-    .pending-actions-card {
-      margin-bottom: 32px;
-    }
-
-    .pending-header {
-      padding: 24px 24px 16px;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    .header-title-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .header-title-icon {
-      color: #f5576c;
-      font-size: 28px;
-      width: 28px;
-      height: 28px;
-    }
-
-    .pending-badge {
-      position: relative;
-    }
-
-    .pending-actions-list {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      padding: 16px;
-    }
-
-    .pending-action-item {
+    .automation-content {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 20px;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.5);
-      border: 1px solid rgba(0, 0, 0, 0.05);
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
+      gap: 2rem;
     }
 
-    .pending-action-item::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 4px;
-      background: linear-gradient(180deg, #2e7d32 0%, #10b981 100%);
-      transform: scaleY(0);
-      transform-origin: bottom;
-      transition: transform 0.3s ease;
-    }
-
-    .pending-action-item:hover {
-      background: rgba(255, 255, 255, 0.8);
-      transform: translateX(4px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .pending-action-item:hover::before {
-      transform: scaleY(1);
-    }
-
-    .action-info {
+    .automation-info {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 1rem;
       flex: 1;
     }
 
-    .action-icon-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      background: rgba(46, 125, 50, 0.1);
-    }
-
-    .action-icon-wrapper.status-success {
-      background: rgba(56, 239, 125, 0.1);
-    }
-
-    .action-icon-wrapper.status-failed {
-      background: rgba(245, 87, 108, 0.1);
-    }
-
-    .action-icon-wrapper.status-timeout {
-      background: rgba(255, 152, 0, 0.1);
-    }
-
-    .action-icon {
-      font-size: 24px;
-      width: 24px;
-      height: 24px;
-      color: #2e7d32;
-      z-index: 1;
-    }
-
-    .action-icon-wrapper.status-success .action-icon {
-      color: #38ef7d;
-    }
-
-    .action-icon-wrapper.status-failed .action-icon {
-      color: #f5576c;
-    }
-
-    .action-icon-wrapper.status-timeout .action-icon {
-      color: #ff9800;
-    }
-
-    .status-indicator {
-      position: absolute;
-      top: -2px;
-      right: -2px;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      border: 2px solid white;
-    }
-
-    .status-indicator.pending {
-      background: #10b981;
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    .status-indicator.success {
-      background: #38ef7d;
-    }
-
-    .status-indicator.failed {
-      background: #f5576c;
-    }
-
-    .status-indicator.timeout {
-      background: #ff9800;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-
-    .action-details h4 {
-      margin: 0 0 6px 0;
-      font-size: 16px;
-      font-weight: 600;
-      color: #1e293b;
-    }
-
-    .action-details p {
-      margin: 0;
-      font-size: 14px;
-      color: #64748b;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .detail-icon {
-      font-size: 16px;
-      width: 16px;
-      height: 16px;
-      color: #94a3b8;
-    }
-
-    .separator {
-      color: #cbd5e1;
-      margin: 0 4px;
-    }
-
-    .action-status {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .status-animation-wrapper {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 32px;
-      height: 32px;
-    }
-
-    .status-spinner {
-      width: 24px !important;
-      height: 24px !important;
-    }
-
-    .status-icon {
-      font-size: 28px;
-      width: 28px;
-      height: 28px;
-    }
-
-    .status-success { color: #38ef7d; }
-    .status-error { color: #f5576c; }
-    .status-warning { color: #ff9800; }
-
-    .status-chip {
-      font-weight: 500;
-    }
-
-    /* ===== Device Cards ===== */
-    .devices-grid {
-      display: grid;
-      /* Flexible grid: auto-fit with responsive min-width */
-      grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
-      gap: 24px;
-      width: 100%;
-      justify-items: stretch;
-    }
-
-    /* Optimize for different device counts using :has() selector (modern browsers) */
-    @supports selector(:has(*)) {
-      .devices-grid:has(.device-card:nth-child(1):nth-last-child(1)) {
-        /* Single device: center it with max width */
-        grid-template-columns: minmax(auto, 600px);
-        justify-content: center;
-      }
-
-      .devices-grid:has(.device-card:nth-child(1):nth-last-child(2)) {
-        /* Two devices: equal columns */
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .devices-grid:has(.device-card:nth-child(1):nth-last-child(3)) {
-        /* Three devices: three columns on large screens */
-        grid-template-columns: repeat(3, 1fr);
-      }
-
-      .devices-grid:has(.device-card:nth-child(4):nth-last-child(n+1)) {
-        /* Four or more: auto-fit with minimum constraint */
-        grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
-      }
-    }
-
-    /* Fallback for browsers without :has() support - use auto-fit as default */
-    @supports not selector(:has(*)) {
-      .devices-grid {
-        grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
-      }
-    }
-
-    .device-card {
-      min-height: 320px;
-      width: 100%;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .device-card.offline {
-      opacity: 0.7;
-    }
-
-    .device-card:hover {
-      transform: translateY(-8px);
-    }
-
-    .device-header {
-      padding: 24px 24px 16px;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    .device-title-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .device-icon-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .automation-icon {
       width: 56px;
       height: 56px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, #2e7d32 0%, #10b981 100%);
-      box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+      color: #065f46;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+      mat-icon {
+        font-size: 28px;
+        width: 28px;
+        height: 28px;
+      }
     }
 
-    .device-icon-wrapper.status-online,
-    .device-icon-wrapper.status-active {
-      background: linear-gradient(135deg, #047857 0%, #10b981 100%);
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-    }
-
-    .device-icon-wrapper mat-icon {
-      font-size: 28px;
-      width: 28px;
-      height: 28px;
-      color: white;
-      z-index: 1;
-    }
-
-    .device-status-dot {
-      position: absolute;
-      top: -4px;
-      right: -4px;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      border: 3px solid white;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .device-status-dot.online,
-    .device-status-dot.active {
-      background: #38ef7d;
-      animation: pulse-dot 2s ease-in-out infinite;
-    }
-
-    .device-status-dot.offline,
-    .device-status-dot.inactive {
-      background: #f5576c;
-    }
-
-    @keyframes pulse-dot {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.2); opacity: 0.8; }
-    }
-
-    .device-title-content {
+    .automation-text {
       flex: 1;
+
+      h3 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      p {
+        margin: 0;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
     }
 
-    .device-title-content mat-card-title {
-      margin: 0 0 8px 0;
-      font-size: 20px;
-      font-weight: 600;
-      color: #1e293b;
+    .automation-toggle {
+      .automation-switch {
+        transform: scale(1.1);
+
+        .toggle-label {
+          font-size: 1rem;
+          font-weight: 600;
+          margin-left: 0.75rem;
+          color: var(--text-primary);
+        }
+      }
     }
 
-    .device-status-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+    // 2️⃣ Conditional Content
+    .conditional-content {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .chip-indicator {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-    }
-
-    .chip-indicator.online,
-    .chip-indicator.active {
-      background: #38ef7d;
-      box-shadow: 0 0 8px rgba(56, 239, 125, 0.6);
-    }
-
-    .chip-indicator.offline,
-    .chip-indicator.inactive {
-      background: #f5576c;
-    }
-
-    .device-content {
-      padding: 24px;
-    }
-
-    /* ===== Action Buttons ===== */
-    .actions-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 16px;
-    }
-
-    .action-button {
-      position: relative;
+    // Automation Active Section
+    .automation-active-section {
       display: flex;
-      flex-direction: column;
-      align-items: center;
       justify-content: center;
-      gap: 12px;
-      padding: 20px 12px;
-      min-height: 100px;
-      border-radius: 16px;
-      overflow: hidden;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      border: none;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 3rem 2rem;
     }
 
-    .action-button::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .action-button:hover:not(.disabled):not(:disabled) {
-      transform: translateY(-6px) scale(1.02);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-    }
-
-    .action-button:hover:not(.disabled):not(:disabled)::before {
-      opacity: 1;
-    }
-
-    .action-button.executing {
-      animation: pulse-button 1.5s ease-in-out infinite;
-    }
-
-    @keyframes pulse-button {
-      0%, 100% { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
-      50% { box-shadow: 0 4px 20px rgba(46, 125, 50, 0.4); }
-    }
-
-    .action-button.disabled,
-    .action-button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      position: relative;
-    }
-
-    .action-button.disabled::after,
-    .action-button:disabled::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.05);
-      border-radius: 16px;
-      pointer-events: none;
-    }
-
-    .button-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .icon-wrapper {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.2);
-      transition: all 0.3s ease;
-    }
-
-    .action-button:hover:not(.disabled):not(:disabled) .icon-wrapper {
-      transform: scale(1.1) rotate(5deg);
-      background: rgba(255, 255, 255, 0.3);
-    }
-
-    .action-icon {
-      font-size: 28px;
-      width: 28px;
-      height: 28px;
-      color: white;
-    }
-
-    .button-spinner {
-      width: 24px !important;
-      height: 24px !important;
-    }
-
-    .button-spinner ::ng-deep circle {
-      stroke: white;
-    }
-
-    .action-label {
-      font-size: 13px;
-      font-weight: 500;
+    .automation-info-card {
+      max-width: 600px;
+      padding: 3rem;
       text-align: center;
-      line-height: 1.3;
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border-radius: 24px;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 32px rgba(16, 185, 129, 0.15);
+        border-color: rgba(16, 185, 129, 0.3);
+      }
+
+      .automation-icon-large {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        animation: automationPulse 2s ease-in-out infinite;
+      }
+
+      h2 {
+        margin: 0 0 1rem 0;
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      p {
+        margin: 0 0 2rem 0;
+        font-size: 1rem;
+        color: var(--text-secondary);
+        line-height: 1.6;
+      }
+    }
+
+    .safe-mode-section {
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border-color);
+
+      .safe-mode-toggle {
+        transform: scale(1.1);
+
+        .safe-mode-label {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 1rem;
+          font-weight: 600;
+          color: var(--text-primary);
+
+          mat-icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+          }
+        }
+      }
+    }
+
+    @keyframes automationPulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+      }
+    }
+
+    // Manual Control Section - Direct Action Panel
+    .manual-control-section {
+      // Direct Action Panel Header
+      .action-panel-header {
+      margin-bottom: 2rem;
+        text-align: center;
+      animation: fadeInDown 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+
+        h2 {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.75rem;
+          margin: 0 0 0.5rem 0;
+          font-size: 1.75rem;
+          font-weight: 600;
+          color: var(--text-primary);
+
+          mat-icon {
+            color: var(--primary-green);
+            font-size: 2rem;
+            width: 2rem;
+            height: 2rem;
+          }
+        }
+
+        p {
+          margin: 0;
+          color: var(--text-secondary);
+          font-size: 1.1rem;
+          line-height: 1.5;
+        }
+      }
+
+      // Action Buttons Grid
+      .action-buttons-grid {
+      display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+      .action-button {
+      padding: 1.5rem;
+      background: var(--glass-bg, rgba(255, 255, 255, 0.7));
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+        border-radius: 20px;
+      border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.4));
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 1rem;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+          height: 3px;
+        background: linear-gradient(90deg, transparent, var(--primary-green), transparent);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      &:hover {
+          transform: translateY(-6px) scale(1.02);
+          box-shadow: 0 16px 32px rgba(16, 185, 129, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.7);
+        border-color: rgba(16, 185, 129, 0.3);
+
+        &::before {
+          opacity: 1;
+          }
+
+          .action-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+          .action-control button {
+            transform: scale(1.05);
+        }
+      }
+
+      &.disabled {
+        opacity: 0.6;
+        pointer-events: none;
+        background: rgba(0, 0, 0, 0.05);
+        border-color: rgba(0, 0, 0, 0.1);
+
+        &::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+          pointer-events: none;
+        }
+        }
+      }
+
+      .action-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+        color: #065f46;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+        mat-icon {
+          font-size: 32px;
+          width: 32px;
+          height: 32px;
+        }
+      }
+
+      .action-info {
+        .device-title-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1rem;
+          margin-bottom: 0.5rem;
+          flex-wrap: wrap;
+        }
+
+        h3.device-name {
+          margin: 0;
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: var(--text-primary);
+          flex: 1;
+          min-width: 0;
+        }
+
+        .sensor-value-title {
+          display: flex !important;
+          flex-direction: column;
+          align-items: flex-end;
+          gap: 0.25rem;
+          padding: 0.5rem 0.75rem;
+          background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1)) !important;
+          border-radius: 12px;
+          border: 2px solid rgba(16, 185, 129, 0.3) !important;
+          min-width: fit-content;
+          flex-shrink: 0;
+          box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+          visibility: visible !important;
+          opacity: 1 !important;
+
+          .sensor-type-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--primary-green);
+            opacity: 0.9;
+            white-space: nowrap;
+          }
+
+          .sensor-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            line-height: 1.2;
+            white-space: nowrap;
+
+            &.no-data {
+              font-size: 0.75rem;
+              font-weight: 500;
+              color: var(--text-secondary);
+              font-style: italic;
+              opacity: 0.7;
+            }
+          }
+        }
+
+        .device-location {
+          margin: 0 0 0.75rem 0;
+          font-size: 0.875rem;
+          color: var(--text-secondary);
+        }
+
+        .device-details {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
+        .device-type {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.25rem 0.5rem;
+          background: rgba(16, 185, 129, 0.1);
+          border-radius: 8px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: var(--primary-green);
+
+          mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+          }
+        }
+
+        .device-specs {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+
+          .spec-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            padding: 0.125rem 0;
+
+            &:not(:last-child) {
+              border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            }
+
+            &:last-child {
+              font-weight: 600;
+              color: var(--text-primary);
+            }
+          }
+        }
+      }
+
+      .status-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+
+          &.active {
+          background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+          color: #065f46;
+          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+          }
+
+          &.inactive {
+          background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            color: #6b7280;
+          }
+
+          &.safe-mode {
+          background: linear-gradient(135deg, #fef3c7, #fde68a);
+          color: #92400e;
+          box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+      }
+
+      .action-control {
+        button {
+          padding: 0.75rem 1.5rem;
+          border-radius: 16px;
+          font-size: 1rem;
+          font-weight: 600;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          border: none;
+          cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      mat-icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+          }
+
+          &.action-button-on {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+
+            &:hover {
+              background: linear-gradient(135deg, #059669, #047857);
+              box-shadow: 0 6px 16px rgba(16, 185, 129, 0.5);
+            }
+          }
+
+          &.action-button-off {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
       color: white;
-      max-width: 100%;
-      word-wrap: break-word;
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.4);
+
+            &:hover {
+              background: linear-gradient(135deg, #4b5563, #374151);
+              box-shadow: 0 6px 16px rgba(107, 114, 128, 0.5);
+            }
+          }
+
+          &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+          }
+        }
+      }
+
+      .last-action-timestamp {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+          color: var(--text-secondary);
+
+        mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+        }
+      }
     }
 
-    .button-ripple {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.3);
-      transform: translate(-50%, -50%);
-      transition: width 0.6s, height 0.6s;
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    .action-button:active:not(.disabled):not(:disabled) .button-ripple {
-      width: 200px;
-      height: 200px;
+
+    // Loading State
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem;
+      color: var(--text-secondary);
+
+      p {
+        margin-top: 1rem;
+        font-size: 1rem;
+      }
     }
 
-    /* ===== Empty State ===== */
+    // Empty State
     .empty-state {
       text-align: center;
-      padding: 80px 24px;
-      color: #64748b;
-    }
+      padding: 3rem 2rem;
+      color: var(--text-secondary);
 
-    .empty-icon {
-      font-size: 80px;
-      width: 80px;
-      height: 80px;
-      color: #cbd5e1;
-      margin-bottom: 24px;
-    }
-
-    .empty-state h3 {
-      margin: 0 0 12px 0;
-      font-size: 24px;
-      font-weight: 600;
-      color: #475569;
-    }
-
-    .empty-state p {
-      margin: 0;
-      font-size: 16px;
-      color: #94a3b8;
-    }
-
-    /* ===== Responsive Design ===== */
-    @media (max-width: 1440px) {
-      .devices-grid {
-        grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+      .empty-icon {
+        font-size: 4rem;
+        width: 4rem;
+        height: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+        color: var(--primary-green);
       }
 
-      @supports selector(:has(*)) {
-        /* Two devices on large screens */
-        .devices-grid:has(.device-card:nth-child(1):nth-last-child(2)) {
-          grid-template-columns: repeat(2, 1fr);
-          max-width: 100%;
-        }
+      h3 {
+        margin: 0 0 0.5rem 0;
+        color: var(--text-primary);
+        font-size: 1.25rem;
+      }
 
-        /* Three devices on large screens */
-        .devices-grid:has(.device-card:nth-child(1):nth-last-child(3)) {
-          grid-template-columns: repeat(3, 1fr);
-        }
+      p {
+        margin: 0;
+        font-size: 1rem;
       }
     }
 
+    // Dark Theme Support
+    :host-context(body.dark-theme) {
+      .automation-banner, .automation-info-card, .action-button, .log-item {
+        background: var(--glass-bg, rgba(30, 41, 59, 0.7));
+        border-color: var(--glass-border, rgba(100, 116, 139, 0.3));
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(100, 116, 139, 0.1);
+      }
+
+      .automation-banner:hover, .automation-info-card:hover, .action-button:hover, .log-item:hover {
+        box-shadow: 0 16px 32px rgba(16, 185, 129, 0.2), inset 0 1px 1px rgba(100, 116, 139, 0.2);
+      }
+
+      .action-icon, .log-icon {
+        background: linear-gradient(135deg, #1e293b, #334155);
+        color: #94a3b8;
+      }
+
+      .status-badge {
+        &.active {
+          background: linear-gradient(135deg, #1e293b, #334155);
+          color: #22c55e;
+          box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+        }
+
+        &.inactive {
+          background: linear-gradient(135deg, #374151, #4b5563);
+          color: #9ca3af;
+        }
+
+        &.safe-mode {
+          background: linear-gradient(135deg, #451a03, #78350f);
+          color: #fbbf24;
+          box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+        }
+      }
+
+      .action-control button {
+        &.action-button-on {
+          background: linear-gradient(135deg, #22c55e, #16a34a);
+          box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+
+          &:hover {
+            background: linear-gradient(135deg, #16a34a, #15803d);
+            box-shadow: 0 6px 16px rgba(34, 197, 94, 0.5);
+          }
+        }
+
+        &.action-button-off {
+          background: linear-gradient(135deg, #6b7280, #4b5563);
+          box-shadow: 0 4px 12px rgba(107, 114, 128, 0.4);
+
+          &:hover {
+            background: linear-gradient(135deg, #4b5563, #374151);
+            box-shadow: 0 6px 16px rgba(107, 114, 128, 0.5);
+          }
+        }
+      }
+    }
+
+    // RTL Support
+    :host-context([dir="rtl"]) {
+      .automation-content {
+        flex-direction: row-reverse;
+      }
+
+      .automation-info {
+        flex-direction: row-reverse;
+      }
+
+      .action-button {
+        text-align: right;
+
+        .action-icon {
+          order: 2;
+        }
+
+        .action-info {
+          order: 1;
+        }
+
+        .status-badge {
+          order: 3;
+        }
+
+        .action-control {
+          order: 4;
+        }
+
+        .last-action-timestamp {
+          order: 5;
+        }
+      }
+
+    }
+
+    // Responsive Design
     @media (max-width: 1200px) {
-      .devices-grid {
-        /* Reduce min size for medium screens */
-        grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+      .action-buttons-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       }
 
-      @supports selector(:has(*)) {
-        /* Three devices on medium screens: show 2 per row */
-        .devices-grid:has(.device-card:nth-child(1):nth-last-child(3)) {
-          grid-template-columns: repeat(2, 1fr);
-        }
-
-        /* Single device: full width but centered */
-        .devices-grid:has(.device-card:nth-child(1):nth-last-child(1)) {
-          grid-template-columns: minmax(auto, 500px);
-          justify-content: center;
-        }
-      }
-    }
-
-    @media (max-width: 1024px) {
-      .devices-grid {
-        grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
-        gap: 20px;
-      }
-
-      @supports selector(:has(*)) {
-        /* Two devices on tablet: flexible layout */
-        .devices-grid:has(.device-card:nth-child(1):nth-last-child(2)) {
-          grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
-        }
+      .automation-content {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
       }
     }
 
     @media (max-width: 768px) {
-      .manual-actions-container {
-        padding: 20px 16px;
+      .manual-control-container {
+        padding: 1rem;
       }
 
-      .header h2 {
-        font-size: 28px;
+      .automation-banner {
+        padding: 1rem 1.5rem;
       }
 
-      .stats-grid {
+      .automation-info {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.75rem;
+      }
+
+      .automation-icon {
+        width: 48px;
+        height: 48px;
+
+        mat-icon {
+          font-size: 24px;
+          width: 24px;
+          height: 24px;
+        }
+      }
+
+      .automation-text h3 {
+        font-size: 1.1rem;
+      }
+
+      .automation-info-card {
+        padding: 2rem 1.5rem;
+        margin: 0 1rem;
+
+        .automation-icon-large {
+          font-size: 3rem;
+        }
+
+        h2 {
+          font-size: 1.5rem;
+        }
+      }
+
+      .action-panel-header {
+        h2 {
+          font-size: 1.5rem;
+
+        mat-icon {
+            font-size: 1.5rem;
+            width: 1.5rem;
+            height: 1.5rem;
+          }
+        }
+
+        p {
+          font-size: 1rem;
+        }
+      }
+
+      .action-buttons-grid {
         grid-template-columns: 1fr;
-        gap: 16px;
-      }
-
-      .devices-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-      }
-
-      @supports selector(:has(*)) {
-        /* Single device: full width on mobile */
-        .devices-grid:has(.device-card:nth-child(1):nth-last-child(1)) {
-          grid-template-columns: 1fr;
-          justify-content: stretch;
-        }
-
-        /* Two devices: stack on mobile */
-        .devices-grid:has(.device-card:nth-child(1):nth-last-child(2)) {
-          grid-template-columns: 1fr;
-        }
-
-        /* Three or more: stack on mobile */
-        .devices-grid:has(.device-card:nth-child(1):nth-last-child(3)),
-        .devices-grid:has(.device-card:nth-child(4):nth-last-child(n+1)) {
-          grid-template-columns: 1fr;
-        }
-      }
-
-      .actions-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
+        gap: 1rem;
       }
 
       .action-button {
-        min-height: 90px;
-        padding: 16px 8px;
+        padding: 1rem;
+        gap: 0.75rem;
       }
 
-      .header-icon-wrapper {
-        width: 64px;
-        height: 64px;
+      .action-icon {
+        width: 56px;
+        height: 56px;
+
+        mat-icon {
+          font-size: 28px;
+          width: 28px;
+          height: 28px;
+        }
       }
 
-      .header-icon {
-        font-size: 32px;
-        width: 32px;
-        height: 32px;
+      .action-info {
+        .device-title-row {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.75rem;
+        }
+
+        .sensor-value-title {
+          width: 100%;
+          align-items: flex-start;
+        }
+
+        h3.device-name {
+          font-size: 1.1rem;
+        }
+      }
+
+      .action-info .device-details {
+        gap: 0.375rem;
+      }
+
+      .action-info .device-type {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.4rem;
+      }
+
+      .action-info .device-specs .spec-item {
+        font-size: 0.65rem;
+      }
+
+      .action-control button {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
       }
     }
 
     @media (max-width: 480px) {
-      .actions-grid {
-        grid-template-columns: 1fr;
+      .automation-banner {
+        padding: 0.75rem 1rem;
       }
 
-      .pending-action-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
+      .automation-text h3 {
+        font-size: 1rem;
       }
 
-      .action-status {
-        width: 100%;
-        justify-content: space-between;
+      .automation-text p {
+        font-size: 0.8rem;
       }
+
+      .automation-info-card {
+        padding: 1.5rem 1rem;
+
+        .automation-icon-large {
+          font-size: 2.5rem;
+        }
+
+        h2 {
+          font-size: 1.25rem;
+        }
+
+        p {
+          font-size: 0.9rem;
+        }
+      }
+
+      .action-panel-header {
+        h2 {
+        font-size: 1.25rem;
+
+          mat-icon {
+            font-size: 1.25rem;
+            width: 1.25rem;
+            height: 1.25rem;
+          }
+        }
+
+        p {
+          font-size: 0.9rem;
+        }
+      }
+
+      .action-button {
+        padding: 0.75rem;
+        gap: 0.5rem;
+      }
+
+      .action-icon {
+        width: 48px;
+        height: 48px;
+
+        mat-icon {
+          font-size: 24px;
+          width: 24px;
+          height: 24px;
+        }
+      }
+
+      .action-info {
+        .device-title-row {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.5rem;
+        }
+
+        .sensor-value-title {
+          width: 100%;
+          align-items: flex-start;
+          padding: 0.4rem 0.6rem;
+        }
+
+        .sensor-value-title .sensor-type-label {
+          font-size: 0.65rem;
+        }
+
+        .sensor-value-title .sensor-value {
+          font-size: 1rem;
+        }
+
+        h3.device-name {
+          font-size: 1rem;
+        }
+      }
+
+      .action-info .device-details {
+        gap: 0.25rem;
+      }
+
+      .action-info .device-type {
+        font-size: 0.65rem;
+        padding: 0.15rem 0.3rem;
+      }
+
+      .action-info .device-specs .spec-item {
+        font-size: 0.6rem;
+      }
+
+      .action-control button {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+      }
+
     }
   `]
 })
 export class ManualControlComponent implements OnInit, OnDestroy {
   private apiService = inject(ApiService);
-  private notificationService = inject(NotificationService);
   private farmManagement = inject(FarmManagementService);
-  private snackBar = inject(MatSnackBar);
+  private alertService = inject(AlertService);
+  private dialog = inject(MatDialog);
   public languageService = inject(LanguageService);
-  private destroy$ = new Subject<void>();
-
-  // Expose enum for template access
-  DeviceStatus = DeviceStatus;
+  public themeService = inject(ThemeService);
+  private refreshSubscription: Subscription | undefined;
 
   // Signals
+  isLoading = signal(false);
   devices = signal<Device[]>([]);
-  farms = signal<Farm[]>([]);
-  deviceActions = signal<Map<string, ActionTemplate[]>>(new Map()); // deviceId -> actions
-  pendingActions = signal<Map<string, PendingAction>>(new Map());
-  executingActions = signal<Set<string>>(new Set()); // execution IDs
-  executingTemplates = signal<Set<string>>(new Set()); // template IDs
+  deviceControls = signal<DeviceControl[]>([]);
+  selectedFilter = signal<'all' | 'zone' | 'type'>('all');
+  
+  // Automation signals
+  automationEnabled = signal(true); // Default to ON for safety
+  safeModeEnabled = signal(false);
 
-  // Computed
-  onlineDevicesCount = computed(() => {
-    const devices = this.devices();
-    const onlineDevices = devices.filter(d => d.status === DeviceStatus.ONLINE || d.status === DeviceStatus.ACTIVE);
-    console.log('🔍 [MANUAL-ACTIONS-V2] Computing online devices:', {
-      totalDevices: devices.length,
-      onlineDevices: onlineDevices.length,
-      deviceStatuses: devices.map(d => ({ id: d.device_id, name: d.name, status: d.status }))
-    });
-    return onlineDevices.length;
+  // Computed properties
+  kpiStats = computed((): ControlKPIs => {
+    const controls = this.deviceControls();
+
+    return {
+      devicesControlled: controls.length,
+      safeMode: this.safeModeEnabled()
+    };
   });
 
-  pendingActionsCount = computed(() => this.pendingActions().size);
+  filteredDeviceControls = computed(() => {
+    const controls = this.deviceControls();
+    const filter = this.selectedFilter();
 
-  pendingActionsArray = computed(() => Array.from(this.pendingActions().values()));
+    if (filter === 'all') return controls;
 
-  // Dynamic actions are now loaded from the backend based on sensor configurations
+    // For now, return all controls since we don't have zone/type data
+    // This would be enhanced based on actual device data structure
+    return controls;
+  });
 
   ngOnInit(): void {
     this.loadData();
-    this.setupWebSocketListeners();
-
-    // Subscribe to farm selection changes
-    this.farmManagement.selectedFarm$.pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(selectedFarm => {
-      if (selectedFarm) {
-        console.log('🏡 [MANUAL-ACTIONS-V2] Farm changed, reloading data for:', selectedFarm.name);
-        this.loadData();
-      }
-    });
+    // Removed startRealTimeUpdates since we deleted the mini log section
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    this.refreshSubscription?.unsubscribe();
   }
 
-  async loadData(): Promise<void> {
-    try {
-      console.log('🔄 [MANUAL-ACTIONS-V2] Loading data...');
 
+  async loadData(): Promise<void> {
+    this.isLoading.set(true);
+    try {
       const selectedFarm = this.farmManagement.getSelectedFarm();
       if (!selectedFarm) {
-        console.log('⚠️ [MANUAL-ACTIONS-V2] No farm selected, skipping data load');
+        console.log('⚠️ [MANUAL CONTROL] No farm selected, skipping data load');
+        this.isLoading.set(false);
         return;
       }
 
-      console.log('🏡 [MANUAL-ACTIONS-V2] Loading data for farm:', selectedFarm.name);
+      console.log('🏡 [MANUAL CONTROL] Loading data for farm:', selectedFarm.name);
 
-      // Load devices for selected farm only
+      // Load devices for selected farm
       const devices = await this.apiService.getDevicesByFarm(selectedFarm.farm_id).toPromise();
-
-      console.log('📊 [MANUAL-ACTIONS-V2] Loaded devices for farm:', devices);
-
       this.devices.set(devices || []);
 
-      // Load actions for each device
-      await this.loadDeviceActions(devices || []);
+      // Create device controls with sensor data
+      const controls: DeviceControl[] = await Promise.all(
+        (devices || []).map(async (device) => {
+          let sensor: Sensor | undefined;
+          let sensorReading: SensorReading | undefined;
 
-      console.log('✅ [MANUAL-ACTIONS-V2] Data loaded successfully. Devices count:', this.devices().length);
-      console.log('🔍 [MANUAL-ACTIONS-V2] Online devices count:', this.onlineDevicesCount());
+          try {
+            // Fetch device with sensors
+            const deviceWithSensors = await this.apiService.getDevice(device.device_id, true).toPromise();
+            if (deviceWithSensors?.sensors && deviceWithSensors.sensors.length > 0) {
+              sensor = deviceWithSensors.sensors[0];
+              // Fetch latest reading
+              try {
+                sensorReading = await this.apiService.getLatestReading(sensor.sensor_id).toPromise() || undefined;
+              } catch (err) {
+                console.warn(`Could not fetch reading for sensor ${sensor.sensor_id}:`, err);
+              }
+            }
+          } catch (error) {
+            console.warn(`Could not fetch sensor data for device ${device.device_id}:`, error);
+          }
 
+          return {
+            device,
+            isOn: false, // This would be determined by actual device state
+            automationRules: this.getAutomationRules(device),
+            thresholds: this.getDeviceThresholds(device),
+            sensor,
+            sensorReading
+          };
+        })
+      );
+
+      this.deviceControls.set(controls);
+
+      // Load recent actions - REMOVED since we deleted the mini log section
     } catch (error) {
-      console.error('❌ [MANUAL-ACTIONS-V2] Error loading data:', error);
-      this.snackBar.open(this.languageService.t()('manualControl.loadDevicesError'), this.languageService.t()('common.close'), { duration: 3000 });
+      console.error('Error loading data:', error);
+      this.alertService.error(
+        this.languageService.t()('common.error'),
+        this.languageService.t()('manualControl.loadDataError'),
+        5000
+      );
+    } finally {
+      this.isLoading.set(false);
     }
   }
 
-  private async loadDeviceActions(devices: Device[]): Promise<void> {
-    try {
-      console.log('🔄 [MANUAL-ACTIONS-V2] Loading device actions...');
 
-      const actionsMap = new Map<string, ActionTemplate[]>();
-
-      // Load actions for each device
-      for (const device of devices) {
-        try {
-          const actions = await this.apiService.getDeviceActions(device.device_id).toPromise();
-          console.log(`📋 [MANUAL-ACTIONS-V2] Loaded ${actions?.length || 0} actions for device ${device.device_id}:`, actions);
-          actionsMap.set(device.device_id, actions || []);
-        } catch (error) {
-          console.error(`❌ [MANUAL-ACTIONS-V2] Error loading actions for device ${device.device_id}:`, error);
-          actionsMap.set(device.device_id, []);
-        }
+  async toggleAutomation(enabled: boolean): Promise<void> {
+    if (!enabled) {
+      // Show confirmation dialog when turning OFF automation
+      const confirmed = await this.showAutomationConfirmation();
+      if (!confirmed) {
+        return; // User cancelled, don't toggle
       }
-
-      this.deviceActions.set(actionsMap);
-      console.log('✅ [MANUAL-ACTIONS-V2] Device actions loaded successfully');
-
-    } catch (error) {
-      console.error('❌ [MANUAL-ACTIONS-V2] Error loading device actions:', error);
     }
+
+    this.automationEnabled.set(enabled);
+    
+    // Show success message with glassmorphic snackbar
+    const alertTexts = this.languageService.t()('alerts') as any;
+    this.showSuccessSnackbar(
+      alertTexts[enabled ? 'automationEnabled' : 'automationDisabled']
+    );
   }
 
-  private setupWebSocketListeners(): void {
-    this.notificationService.initSocket();
-    console.log('🔧 [MANUAL-ACTIONS-V2] Setting up WebSocket listeners...');
-
-    // Listen for action acknowledgments
-    this.notificationService.actionAcknowledged$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((data: any) => {
-        console.log('🎯 [MANUAL-ACTIONS-V2] Action acknowledged:', data);
-        this.updateActionStatus(data.actionId, 'success');
-      });
-
-    // Listen for action failures
-    this.notificationService.actionFailed$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((data: any) => {
-        console.log('❌ [MANUAL-ACTIONS-V2] Action failed:', data);
-        this.updateActionStatus(data.actionId, 'failed', data.error);
-      });
-
-    // Listen for action timeouts
-    this.notificationService.actionTimeout$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((data: any) => {
-        console.log('⏰ [MANUAL-ACTIONS-V2] Action timeout:', data);
-        this.updateActionStatus(data.actionId, 'timeout');
-      });
-  }
-
-  async executeAction(device: Device, action: ActionTemplate): Promise<void> {
-    const actionId = `action_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-    console.log('📤 [MANUAL-ACTIONS-V2] Executing action:', { actionId, device: device.device_id, action: action.name });
-
-    // Add to executing actions (use execution ID, not template ID)
-    this.executingActions.update(actions => new Set([...actions, actionId]));
-
-    // Add template ID to executing templates
-    this.executingTemplates.update(templates => new Set([...templates, action.id]));
-
-    // Add to pending actions
-    this.addPendingAction(actionId, device.device_id, action.name);
-
-    try {
-      const request: ExecuteActionRequest = {
-        deviceId: device.device_id,
-        action: action.actionUri.replace('{device_id}', device.device_id),
-        actionId: actionId,
-        actionType: action.actionType,
-        context: {
-          sensorId: 'manual_trigger',
-          sensorType: 'manual',
-          value: 0,
-          unit: '',
-          violationType: 'manual'
-        }
-      };
-
-      await this.apiService.executeAction(request).toPromise();
-
-      this.snackBar.open(
-        this.languageService.t()('manualControl.actionSentMessage', { actionName: this.getActionNameTranslation(action.name) }),
-        this.languageService.t()('common.close'),
-        { duration: 3000 }
-      );
-
-    } catch (error) {
-      console.error('Error executing action:', error);
-      this.snackBar.open(
-        this.languageService.t()('manualControl.actionFailedMessage', { actionName: this.getActionNameTranslation(action.name) }),
-        this.languageService.t()('common.close'),
-        { duration: 3000 }
-      );
-
-      // Remove from executing and pending on error
-      this.executingActions.update(actions => {
-        const newSet = new Set(actions);
-        newSet.delete(actionId);
-        return newSet;
-      });
-
-      this.executingTemplates.update(templates => {
-        const newSet = new Set(templates);
-        newSet.delete(action.id);
-        return newSet;
-      });
-
-      this.pendingActions.update(actions => {
-        const newMap = new Map(actions);
-        newMap.delete(actionId);
-        return newMap;
-      });
+  async toggleSafeMode(enabled: boolean): Promise<void> {
+    // Show confirmation dialog
+    const confirmed = await this.showSafeModeConfirmation(enabled);
+    if (!confirmed) {
+      return;
     }
+
+    this.safeModeEnabled.set(enabled);
+    
+    // Show success message with glassmorphic snackbar
+    const alertTexts = this.languageService.t()('alerts') as any;
+    this.showSuccessSnackbar(
+      alertTexts[enabled ? 'safeModeEnabled' : 'safeModeDisabled']
+    );
   }
 
-  private addPendingAction(actionId: string, deviceId: string, actionName: string): void {
-    const pendingAction: PendingAction = {
-      actionId,
-      deviceId,
-      actionName,
-      status: 'pending',
-      timestamp: new Date()
-    };
+  private showSuccessSnackbar(message: string): void {
+    // Ensure message is never empty - provide fallback
+    const safeMessage = message && message.trim() 
+      ? message 
+      : this.languageService.t()('common.operationSuccess');
+    
+    // Use AlertService with title and message
+    this.alertService.success(
+      this.languageService.t()('common.success'),
+      safeMessage,
+      4000
+    );
+  }
 
-    this.pendingActions.update(actions => {
-      const newMap = new Map(actions);
-      newMap.set(actionId, pendingAction);
-      return newMap;
+  private showErrorSnackbar(message: string): void {
+    // Ensure message is never empty - provide fallback
+    const safeMessage = message && message.trim() 
+      ? message 
+      : this.languageService.t()('common.operationError');
+    
+    // Use AlertService with title and message
+    this.alertService.error(
+      this.languageService.t()('common.error'),
+      safeMessage,
+      5000
+    );
+  }
+
+  private async showAutomationConfirmation(): Promise<boolean> {
+    const dialogRef = this.dialog.open(ActionConfirmationDialogComponent, {
+      width: '600px',
+      maxWidth: '90vw',
+      panelClass: 'glass-dialog',
+      data: {
+        actionType: 'disableAutomation',
+        context: 'warning'
+      } as ActionConfirmationData
     });
 
-    // Set timeout for 30 seconds
-    setTimeout(() => {
-      this.updateActionStatus(actionId, 'timeout');
-    }, 30000);
+    return dialogRef.afterClosed().toPromise().then(result => result === true);
   }
 
-  private updateActionStatus(actionId: string, status: 'success' | 'failed' | 'timeout', error?: string): void {
-    console.log('🔄 [MANUAL-ACTIONS-V2] Updating action status:', { actionId, status, error });
+  private async showSafeModeConfirmation(enabled: boolean): Promise<boolean> {
+    const dialogRef = this.dialog.open(ActionConfirmationDialogComponent, {
+      width: '600px',
+      maxWidth: '90vw',
+      panelClass: 'glass-dialog',
+      data: {
+        actionType: 'safeMode',
+        context: enabled ? 'warning' : 'info'
+      } as ActionConfirmationData
+    });
 
-    this.pendingActions.update(actions => {
-      const newMap = new Map(actions);
-      const action = newMap.get(actionId);
+    return dialogRef.afterClosed().toPromise().then(result => result === true);
+  }
 
-      if (action) {
-        action.status = status;
-        if (error) action.error = error;
-        newMap.set(actionId, action);
-
-        // Remove from executing actions
-        this.executingActions.update(executing => {
-          const newSet = new Set(executing);
-          newSet.delete(actionId);
-          return newSet;
-        });
-
-        // Remove from executing templates - find the template ID from deviceActions
-        for (const [deviceId, actions] of this.deviceActions().entries()) {
-          const matchingAction = actions.find(a =>
-            a.name.toLowerCase() === action.actionName.toLowerCase() ||
-            a.actionUri.includes(action.actionName.toLowerCase().replace(' ', '_'))
-          );
-          if (matchingAction) {
-            this.executingTemplates.update(templates => {
-              const newSet = new Set(templates);
-              newSet.delete(matchingAction.id);
-              return newSet;
-            });
-            break;
+  private async showActionConfirmation(device: Device, isOn: boolean): Promise<boolean> {
+    // Try to get sensor data from existing controls first
+    const controls = this.deviceControls();
+    const existingControl = controls.find(c => c.device.device_id === device.device_id);
+    
+    let sensor = existingControl?.sensor || null;
+    let sensorReading = existingControl?.sensorReading || null;
+    
+    // If not found in controls, fetch from API
+    if (!sensor) {
+      try {
+        const deviceWithSensors = await this.apiService.getDevice(device.device_id, true).toPromise();
+        if (deviceWithSensors?.sensors && deviceWithSensors.sensors.length > 0) {
+          sensor = deviceWithSensors.sensors[0];
+          // Get latest reading if not already available
+          if (!sensorReading && sensor) {
+            try {
+              sensorReading = await this.apiService.getLatestReading(sensor.sensor_id).toPromise() || null;
+            } catch (err) {
+              console.warn(`Could not fetch reading for sensor ${sensor.sensor_id}:`, err);
+            }
           }
         }
-
-        // Show notification
-        const message = status === 'success'
-          ? this.languageService.t()('manualControl.actionSuccessMessage', { actionName: this.getActionNameTranslation(action.actionName) })
-          : status === 'failed'
-          ? this.languageService.t()('manualControl.actionFailedMessage', { actionName: this.getActionNameTranslation(action.actionName), error: error || this.languageService.t()('common.unknownError') })
-          : this.languageService.t()('manualControl.actionTimeoutMessage', { actionName: this.getActionNameTranslation(action.actionName) });
-
-        this.snackBar.open(message, this.languageService.t()('common.close'), {
-          duration: status === 'success' ? 3000 : 5000,
-          panelClass: status === 'success' ? 'success-snackbar' : 'error-snackbar'
-        });
-
-        // Remove from pending after showing status for 2 seconds
-        setTimeout(() => {
-          this.pendingActions.update(pendingActions => {
-            const updatedMap = new Map(pendingActions);
-            updatedMap.delete(actionId);
-            return updatedMap;
-          });
-        }, 2000);
-      } else {
-        console.warn('⚠️ [MANUAL-ACTIONS-V2] Action not found for ID:', actionId);
+      } catch (error) {
+        console.warn('Could not fetch sensor data for device:', error);
       }
+    }
 
-      return newMap;
+    const dialogRef = this.dialog.open(ActionConfirmationDialogComponent, {
+      width: '600px',
+      maxWidth: '90vw',
+      panelClass: 'glass-dialog',
+      data: {
+        actionType: isOn ? 'turnOn' : 'turnOff',
+        device: device,
+        sensor: sensor,
+        sensorReading: sensorReading,
+        deviceZone: device.location,
+        thresholdMin: 20, // These would come from actual automation rules
+        thresholdMax: 80,
+        lastUpdateTime: sensorReading?.createdAt ? new Date(sensorReading.createdAt) : (device.last_seen ? new Date(device.last_seen) : undefined),
+        context: isOn ? 'success' : 'warning'
+      } as ActionConfirmationData
     });
+
+    return dialogRef.afterClosed().toPromise().then(result => result === true);
   }
 
-  getActionsForDevice(device: Device): ActionTemplate[] {
-    // Return dynamic actions for this specific device
-    return this.deviceActions().get(device.device_id) || [];
+  getStatusBadgeClass(control: DeviceControl): string {
+    if (control.device.device_type === 'safety') return 'safe-mode';
+    return control.isOn ? 'active' : 'inactive';
   }
 
-  isActionExecuting(actionTemplateId: string): boolean {
-    return this.executingTemplates().has(actionTemplateId);
+  getDeviceTypeIcon(device: Device): string {
+    const type = device.device_type?.toLowerCase() || '';
+    if (type.includes('humidity') || type.includes('humidifier')) return 'water_drop';
+    if (type.includes('temperature') || type.includes('heater')) return 'thermostat';
+    if (type.includes('light') || type.includes('lamp')) return 'lightbulb';
+    if (type.includes('fan') || type.includes('ventilation')) return 'air';
+    if (type.includes('pump') || type.includes('irrigation')) return 'water_pump';
+    if (type.includes('sensor')) return 'sensors';
+    if (type.includes('motor')) return 'settings';
+    return 'devices';
+  }
+
+  getDeviceTypeName(device: Device): string {
+    const type = device.device_type?.toLowerCase() || '';
+    if (type.includes('humidity')) return this.languageService.t()('manualControl.humidityController');
+    if (type.includes('humidifier')) return this.languageService.t()('manualControl.humidifier');
+    if (type.includes('temperature')) return this.languageService.t()('manualControl.temperatureController');
+    if (type.includes('heater')) return this.languageService.t()('manualControl.heater');
+    if (type.includes('light')) return this.languageService.t()('manualControl.lightController');
+    if (type.includes('fan')) return this.languageService.t()('manualControl.fanController');
+    if (type.includes('ventilation')) return this.languageService.t()('manualControl.ventilationSystem');
+    if (type.includes('pump')) return this.languageService.t()('manualControl.waterPump');
+    if (type.includes('irrigation')) return this.languageService.t()('manualControl.irrigationSystem');
+    if (type.includes('sensor')) return this.languageService.t()('manualControl.sensor');
+    return this.languageService.t()('manualControl.device');
+  }
+
+  getDeviceSpecs(device: Device): { label: string; value: string }[] | null {
+    const specs: { label: string; value: string }[] = [];
+    const type = device.device_type?.toLowerCase() || '';
+
+    // Add device-specific specifications
+    if (type.includes('humidity') || type.includes('humidifier')) {
+      specs.push({
+        label: this.languageService.t()('manualControl.humidityRange'),
+        value: '30-80%'
+      });
+      specs.push({
+        label: this.languageService.t()('manualControl.capacity'),
+        value: '5L/hour'
+      });
+    }
+
+    if (type.includes('temperature') || type.includes('heater')) {
+      specs.push({
+        label: this.languageService.t()('manualControl.temperatureRange'),
+        value: '15-35°C'
+      });
+      specs.push({
+        label: this.languageService.t()('manualControl.power'),
+        value: '2000W'
+      });
+    }
+
+    if (type.includes('light')) {
+      specs.push({
+        label: this.languageService.t()('manualControl.lightIntensity'),
+        value: '1000-5000 lux'
+      });
+      specs.push({
+        label: this.languageService.t()('manualControl.wattage'),
+        value: '100W LED'
+      });
+    }
+
+    if (type.includes('fan') || type.includes('ventilation')) {
+      specs.push({
+        label: this.languageService.t()('manualControl.airflow'),
+        value: '500 CFM'
+      });
+      specs.push({
+        label: this.languageService.t()('manualControl.speed'),
+        value: '3 speeds'
+      });
+    }
+
+    if (type.includes('pump') || type.includes('irrigation')) {
+      specs.push({
+        label: this.languageService.t()('manualControl.flowRate'),
+        value: '10L/min'
+      });
+      specs.push({
+        label: this.languageService.t()('manualControl.pressure'),
+        value: '2.5 bar'
+      });
+    }
+
+    // Add connection status
+    if (device.status) {
+      const isOnline = device.status === DeviceStatus.ONLINE || device.status === DeviceStatus.ACTIVE;
+      specs.push({
+        label: this.languageService.t()('manualControl.connection'),
+        value: isOnline ? this.languageService.t()('manualControl.online') : this.languageService.t()('manualControl.offline')
+      });
+    }
+
+    // Add last seen if available
+    if (device.last_seen) {
+      const lastSeen = new Date(device.last_seen);
+      const now = new Date();
+      const diffMs = now.getTime() - lastSeen.getTime();
+      const diffMins = Math.floor(diffMs / 60000);
+      
+      if (diffMins < 1) {
+        specs.push({
+          label: this.languageService.t()('manualControl.lastSeen'),
+          value: this.languageService.t()('manualControl.justNow')
+        });
+      } else if (diffMins < 60) {
+        specs.push({
+          label: this.languageService.t()('manualControl.lastSeen'),
+          value: this.languageService.t()('manualControl.minutesAgo', { count: diffMins })
+        });
+      } else {
+        specs.push({
+          label: this.languageService.t()('manualControl.lastSeen'),
+          value: this.languageService.t()('manualControl.hoursAgo', { count: Math.floor(diffMins / 60) })
+        });
+      }
+    }
+
+    return specs.length > 0 ? specs : null;
+  }
+
+  async executeDeviceAction(device: Device, isOn: boolean): Promise<void> {
+    // Check if manual control is allowed
+    if (this.automationEnabled()) {
+      this.showErrorSnackbar(
+        this.languageService.t()('manualControl.automationActiveError')
+      );
+      return;
+    }
+
+    // Check safe mode
+    if (this.safeModeEnabled()) {
+      this.showErrorSnackbar(
+        this.languageService.t()('manualControl.safeModeActiveError')
+      );
+      return;
+    }
+
+    // Show confirmation dialog with real sensor data
+    const confirmed = await this.showActionConfirmation(device, isOn);
+    if (!confirmed) {
+      return; // User cancelled
+    }
+
+    try {
+      // Execute action via API
+      await this.apiService.executeAction({
+        deviceId: device.device_id,
+        action: isOn ? 'mqtt:/devices/' + device.device_id + '/on' : 'mqtt:/devices/' + device.device_id + '/off',
+        actionType: 'normal',
+        context: {
+          value: isOn ? 1 : 0
+        }
+      }).toPromise();
+
+      // Update local state
+      const controls = this.deviceControls();
+      const updatedControls = controls.map(control =>
+        control.device.device_id === device.device_id
+          ? { ...control, isOn }
+          : control
+      );
+      this.deviceControls.set(updatedControls);
+
+      // Show success message with glassmorphic snackbar
+      const alertTexts = this.languageService.t()('alerts') as any;
+      this.showSuccessSnackbar(
+        alertTexts[isOn ? 'deviceTurnedOn' : 'deviceTurnedOff'].replace('{{device}}', device.name)
+      );
+    } catch (error) {
+      console.error('Error executing device action:', error);
+      const alertTexts = this.languageService.t()('alerts') as any;
+      this.showErrorSnackbar(alertTexts.actionError);
+    }
+  }
+
+  async toggleDevice(device: Device, isOn: boolean): Promise<void> {
+    // Legacy method for backward compatibility
+    return this.executeDeviceAction(device, isOn);
+  }
+
+  setFilter(filter: 'all' | 'zone' | 'type'): void {
+    this.selectedFilter.set(filter);
   }
 
   getDeviceIcon(device: Device): string {
-    return 'sensors';
+    const type = device.device_type?.toLowerCase() || '';
+    if (type.includes('pump') || type.includes('irrigation')) return 'water_drop';
+    if (type.includes('fan') || type.includes('ventilation')) return 'air';
+    if (type.includes('heater') || type.includes('heating')) return 'local_fire_department';
+    if (type.includes('light')) return 'lightbulb';
+    if (type.includes('sensor')) return 'sensors';
+    if (type.includes('motor')) return 'settings';
+    return 'devices';
   }
 
-  getActionIcon(actionName: string): string {
-    const name = actionName.toLowerCase();
-    if (name.includes('irrigation') || name.includes('water')) return 'water_drop';
-    if (name.includes('fan') || name.includes('ventil')) return 'air';
-    if (name.includes('heat')) return 'local_fire_department';
-    if (name.includes('light')) return 'lightbulb';
-    if (name.includes('roof')) return 'open_in_full';
-    if (name.includes('restart')) return 'restart_alt';
-    if (name.includes('calibrate')) return 'tune';
-    return 'smart_toy';
+  getStatusIcon(control: DeviceControl): string {
+    if (control.device.device_type === 'safety') return 'security';
+    return control.isOn ? 'power' : 'power_off';
   }
 
-  getActionColor(actionType: string): 'primary' | 'accent' | 'warn' {
-    switch (actionType) {
-      case 'critical': return 'warn';
-      case 'important': return 'accent';
-      default: return 'primary';
-    }
+  getStatusIconClass(control: DeviceControl): string {
+    if (control.device.device_type === 'safety') return 'safe-mode';
+    return control.isOn ? 'active' : 'inactive';
   }
 
-  getStatusColor(status: string): 'primary' | 'accent' | 'warn' {
-    switch (status) {
-      case 'success': return 'accent';
-      case 'failed': return 'warn';
-      case 'timeout': return 'warn';
-      default: return 'primary';
-    }
+  getLastUpdatedText(control: DeviceControl): string {
+    // Since we removed the lastAction property, we'll use a generic message
+    return this.languageService.t()('manualControl.never');
   }
 
-  getStatusText(status: string): string {
-    switch (status) {
-      case 'pending': return this.languageService.t()('manualControl.statusPending');
-      case 'success': return this.languageService.t()('manualControl.statusSuccess');
-      case 'failed': return this.languageService.t()('manualControl.statusFailed');
-      case 'timeout': return this.languageService.t()('manualControl.statusTimeout');
-      default: return status;
+  getAutomationRules(device: Device): string[] {
+    // This would be based on actual automation configuration
+    const rules: string[] = [];
+
+    if (device.device_type?.includes('pump')) {
+      rules.push(this.languageService.t()('manualControl.soilMoistureRule'));
     }
+    if (device.device_type?.includes('fan')) {
+      rules.push(this.languageService.t()('manualControl.temperatureRule'));
+    }
+    if (device.device_type?.includes('heater')) {
+      rules.push(this.languageService.t()('manualControl.temperatureRule'));
+    }
+
+    return rules;
   }
 
-  getActionNameTranslation(actionName: string): string {
-    const actionMap: { [key: string]: string } = {
-      'irrigation': this.languageService.t()('actions.actionTypes.irrigation'),
-      'fertilization': this.languageService.t()('actions.actionTypes.fertilization'),
-      'pest control': this.languageService.t()('actions.actionTypes.pestControl'),
-      'harvesting': this.languageService.t()('actions.actionTypes.harvesting'),
-      'planting': this.languageService.t()('actions.actionTypes.planting'),
-      'pruning': this.languageService.t()('actions.actionTypes.pruning'),
-      'monitoring': this.languageService.t()('actions.actionTypes.monitoring'),
-      'alert': this.languageService.t()('actions.actionTypes.alert'),
-      'watering': this.languageService.t()('actions.actionTypes.watering'),
-      'ventilation': this.languageService.t()('actions.actionTypes.ventilation'),
-      'heating': this.languageService.t()('actions.actionTypes.heating'),
-      'lighting': this.languageService.t()('actions.actionTypes.lighting'),
-      'open roof': this.languageService.t()('actions.actionTypes.openRoof'),
-      'close roof': this.languageService.t()('actions.actionTypes.closeRoof'),
-      'open window': this.languageService.t()('actions.actionTypes.openWindow'),
-      'close window': this.languageService.t()('actions.actionTypes.closeWindow'),
-      'start pump': this.languageService.t()('actions.actionTypes.startPump'),
-      'stop pump': this.languageService.t()('actions.actionTypes.stopPump'),
-      'turn on fan': this.languageService.t()('actions.actionTypes.turnOnFan'),
-      'turn off fan': this.languageService.t()('actions.actionTypes.turnOffFan'),
-      'turn on heater': this.languageService.t()('actions.actionTypes.turnOnHeater'),
-      'turn off heater': this.languageService.t()('actions.actionTypes.turnOffHeater'),
-      'turn on light': this.languageService.t()('actions.actionTypes.turnOnLight'),
-      'turn off light': this.languageService.t()('actions.actionTypes.turnOffLight'),
-      'humidifier on': this.languageService.t()('actions.actionTypes.humidifierOn'),
-      'humidifier off': this.languageService.t()('actions.actionTypes.humidifierOff'),
-      'ventilator on': this.languageService.t()('actions.actionTypes.ventilatorOn'),
-      'ventilator off': this.languageService.t()('actions.actionTypes.ventilatorOff'),
-      'water pump on': this.languageService.t()('actions.actionTypes.waterPumpOn'),
-      'water pump off': this.languageService.t()('actions.actionTypes.waterPumpOff'),
-      'light on': this.languageService.t()('actions.actionTypes.lightOn'),
-      'light off': this.languageService.t()('actions.actionTypes.lightOff'),
-      'pump on': this.languageService.t()('actions.actionTypes.waterPumpOn'),
-      'pump off': this.languageService.t()('actions.actionTypes.waterPumpOff'),
-      'turn on': this.languageService.t()('actions.actionTypes.turnOnLight'),
-      'turn off': this.languageService.t()('actions.actionTypes.turnOffLight'),
-      // Additional patterns for common variations
-      'waterpump on': this.languageService.t()('actions.actionTypes.waterPumpOn'),
-      'waterpump off': this.languageService.t()('actions.actionTypes.waterPumpOff'),
-      'water_pump on': this.languageService.t()('actions.actionTypes.waterPumpOn'),
-      'water_pump off': this.languageService.t()('actions.actionTypes.waterPumpOff'),
-      'light_on': this.languageService.t()('actions.actionTypes.lightOn'),
-      'light_off': this.languageService.t()('actions.actionTypes.lightOff'),
-      'pump_on': this.languageService.t()('actions.actionTypes.waterPumpOn'),
-      'pump_off': this.languageService.t()('actions.actionTypes.waterPumpOff')
-    };
-
-    // Try exact match first
-    let translatedName = actionMap[actionName.toLowerCase()];
-    if (translatedName) {
-      return translatedName;
+  getDeviceThresholds(device: Device): { [key: string]: number } | undefined {
+    // This would be based on actual device configuration
+    if (device.device_type?.includes('sensor')) {
+      return {
+        'min': 20,
+        'max': 80
+      };
     }
-
-    // Handle complex action names with context (e.g., "Ventilator Off (temperature Low)")
-    const lowerActionName = actionName.toLowerCase();
-
-    // Extract the main action from complex names
-    if (lowerActionName.includes('ventilator off')) {
-      return this.languageService.t()('actions.actionTypes.ventilatorOff');
-    }
-    if (lowerActionName.includes('ventilator on')) {
-      return this.languageService.t()('actions.actionTypes.ventilatorOn');
-    }
-    if (lowerActionName.includes('humidifier on')) {
-      return this.languageService.t()('actions.actionTypes.humidifierOn');
-    }
-    if (lowerActionName.includes('humidifier off')) {
-      return this.languageService.t()('actions.actionTypes.humidifierOff');
-    }
-    if (lowerActionName.includes('open roof')) {
-      return this.languageService.t()('actions.actionTypes.openRoof');
-    }
-    if (lowerActionName.includes('close roof')) {
-      return this.languageService.t()('actions.actionTypes.closeRoof');
-    }
-    if (lowerActionName.includes('water pump on')) {
-      return this.languageService.t()('actions.actionTypes.waterPumpOn');
-    }
-    if (lowerActionName.includes('water pump off')) {
-      return this.languageService.t()('actions.actionTypes.waterPumpOff');
-    }
-    if (lowerActionName.includes('light on')) {
-      return this.languageService.t()('actions.actionTypes.lightOn');
-    }
-    if (lowerActionName.includes('light off')) {
-      return this.languageService.t()('actions.actionTypes.lightOff');
-    }
-
-    // Try partial matches for complex action names
-    if (lowerActionName.includes('water') && lowerActionName.includes('pump') && lowerActionName.includes('on')) {
-      return this.languageService.t()('actions.actionTypes.waterPumpOn');
-    }
-    if (lowerActionName.includes('water') && lowerActionName.includes('pump') && lowerActionName.includes('off')) {
-      return this.languageService.t()('actions.actionTypes.waterPumpOff');
-    }
-    if (lowerActionName.includes('light') && lowerActionName.includes('on')) {
-      return this.languageService.t()('actions.actionTypes.lightOn');
-    }
-    if (lowerActionName.includes('light') && lowerActionName.includes('off')) {
-      return this.languageService.t()('actions.actionTypes.lightOff');
-    }
-    if (lowerActionName.includes('pump') && lowerActionName.includes('on')) {
-      return this.languageService.t()('actions.actionTypes.waterPumpOn');
-    }
-    if (lowerActionName.includes('pump') && lowerActionName.includes('off')) {
-      return this.languageService.t()('actions.actionTypes.waterPumpOff');
-    }
-
-    // Fallback to original name if no translation found
-    return actionName;
+    return undefined;
   }
 
-  getDeviceDisplayName(deviceName: string): string {
-    // Translate common device names/IDs
-    const deviceMap: { [key: string]: string } = {
-      'dht11 sensor': this.languageService.t()('devices.deviceTypes.dht11Sensor'),
-      'dht22 sensor': this.languageService.t()('devices.deviceTypes.dht22Sensor'),
-      'soil moisture sensor': this.languageService.t()('devices.deviceTypes.soilMoistureSensor'),
-      'water pump': this.languageService.t()('devices.deviceTypes.waterPump'),
-      'irrigation pump': this.languageService.t()('devices.deviceTypes.irrigationPump'),
-      'fan': this.languageService.t()('devices.deviceTypes.fan'),
-      'ventilator': this.languageService.t()('devices.deviceTypes.ventilator'),
-      'heater': this.languageService.t()('devices.deviceTypes.heater'),
-      'light': this.languageService.t()('devices.deviceTypes.light'),
-      'led light': this.languageService.t()('devices.deviceTypes.ledLight'),
-      'roof motor': this.languageService.t()('devices.deviceTypes.roofMotor'),
-      'window motor': this.languageService.t()('devices.deviceTypes.windowMotor'),
-      'gateway': this.languageService.t()('devices.deviceTypes.gateway'),
-      'controller': this.languageService.t()('devices.deviceTypes.controller')
-    };
-
-    const translatedName = deviceMap[deviceName.toLowerCase()];
-    return translatedName || deviceName;
+  getThresholdEntries(thresholds: { [key: string]: number }): { key: string; value: number }[] {
+    return Object.entries(thresholds).map(([key, value]) => ({ key, value }));
   }
 
-  getDeviceStatusTranslation(status: string): string {
-    switch (status) {
-      case 'online': return this.languageService.t()('devices.statusOnline');
-      case 'offline': return this.languageService.t()('devices.statusOffline');
-      case 'active': return this.languageService.t()('devices.statusActive');
-      case 'inactive': return this.languageService.t()('devices.statusInactive');
-      case 'error': return this.languageService.t()('devices.statusError');
-      default: return status;
+  trackByDeviceId(index: number, control: DeviceControl): string {
+    return control.device.device_id;
+  }
+
+  getSensorTypeDisplayName(sensor: Sensor): string {
+    if (!sensor) return '';
+    
+    const type = sensor.type?.toLowerCase() || '';
+    
+    if (type.includes('temperature')) return this.languageService.t()('sensors.temperature') || 'Temperature';
+    if (type.includes('humidity')) return this.languageService.t()('sensors.humidity') || 'Humidity';
+    if (type.includes('soil') && type.includes('moisture')) return this.languageService.t()('sensors.soilMoisture') || 'Soil Moisture';
+    if (type.includes('light')) return this.languageService.t()('sensors.lightLevel') || 'Light';
+    if (type.includes('ph')) return this.languageService.t()('sensors.phLevel') || 'pH';
+    if (type.includes('pressure')) return this.languageService.t()('sensors.pressure') || 'Pressure';
+    
+    // Fallback to the sensor type itself
+    return sensor.type || '';
+  }
+
+  getSensorCurrentValue(reading: SensorReading, sensor: Sensor): string {
+    if (!reading || !sensor) return '—';
+    
+    const value1 = reading.value1;
+    const value2 = reading.value2;
+    
+    // Return the primary value, or value2 if value1 is not available
+    const value = value1 !== undefined ? value1 : value2;
+    
+    if (value === undefined || value === null) return '—';
+    
+    // Format based on sensor type
+    const type = sensor.type?.toLowerCase() || '';
+    if (type.includes('temperature')) {
+      return value.toFixed(1);
     }
-  }
-
-  // TrackBy functions for better performance
-  trackByDeviceId(index: number, device: Device): string {
-    return device.device_id;
-  }
-
-  trackByActionId(index: number, action: PendingAction): string {
-    return action.actionId;
-  }
-
-  trackByActionTemplateId(index: number, action: ActionTemplate): string {
-    return action.id;
-  }
-
-  // Hover handlers for button animations
-  onButtonHover(event: MouseEvent): void {
-    const button = event.currentTarget as HTMLElement;
-    button.classList.add('hover');
-  }
-
-  onButtonLeave(event: MouseEvent): void {
-    const button = event.currentTarget as HTMLElement;
-    button.classList.remove('hover');
-  }
-
-  // Get button tooltip with explanation for disabled state
-  getButtonTooltip(action: ActionTemplate, device: Device): string {
-    const isExecuting = this.isActionExecuting(action.id);
-    const isDeviceOffline = device.status !== DeviceStatus.ONLINE && device.status !== DeviceStatus.ACTIVE;
-
-    if (isExecuting) {
-      return this.languageService.t()('manualControl.actionExecutingTooltip', { actionName: this.getActionNameTranslation(action.name) });
+    if (type.includes('humidity') || type.includes('moisture')) {
+      return value.toFixed(0);
     }
-
-    if (isDeviceOffline) {
-      return this.languageService.t()('manualControl.deviceOfflineTooltip', {
-        deviceName: this.getDeviceDisplayName(device.name),
-        status: this.getDeviceStatusTranslation(device.status)
-      });
+    if (type.includes('ph')) {
+      return value.toFixed(2);
     }
-
-    // Default tooltip with description
-    return action.description || this.getActionNameTranslation(action.name);
+    if (type.includes('light')) {
+      return value.toFixed(0);
+    }
+    
+    // Default formatting
+    return value.toFixed(1);
   }
+
+  getSensorUnit(sensor: Sensor): string {
+    if (!sensor) return '';
+    
+    const type = sensor.type?.toLowerCase() || '';
+    
+    if (type.includes('temperature')) return '°C';
+    if (type.includes('humidity') || type.includes('moisture')) return '%';
+    if (type.includes('light')) return 'lux';
+    if (type.includes('ph')) return 'pH';
+    if (type.includes('pressure')) return 'Pa';
+    
+    return sensor.unit || '';
+  }
+
+  getConcernedValueType(control: DeviceControl): string {
+    // If sensor exists, use sensor type
+    if (control.sensor) {
+      return this.getSensorTypeDisplayName(control.sensor);
+    }
+    
+    // Otherwise, infer from device type
+    const deviceType = control.device.device_type?.toLowerCase() || '';
+    const deviceName = control.device.name?.toLowerCase() || '';
+    
+    if (deviceType.includes('humidity') || deviceName.includes('humid') || deviceType.includes('humidifier')) {
+      return this.languageService.t()('sensors.humidity') || 'Humidity';
+    }
+    if (deviceType.includes('temperature') || deviceName.includes('temp') || deviceType.includes('heater') || deviceType.includes('thermostat')) {
+      return this.languageService.t()('sensors.temperature') || 'Temperature';
+    }
+    if (deviceType.includes('light') || deviceName.includes('light') || deviceType.includes('lamp')) {
+      return this.languageService.t()('sensors.lightLevel') || 'Light';
+    }
+    if (deviceType.includes('fan') || deviceName.includes('fan') || deviceType.includes('ventilation') || deviceName.includes('vent')) {
+      return this.languageService.t()('sensors.temperature') || 'Temperature'; // Fans control temperature
+    }
+    if (deviceType.includes('pump') || deviceName.includes('pump') || deviceType.includes('irrigation') || deviceName.includes('water')) {
+      return this.languageService.t()('sensors.soilMoisture') || 'Soil Moisture'; // Pumps control soil moisture
+    }
+    
+    // Fallback to device type name
+    return this.getDeviceTypeName(control.device);
+  }
+
+  getConcernedValue(control: DeviceControl): string | null {
+    // If sensor reading exists, use it
+    if (control.sensor && control.sensorReading) {
+      const value1 = control.sensorReading.value1;
+      const value2 = control.sensorReading.value2;
+      const value = value1 !== undefined ? value1 : value2;
+      
+      if (value !== undefined && value !== null) {
+        return this.getSensorCurrentValue(control.sensorReading, control.sensor);
+      }
+    }
+    
+    // No sensor reading available
+    return null;
+  }
+
+  getConcernedValueUnit(control: DeviceControl): string {
+    // If sensor exists, use sensor unit
+    if (control.sensor) {
+      return this.getSensorUnit(control.sensor);
+    }
+    
+    // Otherwise, infer from device type
+    const deviceType = control.device.device_type?.toLowerCase() || '';
+    const deviceName = control.device.name?.toLowerCase() || '';
+    
+    if (deviceType.includes('humidity') || deviceName.includes('humid') || deviceType.includes('humidifier')) {
+      return '%';
+    }
+    if (deviceType.includes('temperature') || deviceName.includes('temp') || deviceType.includes('heater') || deviceType.includes('thermostat') || deviceType.includes('fan') || deviceType.includes('ventilation')) {
+      return '°C';
+    }
+    if (deviceType.includes('light') || deviceName.includes('light') || deviceType.includes('lamp')) {
+      return 'lux';
+    }
+    if (deviceType.includes('pump') || deviceName.includes('pump') || deviceType.includes('irrigation') || deviceName.includes('water')) {
+      return '%';
+    }
+    
+    return '';
+  }
+
 }

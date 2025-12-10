@@ -18,52 +18,25 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<SafeUser> {
-    try {
-      // Check if email already exists
-      const existingUser = await this.usersRepository.findOne({
-        where: { email: createUserDto.email }
-      });
+    // Check if email already exists
+    const existingUser = await this.usersRepository.findOne({
+      where: { email: createUserDto.email }
+    });
 
-      if (existingUser) {
-        throw new ConflictException('Email already exists');
-      }
-
-      const user = this.usersRepository.create({
-        ...createUserDto,
-        user_id: createUserDto.user_id || uuidv4(),
-      });
-
-      const savedUser = await this.usersRepository.save(user);
-      
-      // Remove password from response and return as SafeUser
-      const { password, hashPassword, validatePassword, ...userWithoutSensitiveData } = savedUser;
-      return userWithoutSensitiveData as SafeUser;
-    } catch (error) {
-      // Log the full error for debugging
-      console.error('Error creating user:', error);
-      console.error('Error details:', {
-        message: error.message,
-        code: error.code,
-        sqlState: error.sqlState,
-        sqlMessage: error.sqlMessage,
-        stack: error.stack
-      });
-      
-      // Re-throw with more context if it's a database constraint error
-      if (error.code === '23505' || error.sqlState === '23000') {
-        // Unique constraint violation
-        throw new ConflictException('Email already exists');
-      } else if (error.code === '23502' || error.sqlState === '23000') {
-        // Not null constraint violation
-        throw new ConflictException('Required fields are missing');
-      } else if (error.message && error.message.includes('enum')) {
-        // Enum value error
-        throw new ConflictException(`Invalid role value. Allowed values: admin, farmer, moderator. Received: ${createUserDto.role}`);
-      }
-      
-      // Re-throw the original error
-      throw error;
+    if (existingUser) {
+      throw new ConflictException('Email already exists');
     }
+
+    const user = this.usersRepository.create({
+      ...createUserDto,
+      user_id: createUserDto.user_id || uuidv4(),
+    });
+
+    const savedUser = await this.usersRepository.save(user);
+    
+    // Remove password from response and return as SafeUser
+    const { password, hashPassword, validatePassword, ...userWithoutSensitiveData } = savedUser;
+    return userWithoutSensitiveData as SafeUser;
   }
 
   async findAll(includeFarms = false): Promise<SafeUser[]> {

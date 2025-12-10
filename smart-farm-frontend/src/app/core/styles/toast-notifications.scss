@@ -332,88 +332,16 @@
 }
 
 // ===========================
-// Dark Background Support - Full Theme Integration
+// Dark Background Support
 // ===========================
-body.dark-theme .swal2-popup.swal2-toast,
 .swal2-popup.swal2-toast.dark-theme {
-  background: var(--glass-bg, rgba(30, 41, 59, 0.95)) !important;
-  border: 1px solid var(--glass-border, rgba(100, 116, 139, 0.4)) !important;
+  background: rgba(30, 30, 30, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
 
   box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.4),
     0 2px 6px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(100, 116, 139, 0.2) !important;
-
-  .swal2-title {
-    color: var(--text-primary, #f1f5f9) !important;
-  }
-
-  .swal2-html-container {
-    color: var(--text-secondary, #cbd5e1) !important;
-  }
-
-  .swal2-close {
-    color: var(--text-secondary, rgba(255, 255, 255, 0.7)) !important;
-
-    &:hover {
-      color: var(--text-primary, #ffffff) !important;
-      background: rgba(255, 255, 255, 0.15) !important;
-    }
-  }
-
-  // Success toast in dark theme
-  &.swal2-icon-success {
-    border-left-color: var(--success, #10b981) !important;
-    
-    .swal2-icon.swal2-success {
-      background: rgba(16, 185, 129, 0.2) !important;
-      
-      .swal2-success-ring {
-        border-color: var(--success, #10b981) !important;
-      }
-      
-      .swal2-success-line-long,
-      .swal2-success-line-tip {
-        background-color: var(--success, #10b981) !important;
-      }
-    }
-  }
-
-  // Error toast in dark theme
-  &.swal2-icon-error {
-    border-left-color: var(--danger, #ef4444) !important;
-    
-    .swal2-icon.swal2-error {
-      background: rgba(239, 68, 68, 0.2) !important;
-      
-      .swal2-x-mark-line-left,
-      .swal2-x-mark-line-right {
-        background-color: var(--danger, #ef4444) !important;
-      }
-    }
-  }
-
-  // Warning toast in dark theme
-  &.swal2-icon-warning {
-    border-left-color: var(--warning, #f59e0b) !important;
-    
-    .swal2-icon.swal2-warning {
-      background: rgba(245, 158, 11, 0.2) !important;
-      color: var(--warning, #f59e0b) !important;
-      border-color: var(--warning, #f59e0b) !important;
-    }
-  }
-
-  // Info toast in dark theme
-  &.swal2-icon-info {
-    border-left-color: var(--primary-blue, #3b82f6) !important;
-    
-    .swal2-icon.swal2-info {
-      background: rgba(59, 130, 246, 0.2) !important;
-      color: var(--primary-blue, #3b82f6) !important;
-      border-color: var(--primary-blue, #3b82f6) !important;
-    }
-  }
+    inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
 }
 
 // ===========================

@@ -26,41 +26,7 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
-              {
-                "glob": "favicon.ico",
-                "input": "src/assets/images/logos",
-                "output": "/"
-              },
-              {
-                "glob": "favicon-16x16.png",
-                "input": "src/assets/images/logos",
-                "output": "/"
-              },
-              {
-                "glob": "favicon-32x32.png",
-                "input": "src/assets/images/logos",
-                "output": "/"
-              },
-              {
-                "glob": "apple-touch-icon.png",
-                "input": "src/assets/images/logos",
-                "output": "/"
-              },
-              {
-                "glob": "android-chrome-192x192.png",
-                "input": "src/assets/images/logos",
-                "output": "/"
-              },
-              {
-                "glob": "android-chrome-512x512.png",
-                "input": "src/assets/images/logos",
-                "output": "/"
-              },
-              {
-                "glob": "site.webmanifest",
-                "input": "src/assets/images/logos",
-                "output": "/"
-              },
+              "src/favicon.ico",
               "src/assets"
             ],
             "styles": [
@@ -80,8 +46,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "75kb",
-                  "maximumError": "100kb"
+                  "maximumWarning": "50kb",
+                  "maximumError": "60kb"
                 }
               ],
               "outputHashing": "all",

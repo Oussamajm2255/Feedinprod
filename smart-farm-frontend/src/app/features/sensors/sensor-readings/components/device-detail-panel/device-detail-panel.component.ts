@@ -153,7 +153,7 @@ export interface DeviceDetail {
             </div>
             <div class="chart-controls">
               <!-- View Toggle -->
-              <mat-button-toggle-group [(value)]="viewMode" class="view-toggle-group" [appearance]="'standard'">
+              <mat-button-toggle-group [(value)]="viewMode" class="view-toggle-group">
                 <mat-button-toggle value="chart" matTooltip="Chart View">
                   <mat-icon>show_chart</mat-icon>
                 </mat-button-toggle>
@@ -346,14 +346,6 @@ export interface DeviceDetail {
         background-size: 200% 100%;
         border-radius: 16px;
         animation: shimmer 1.5s infinite;
-      }
-
-      /* Dark theme skeleton loading */
-      :host-context(body.dark-theme) .skeleton-circle,
-      :host-context(body.dark-theme) .skeleton-line,
-      :host-context(body.dark-theme) .skeleton-chart {
-        background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
-        background-size: 200% 100%;
       }
 
       @keyframes shimmer {
@@ -665,295 +657,57 @@ export interface DeviceDetail {
         gap: 12px;
       }
 
-      /* View Toggle Group - Enhanced */
+      /* View Toggle Group */
       .view-toggle-group {
-        display: inline-flex;
-        border-radius: 14px;
+        border-radius: 12px;
         overflow: hidden;
-        border: 2px solid rgba(16, 185, 129, 0.15);
-        box-shadow: 
-          0 4px 12px rgba(0, 0, 0, 0.08),
-          0 0 0 1px rgba(255, 255, 255, 0.5) inset,
-          0 1px 2px rgba(0, 0, 0, 0.05) inset;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        position: relative;
-        gap: 2px;
-        padding: 2px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-
-      .view-toggle-group:hover {
-        border-color: rgba(16, 185, 129, 0.3);
-        box-shadow: 
-          0 6px 16px rgba(16, 185, 129, 0.15),
-          0 0 0 1px rgba(255, 255, 255, 0.6) inset,
-          0 1px 2px rgba(0, 0, 0, 0.05) inset;
+        border: 2px solid rgba(16, 185, 129, 0.2);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        background: rgba(255, 255, 255, 0.8);
       }
 
       .view-toggle-group ::ng-deep .mat-button-toggle {
         border: none;
         background: transparent;
-        color: #64748b;
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
-        margin: 0;
-        min-width: 48px;
-      }
-
-      .view-toggle-group ::ng-deep .mat-button-toggle::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        border-radius: 50%;
-        background: rgba(16, 185, 129, 0.1);
-        transform: translate(-50%, -50%);
-        transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                    height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        pointer-events: none;
-      }
-
-      .view-toggle-group ::ng-deep .mat-button-toggle:hover::before {
-        width: 100%;
-        height: 100%;
+        color: #6b7280;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       }
 
       .view-toggle-group ::ng-deep .mat-button-toggle-button {
-        padding: 10px 18px;
-        height: 44px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        z-index: 1;
-        border-radius: 10px;
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 8px 16px;
+        height: 40px;
       }
 
       .view-toggle-group ::ng-deep .mat-button-toggle mat-icon {
-        font-size: 22px;
-        width: 22px;
-        height: 22px;
-        color: #64748b;
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        z-index: 2;
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        color: #6b7280;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       }
 
       .view-toggle-group ::ng-deep .mat-button-toggle:hover {
-        background: rgba(16, 185, 129, 0.08);
-        transform: translateY(-1px);
+        background: rgba(16, 185, 129, 0.1);
       }
 
       .view-toggle-group ::ng-deep .mat-button-toggle:hover mat-icon {
         color: #10b981;
-        transform: scale(1.15) rotate(5deg);
+        transform: scale(1.1);
       }
 
       .view-toggle-group ::ng-deep .mat-button-toggle-checked {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        background: linear-gradient(135deg, #10b981, #059669);
         color: white;
-        box-shadow: 
-          0 4px 12px rgba(16, 185, 129, 0.3),
-          0 2px 4px rgba(0, 0, 0, 0.1) inset,
-          0 0 0 1px rgba(255, 255, 255, 0.2) inset;
-        transform: translateY(-1px);
-        position: relative;
-      }
-
-      .view-toggle-group ::ng-deep .mat-button-toggle-checked::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
-        border-radius: 10px;
-        pointer-events: none;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
       }
 
       .view-toggle-group ::ng-deep .mat-button-toggle-checked mat-icon {
         color: white;
-        transform: scale(1.15);
-        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
-      }
-
-      /* Hide Material's pseudo-checkbox checkmark - but keep the actual icons */
-      .view-toggle-group ::ng-deep .mat-button-toggle .mat-pseudo-checkbox,
-      .view-toggle-group ::ng-deep .mat-button-toggle .mat-pseudo-checkbox-checked,
-      .view-toggle-group ::ng-deep .mat-button-toggle .mat-pseudo-checkbox-minimal,
-      .view-toggle-group ::ng-deep .mat-pseudo-checkbox,
-      .view-toggle-group ::ng-deep .mat-pseudo-checkbox-checked,
-      .view-toggle-group ::ng-deep .mat-pseudo-checkbox-minimal,
-      .view-toggle-group ::ng-deep *[class*="pseudo-checkbox"] {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        width: 0 !important;
-        height: 0 !important;
-        position: absolute !important;
-        left: -9999px !important;
-        pointer-events: none !important;
-      }
-
-      /* Hide any checkmark SVG or icon elements - specifically target check icons only */
-      .view-toggle-group ::ng-deep .mat-button-toggle svg[data-mat-icon-name="check"],
-      .view-toggle-group ::ng-deep .mat-button-toggle .mat-icon svg:has(path[d*="M9 16.17"]),
-      .view-toggle-group ::ng-deep .mat-button-toggle .mat-icon svg:has(path[d*="M21 7"]),
-      .view-toggle-group ::ng-deep .mat-button-toggle mat-icon[data-mat-icon-name="check"],
-      .view-toggle-group ::ng-deep .mat-button-toggle mat-icon[data-mat-icon-type="check"],
-      .view-toggle-group ::ng-deep .mat-button-toggle mat-icon:has-text("check") {
-        display: none !important;
-        visibility: hidden !important;
-      }
-
-      /* Hide checkmark icons but preserve our actual icons */
-      .view-toggle-group ::ng-deep .mat-button-toggle mat-icon[class*="check"]:not([class*="show_chart"]):not([class*="table_rows"]):not([class*="timeline"]),
-      .view-toggle-group ::ng-deep .mat-button-toggle mat-icon[aria-label*="check" i],
-      .view-toggle-group ::ng-deep .mat-button-toggle mat-icon[aria-label*="Check" i] {
-        display: none !important;
-        visibility: hidden !important;
-      }
-
-      /* Target any element that contains a checkmark path in SVG */
-      .view-toggle-group ::ng-deep .mat-button-toggle svg path[d*="M9 16.17"],
-      .view-toggle-group ::ng-deep .mat-button-toggle svg path[d*="M21 7"],
-      .view-toggle-group ::ng-deep .mat-button-toggle svg path[d*="L4.83 12"] {
-        display: none !important;
-        visibility: hidden !important;
-      }
-
-      /* Ensure our actual icons stay visible */
-      .view-toggle-group ::ng-deep .mat-button-toggle mat-icon[class*="show_chart"],
-      .view-toggle-group ::ng-deep .mat-button-toggle mat-icon[class*="table_rows"],
-      .view-toggle-group ::ng-deep .mat-button-toggle mat-icon[class*="timeline"] {
-        display: inline-flex !important;
-        visibility: visible !important;
-      }
-
-      /* Nuclear option: Hide any mat-icon that contains "check" in its text content or innerHTML */
-      .view-toggle-group ::ng-deep .mat-button-toggle .mat-button-toggle-button {
-        position: relative;
-      }
-
-      /* Hide checkmark by targeting the specific Material check icon */
-      .view-toggle-group ::ng-deep .mat-button-toggle mat-icon:not([class*="show_chart"]):not([class*="table_rows"]):not([class*="timeline"]) {
-        /* Only hide if it's not one of our icons */
-      }
-
-      /* More aggressive: Hide any second icon element or checkmark */
-      .view-toggle-group ::ng-deep .mat-button-toggle-checked .mat-button-toggle-button > mat-icon:nth-child(2),
-      .view-toggle-group ::ng-deep .mat-button-toggle-checked .mat-button-toggle-button > mat-icon:last-child:not(:first-child),
-      .view-toggle-group ::ng-deep .mat-button-toggle-checked .mat-button-toggle-button mat-icon + mat-icon {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-      }
-
-      /* Universal checkmark hiding - target any element that might be a checkmark */
-      .view-toggle-group ::ng-deep .mat-button-toggle *::before,
-      .view-toggle-group ::ng-deep .mat-button-toggle *::after {
-        content: none !important;
-      }
-
-      /* Hide any element with checkmark-related content */
-      .view-toggle-group ::ng-deep .mat-button-toggle [class*="check"]:not([class*="show_chart"]):not([class*="table_rows"]):not([class*="timeline"]),
-      .view-toggle-group ::ng-deep .mat-button-toggle [aria-label*="check" i]:not([class*="show_chart"]):not([class*="table_rows"]):not([class*="timeline"]) {
-        display: none !important;
+        transform: scale(1.1);
       }
 
       .view-toggle-group ::ng-deep .mat-button-toggle-checked:hover {
-        background: linear-gradient(135deg, #059669 0%, #047857 100%);
-        box-shadow: 
-          0 6px 16px rgba(16, 185, 129, 0.4),
-          0 2px 4px rgba(0, 0, 0, 0.15) inset,
-          0 0 0 1px rgba(255, 255, 255, 0.25) inset;
-        transform: translateY(-2px);
-      }
-
-      .view-toggle-group ::ng-deep .mat-button-toggle-checked:hover mat-icon {
-        transform: scale(1.2) rotate(-5deg);
-      }
-
-      /* Ripple effect enhancement */
-      .view-toggle-group ::ng-deep .mat-button-toggle .mat-ripple-element {
-        background-color: rgba(16, 185, 129, 0.2);
-        animation-duration: 0.6s;
-      }
-
-      /* Focus states for accessibility */
-      .view-toggle-group ::ng-deep .mat-button-toggle:focus-visible {
-        outline: 2px solid rgba(16, 185, 129, 0.5);
-        outline-offset: 2px;
-        border-radius: 10px;
-      }
-
-      /* Smooth transition between states */
-      .view-toggle-group ::ng-deep .mat-button-toggle:not(.mat-button-toggle-checked) {
-        animation: fadeIn 0.2s ease-out;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0.7;
-        }
-        to {
-          opacity: 1;
-        }
-      }
-
-      /* Responsive - View Toggle Group */
-      @media (max-width: 768px) {
-        .view-toggle-group {
-          border-radius: 12px;
-          padding: 1px;
-          gap: 1px;
-        }
-
-        .view-toggle-group ::ng-deep .mat-button-toggle-button {
-          padding: 8px 12px;
-          height: 40px;
-          min-width: 44px;
-        }
-
-        .view-toggle-group ::ng-deep .mat-button-toggle mat-icon {
-          font-size: 20px;
-          width: 20px;
-          height: 20px;
-        }
-      }
-
-      @media (max-width: 480px) {
-        .chart-controls {
-          flex-wrap: wrap;
-          gap: 8px;
-        }
-
-        .view-toggle-group {
-          width: 100%;
-          justify-content: stretch;
-        }
-
-        .view-toggle-group ::ng-deep .mat-button-toggle {
-          flex: 1;
-        }
-
-        .view-toggle-group ::ng-deep .mat-button-toggle-button {
-          padding: 10px 8px;
-          height: 38px;
-        }
-
-        .view-toggle-group ::ng-deep .mat-button-toggle mat-icon {
-          font-size: 18px;
-          width: 18px;
-          height: 18px;
-        }
+        background: linear-gradient(135deg, #059669, #047857);
       }
 
       /* Export Button */
@@ -1528,31 +1282,16 @@ export interface DeviceDetail {
         color: #cbd5e1;
       }
 
-      /* Dark Theme - View Toggle - Enhanced */
+      /* Dark Theme - View Toggle */
       :host-context(body.dark-theme) .view-toggle-group {
-        border-color: rgba(100, 116, 139, 0.25);
-        background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.9));
-        box-shadow: 
-          0 4px 12px rgba(0, 0, 0, 0.3),
-          0 0 0 1px rgba(100, 116, 139, 0.2) inset,
-          0 1px 2px rgba(0, 0, 0, 0.2) inset;
-      }
-
-      :host-context(body.dark-theme) .view-toggle-group:hover {
         border-color: rgba(16, 185, 129, 0.4);
-        box-shadow: 
-          0 6px 16px rgba(16, 185, 129, 0.2),
-          0 0 0 1px rgba(100, 116, 139, 0.3) inset,
-          0 1px 2px rgba(0, 0, 0, 0.2) inset;
+        background: rgba(30, 41, 59, 0.8);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
       }
 
       :host-context(body.dark-theme) .view-toggle-group ::ng-deep .mat-button-toggle {
         background: transparent;
-        color: #cbd5e1;
-      }
-
-      :host-context(body.dark-theme) .view-toggle-group ::ng-deep .mat-button-toggle::before {
-        background: rgba(16, 185, 129, 0.15);
+        color: #94a3b8;
       }
 
       :host-context(body.dark-theme) .view-toggle-group ::ng-deep .mat-button-toggle mat-icon {
@@ -1560,50 +1299,22 @@ export interface DeviceDetail {
       }
 
       :host-context(body.dark-theme) .view-toggle-group ::ng-deep .mat-button-toggle:hover {
-        background: rgba(16, 185, 129, 0.12);
+        background: rgba(16, 185, 129, 0.15);
       }
 
       :host-context(body.dark-theme) .view-toggle-group ::ng-deep .mat-button-toggle:hover mat-icon {
         color: #34d399;
-        transform: scale(1.15) rotate(5deg);
       }
 
       :host-context(body.dark-theme) .view-toggle-group ::ng-deep .mat-button-toggle-checked {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        color: white;
-        box-shadow: 
-          0 4px 12px rgba(16, 185, 129, 0.4),
-          0 2px 4px rgba(0, 0, 0, 0.3) inset,
-          0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-      }
-
-      :host-context(body.dark-theme) .view-toggle-group ::ng-deep .mat-button-toggle-checked::after {
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent);
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.4), rgba(5, 150, 105, 0.35));
+        color: #6ee7b7;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3),
+                    0 0 12px rgba(16, 185, 129, 0.3);
       }
 
       :host-context(body.dark-theme) .view-toggle-group ::ng-deep .mat-button-toggle-checked mat-icon {
-        color: white;
-        filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.4));
-      }
-
-      :host-context(body.dark-theme) .view-toggle-group ::ng-deep .mat-button-toggle-checked:hover {
-        background: linear-gradient(135deg, #059669 0%, #047857 100%);
-        box-shadow: 
-          0 6px 16px rgba(16, 185, 129, 0.5),
-          0 2px 4px rgba(0, 0, 0, 0.4) inset,
-          0 0 0 1px rgba(255, 255, 255, 0.15) inset;
-      }
-
-      :host-context(body.dark-theme) .view-toggle-group ::ng-deep .mat-button-toggle-checked:hover mat-icon {
-        transform: scale(1.2) rotate(-5deg);
-      }
-
-      :host-context(body.dark-theme) .view-toggle-group ::ng-deep .mat-button-toggle .mat-ripple-element {
-        background-color: rgba(16, 185, 129, 0.3);
-      }
-
-      :host-context(body.dark-theme) .view-toggle-group ::ng-deep .mat-button-toggle:focus-visible {
-        outline-color: rgba(16, 185, 129, 0.6);
+        color: #6ee7b7;
       }
 
       /* Dark Theme - Export Button */
@@ -1798,9 +1509,9 @@ export class DeviceDetailPanelComponent {
   getValueStatus(value: number): SensorStatus {
     const dev = this.device();
     if (!dev) return 'offline';
-
+    
     const { min, max, optimalMin, optimalMax } = dev.thresholds;
-
+    
     if (value < min || value > max) return 'critical';
     if (value < optimalMin || value > optimalMax) return 'warning';
     return 'normal';

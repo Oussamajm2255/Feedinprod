@@ -114,16 +114,6 @@
         outline-offset: 2px;
       }
     }
-
-    .table-actions {
-      display: inline-flex;
-      gap: 0.35rem;
-      align-items: center;
-
-      button {
-        margin: 0;
-      }
-    }
   }
 
   ::ng-deep {
@@ -185,15 +175,6 @@
         padding: 0.2rem 0.5rem;
         min-width: 80px;
       }
-
-      .table-actions {
-        gap: 0.25rem;
-
-        button {
-          width: 36px;
-          height: 36px;
-        }
-      }
     }
 
     ::ng-deep {
@@ -219,48 +200,6 @@
       .mat-column-type,
       .mat-column-location {
         display: none;
-      }
-    }
-  }
-}
-
-/* Dark Theme Support */
-body.dark-theme {
-  .table-container {
-    .devices-table {
-      ::ng-deep {
-        .mat-mdc-header-row {
-          background: linear-gradient(135deg, #0f172a, #1e293b) !important;
-        }
-
-        .mat-mdc-header-cell {
-          color: #f1f5f9 !important;
-          font-weight: 700 !important;
-          border-bottom: 2px solid rgba(16, 185, 129, 0.3) !important;
-        }
-
-        .mat-mdc-cell {
-          color: #e2e8f0 !important;
-          border-bottom-color: #334155 !important;
-        }
-
-        .mat-mdc-row:hover {
-          background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1)) !important;
-        }
-      }
-
-      .device-name-cell span {
-        color: #f1f5f9 !important;
-      }
-    }
-
-    ::ng-deep .mat-mdc-paginator {
-      border-top-color: #334155 !important;
-
-      .mat-mdc-select-value,
-      .mat-mdc-paginator-range-label,
-      .mat-mdc-icon-button {
-        color: #e2e8f0 !important;
       }
     }
   }

@@ -40,7 +40,7 @@ export interface DeviceDetailsDialogData {
     MatBadgeModule
   ],
   templateUrl: './device-details-dialog.component.html',
-  styleUrls: ['./device-details-dialog.component.scss'],
+  styleUrl: './device-details-dialog.component.scss',
   animations: [
     trigger('dialogAnimation', [
       transition(':enter', [
@@ -68,26 +68,8 @@ export class DeviceDetailsDialogComponent implements OnInit {
   private alertService = inject(AlertService);
   public languageService = inject(LanguageService);
   public themeService = inject(ThemeService);
-  private readonly sensorTypeMap: Record<string, string> = {
-    temperature: 'sensors.sensorTypes.temperature',
-    humidity: 'sensors.sensorTypes.humidity',
-    soil_moisture: 'sensors.sensorTypes.soilMoisture',
-    soil: 'sensors.sensorTypes.soil',
-    light: 'sensors.sensorTypes.light',
-    ph: 'sensors.sensorTypes.ph'
-  };
-  private readonly actionStatusPalette: Record<string, { bg: string; color: string }> = {
-    ack: { bg: 'rgba(16, 185, 129, 0.15)', color: '#059669' },
-    pending: { bg: 'rgba(234, 179, 8, 0.15)', color: '#b45309' },
-    queued: { bg: 'rgba(59, 130, 246, 0.15)', color: '#1d4ed8' },
-    sent: { bg: 'rgba(59, 130, 246, 0.15)', color: '#1d4ed8' },
-    error: { bg: 'rgba(239, 68, 68, 0.15)', color: '#b91c1c' },
-    failed: { bg: 'rgba(239, 68, 68, 0.15)', color: '#b91c1c' }
-  };
 
   device: Device;
-  dialogTitleId = '';
-  dialogContentId = '';
   sensors = signal<Sensor[]>([]);
   recentReadings = signal<SensorReading[]>([]);
   deviceActions = signal<any[]>([]);
@@ -110,8 +92,6 @@ export class DeviceDetailsDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: DeviceDetailsDialogData
   ) {
     this.device = data.device;
-    this.dialogTitleId = `device-details-title-${this.device.device_id}`;
-    this.dialogContentId = `${this.dialogTitleId}-body`;
   }
 
   ngOnInit(): void {
@@ -272,59 +252,19 @@ export class DeviceDetailsDialogComponent implements OnInit {
   }
 
   calculateUptime(): string {
-    if (!this.device.last_seen || !this.device.created_at) {
-      return this.languageService.t()('devices.notAvailableShort');
-    }
-
+    if (!this.device.last_seen || !this.device.created_at) return 'N/A';
+    
     const created = new Date(this.device.created_at);
     const now = new Date();
     const diff = now.getTime() - created.getTime();
-
+    
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
-    if (days > 0) {
-      return this.languageService.t()('devices.uptimeDaysHours', { days, hours });
-    }
-
-    if (hours > 0) {
-      return this.languageService.t()('devices.uptimeHoursMinutes', { hours, minutes });
-    }
-
-    return this.languageService.t()('devices.uptimeMinutes', { minutes });
-  }
-
-  getSensorTypeLabel(sensorType: string | undefined): string {
-    if (!sensorType) {
-      return this.languageService.t()('sensors.sensorTypes.unknown');
-    }
-
-    const key = this.sensorTypeMap[sensorType.toLowerCase()];
-    if (!key) {
-      return sensorType;
-    }
-
-    const translation = this.languageService.translate(key);
-    return translation === key ? sensorType : translation;
-  }
-
-  getActionStatusTranslation(status: string): string {
-    if (!status) {
-      return this.languageService.t()('devices.actionStatus.unknown');
-    }
-
-    const key = `devices.actionStatus.${status.toLowerCase()}`;
-    const translation = this.languageService.translate(key);
-    return translation === key ? status : translation;
-  }
-
-  getActionStatusStyle(status: string): { [key: string]: string } {
-    const palette = this.actionStatusPalette[status?.toLowerCase()] || { bg: 'rgba(148, 163, 184, 0.2)', color: '#475569' };
-    return {
-      background: palette.bg,
-      color: palette.color
-    };
+    
+    if (days > 0) return `${days}d ${hours}h`;
+    if (hours > 0) return `${hours}h ${minutes}m`;
+    return `${minutes}m`;
   }
 
   onClose(): void {

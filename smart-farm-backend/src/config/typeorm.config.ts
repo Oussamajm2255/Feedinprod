@@ -40,50 +40,27 @@ export const typeOrmConfig = async (
     };
   }
   
-  // Fallback to individual PostgreSQL configuration (Neon or local PostgreSQL)
-  // This supports both DATABASE_URL and individual env vars (DB_HOST, DB_USER, etc.)
-  const dbHost = configService.get('DB_HOST');
-  const dbUser = configService.get('DB_USER');
-  const dbPass = configService.get('DB_PASS');
-  const dbName = configService.get('DB_NAME');
-  const dbPort = +configService.get<number>('DB_PORT', 5432);
-
-  // If individual env vars are provided, use them for PostgreSQL
-  if (dbHost && dbUser && dbPass && dbName) {
-    return {
-      type: 'postgres',
-      host: dbHost,
-      port: dbPort,
-      username: dbUser,
-      password: dbPass,
-      database: dbName,
-      autoLoadEntities: true,
-      synchronize: configService.get('DB_SYNCHRONIZE', 'false') === 'true',
-      cache: false,
-      migrationsRun: configService.get('DB_MIGRATIONS_RUN', 'false') === 'true',
-      dropSchema: false,
-      logging: configService.get('LOG_LEVEL', 'error') === 'debug',
-      ssl: {
-        rejectUnauthorized: false,
-      },
-      // Add retry configuration for PostgreSQL
-      retryAttempts: 5,
-      retryDelay: 5000,
-      maxQueryExecutionTime: 30000,
-      // Additional PostgreSQL-specific options
-      extra: {
-        connectionTimeoutMillis: 30000,
-        idleTimeoutMillis: 30000,
-        max: 20,
-      },
-      // Enable migrations for PostgreSQL
-      migrations: ['dist/migrations/*.js'],
-      migrationsTableName: 'migrations',
-    };
-  }
-
-  // If neither DATABASE_URL nor individual vars are set, throw an error
-  throw new Error(
-    'Database configuration missing! Please set either DATABASE_URL or DB_HOST, DB_USER, DB_PASS, DB_NAME environment variables.'
-  );
+  // Fallback to individual MySQL configuration (local development)
+  return {
+    type: 'mysql',
+    host: configService.get('DB_HOST', 'localhost'),
+    port: +configService.get<number>('DB_PORT', 3306),
+    username: configService.get('DB_USER', 'root'),
+    password: configService.get('DB_PASS', ''),
+    database: configService.get('DB_NAME', 'smartfarm'),
+    autoLoadEntities: true,
+    synchronize: configService.get('DB_SYNCHRONIZE', 'true') === 'true',
+    cache: false,
+    migrationsRun: configService.get('DB_MIGRATIONS_RUN', 'false') === 'true',
+    dropSchema: false,
+    logging: configService.get('LOG_LEVEL', 'error') === 'debug',
+    // Add retry configuration for local development
+    retryAttempts: 3,
+    retryDelay: 3000,
+    maxQueryExecutionTime: 10000,
+    connectTimeout: 10000,
+    // Enable migrations for MySQL
+    migrations: ['dist/migrations/*.js'],
+    migrationsTableName: 'migrations',
+  };
 };

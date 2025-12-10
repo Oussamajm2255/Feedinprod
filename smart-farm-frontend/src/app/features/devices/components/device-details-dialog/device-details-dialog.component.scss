@@ -1,9 +1,10 @@
 // Glassmorphic Device Details Dialog - Modern & Epic UI
 
 .device-details-dialog {
-  width: min(900px, 95vw);
-  max-height: 90vh;
-  min-width: min(600px, 100%);
+  width: 100%;
+  max-width: 95vw;
+  max-height: 95vh;
+  min-width: 600px;
   background: var(--glass-bg, rgba(255, 255, 255, 0.7));
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
@@ -177,7 +178,7 @@
 
 // Content Section
 .dialog-content {
-  padding: clamp(1.25rem, 2vw, 2rem);
+  padding: 2rem;
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;

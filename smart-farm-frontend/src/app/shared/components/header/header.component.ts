@@ -1,4 +1,4 @@
-import { Component, inject, HostListener, signal, OnDestroy, computed, ChangeDetectionStrategy, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, HostListener, signal, OnDestroy, computed, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
@@ -32,7 +32,6 @@ export interface NavItem {
   route: string;
   icon: string;
   svgPath: string;
-  fontAwesomeIcon: string; // Font Awesome icon class
   priority: 'primary' | 'secondary';  // primary = show on mobile bottom nav
   translationKey: string;
 }
@@ -85,7 +84,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   public themeService = inject(ThemeService);
   private farmManagement = inject(FarmManagementService);
   private router = inject(Router);
-  private cdr = inject(ChangeDetectorRef);
 
   user = this.authService.user;
   isAuthenticated = this.authService.isAuthenticated;
@@ -122,7 +120,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       route: '/dashboard',
       icon: 'dashboard',
       svgPath: 'M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25',
-      fontAwesomeIcon: 'fa-solid fa-house',
       priority: 'primary',
       translationKey: 'navigation.dashboard'
     },
@@ -130,9 +127,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
       id: 'devices',
       label: 'Devices',
       route: '/devices',
-      icon: 'precision_manufacturing',
-      svgPath: 'M3 7.5A2.25 2.25 0 015.25 5.25h13.5A2.25 2.25 0 0121 7.5v1.5A2.25 2.25 0 0118.75 11.25H5.25A2.25 2.25 0 013 9V7.5zM3 15.75A2.25 2.25 0 015.25 13.5h13.5A2.25 2.25 0 0121 15.75v1.5A2.25 2.25 0 0118.75 19.5H5.25A2.25 2.25 0 013 17.25v-1.5zM7.5 7.5h1.5v1.5H7.5V7.5zm0 8.25h1.5v1.5H7.5v-1.5zm7.5-8.25h1.5v1.5H15V7.5zm0 8.25h1.5v1.5H15v-1.5z',
-      fontAwesomeIcon: 'fa-solid fa-diagram-project',
+      icon: 'devices',
+      svgPath: 'M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 6.75v10.5a2.25 2.25 0 002.25 2.25zm.75-12h9v9h-9v-9z',
       priority: 'primary',
       translationKey: 'navigation.devices'
     },
@@ -142,7 +138,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       route: '/sensors',
       icon: 'sensors',
       svgPath: 'M9.348 14.651a3.75 3.75 0 010-5.303m5.304 0a3.75 3.75 0 010 5.303m-7.425 2.122a6.75 6.75 0 010-9.546m9.546 0a6.75 6.75 0 010 9.546M5.106 18.894c-3.808-3.808-3.808-9.98 0-13.789m13.788 0c3.808 3.808 3.808 9.981 0 13.79M12 12h.008v.007H12V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z',
-      fontAwesomeIcon: 'fa-solid fa-microchip',
       priority: 'secondary',
       translationKey: 'navigation.sensors'
     },
@@ -152,7 +147,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       route: '/sensor-readings',
       icon: 'analytics',
       svgPath: 'M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6.75',
-      fontAwesomeIcon: 'fa-solid fa-chart-line',
       priority: 'secondary',
       translationKey: 'navigation.liveReadings'
     },
@@ -162,7 +156,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       route: '/actions',
       icon: 'bolt',
       svgPath: 'M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z',
-      fontAwesomeIcon: 'fa-solid fa-bolt',
       priority: 'primary',
       translationKey: 'navigation.actions'
     },
@@ -172,7 +165,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       route: '/crops',
       icon: 'spa',
       svgPath: 'M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z',
-      fontAwesomeIcon: 'fa-solid fa-seedling',
       priority: 'primary',
       translationKey: 'navigation.crops'
     }
@@ -257,10 +249,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   private checkScreenSize(): void {
     const width = window.innerWidth;
-    // Mobile: 320px - 767px
-    this.isMobile.set(width <= 767);
-    // Tablet: 768px - 1024px
-    this.isTablet.set(width >= 768 && width <= 1024);
+    this.isMobile.set(width <= 768);
+    this.isTablet.set(width > 768 && width <= 1024);
   }
 
   ngOnDestroy(): void {
@@ -557,35 +547,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.closeFarmSelector();
   }
 
-  // Cache for device counts per farm using signals
-  private deviceCountCache = signal<Map<string, number>>(new Map());
-
   getFarmDeviceCount(farm: Farm): number {
-    const cache = this.deviceCountCache();
-    // Return cached count if available
-    if (cache.has(farm.farm_id)) {
-      return cache.get(farm.farm_id) || 0;
-    }
-
-    // Fetch device count from API
-    this.api.getDevicesByFarm(farm.farm_id).subscribe({
-      next: (devices) => {
-        const count = devices?.length || 0;
-        const newCache = new Map(cache);
-        newCache.set(farm.farm_id, count);
-        this.deviceCountCache.set(newCache);
-        this.cdr.markForCheck();
-      },
-      error: (error) => {
-        console.error('Error fetching device count for farm:', error);
-        const newCache = new Map(cache);
-        newCache.set(farm.farm_id, 0);
-        this.deviceCountCache.set(newCache);
-        this.cdr.markForCheck();
-      }
-    });
-
-    // Return 0 initially, will update when API call completes
+    // This would ideally come from the farm data or API
+    // For now, return a placeholder
     return 0;
   }
 
@@ -633,4 +597,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.closeMoreMenu();
   }
 
+  // Quick action handler for FAB
+  handleQuickAction(): void {
+    // Navigate to manual control/actions page
+    this.router.navigate(['/actions'], { queryParams: { mode: 'manual' } });
+  }
 }

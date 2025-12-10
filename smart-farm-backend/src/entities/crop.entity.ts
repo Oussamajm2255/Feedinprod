@@ -1,9 +1,9 @@
-import { Entity, PrimaryColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Sensor } from './sensor.entity';
 
 @Entity('crops')
 export class Crop {
-  @PrimaryColumn({ type: 'varchar', length: 36 })
+  @PrimaryGeneratedColumn('uuid')
   crop_id: string;
 
   @Column({ type: 'varchar', length: 100 })

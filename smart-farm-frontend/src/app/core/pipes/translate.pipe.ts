@@ -1,59 +1,39 @@
-import { Pipe, PipeTransform, inject, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Pipe, PipeTransform, inject, effect, signal } from '@angular/core';
 import { LanguageService } from '../services/language.service';
-import { Subscription } from 'rxjs';
 
-/**
- * Translation Pipe - TerraFlow Smart Farm
- * 
- * Usage:
- *   {{ 'CROPS.LOADING' | translate }}
- *   {{ 'CROPS.WELCOME' | translate:{ name: userName } }}
- * 
- * Features:
- * - Reactive to language changes
- * - Parameter interpolation support
- * - Fallback to English if key not found
- * - Performance optimized with impure pipe
- */
 @Pipe({
   name: 'translate',
   standalone: true,
-  pure: false // Impure to react to language changes
+  pure: false // Required for reactive translations
 })
-export class TranslatePipe implements PipeTransform, OnDestroy {
+export class TranslatePipe implements PipeTransform {
   private languageService = inject(LanguageService);
-  private cdr = inject(ChangeDetectorRef);
-  private subscription?: Subscription;
-  private lastKey: string = '';
-  private lastParams?: { [key: string]: any };
-  private lastValue: string = '';
+  private translations = this.languageService.translations;
+  private currentLanguage = this.languageService.currentLanguage;
+
+  // Internal signal to force re-evaluation when language changes
+  private translationTrigger = signal(0);
 
   constructor() {
-    // Subscribe to translation changes for reactivity
-    this.subscription = this.languageService.getTranslations().subscribe(() => {
-      // Force change detection when translations update
-      this.cdr.markForCheck();
+    // Enhanced reactivity effect to ensure pipe updates when language changes
+    effect(() => {
+      // Access both signals to establish dependency
+      const translations = this.translations();
+      const language = this.currentLanguage();
+
+      // Trigger re-evaluation by updating the internal signal
+      this.translationTrigger.set(this.translationTrigger() + 1);
     });
   }
 
   transform(key: string, params?: { [key: string]: any }): string {
-    if (!key) return '';
+    // Access the trigger signal to ensure reactivity
+    this.translationTrigger();
 
-    // Performance optimization: return cached value if key and params haven't changed
-    if (key === this.lastKey && JSON.stringify(params) === JSON.stringify(this.lastParams)) {
-      return this.lastValue;
-    }
-
-    this.lastKey = key;
-    this.lastParams = params;
-    this.lastValue = this.languageService.translate(key, params);
-
-    return this.lastValue;
-  }
-
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    return this.languageService.translate(key, params);
   }
 }
+
+
+
+

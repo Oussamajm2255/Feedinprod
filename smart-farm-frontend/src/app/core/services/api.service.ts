@@ -194,16 +194,11 @@ export class ApiService {
   }
 
   getSensorsByFarm(farmId: string): Observable<Sensor[]> {
-    return this.http.get<Sensor[]>(`${this.API_URL}/sensors/by-farm/${farmId}`);
+    return this.http.get<Sensor[]>(`${this.API_URL}/sensors/farm/${farmId}`);
   }
 
   getSensorsByDevice(deviceId: string): Observable<Sensor[]> {
-    return this.http.get<Sensor[]>(`${this.API_URL}/sensors/by-device/${deviceId}`);
-  }
-
-  getSensorsByCrop(cropId: string, includeReadings = false): Observable<Sensor[]> {
-    const params = new HttpParams().set('includeReadings', includeReadings.toString());
-    return this.http.get<Sensor[]>(`${this.API_URL}/crops/${cropId}/sensors`, { params });
+    return this.http.get<Sensor[]>(`${this.API_URL}/sensors/device/${deviceId}`);
   }
 
   // Sensor Reading endpoints
@@ -230,11 +225,11 @@ export class ApiService {
     const params = new HttpParams()
       .set('limit', limit.toString())
       .set('offset', offset.toString());
-    return this.http.get<SensorReading[]>(`${this.API_URL}/sensor-readings/by-sensor/${sensorId}`, { params });
+    return this.http.get<SensorReading[]>(`${this.API_URL}/sensor-readings/sensor/${sensorId}`, { params });
   }
 
   getLatestReading(sensorId: string): Observable<SensorReading | null> {
-    return this.http.get<SensorReading | null>(`${this.API_URL}/sensor-readings/by-sensor/${sensorId}/latest`);
+    return this.http.get<SensorReading | null>(`${this.API_URL}/sensor-readings/sensor/${sensorId}/latest`);
   }
 
   getReadingsByDateRange(sensorId: string, startDate: Date, endDate: Date, limit = 1000): Observable<SensorReading[]> {
@@ -242,39 +237,31 @@ export class ApiService {
       .set('startDate', startDate.toISOString())
       .set('endDate', endDate.toISOString())
       .set('limit', limit.toString());
-    return this.http.get<SensorReading[]>(`${this.API_URL}/sensor-readings/by-sensor/${sensorId}/date-range`, { params });
+    return this.http.get<SensorReading[]>(`${this.API_URL}/sensor-readings/sensor/${sensorId}/range`, { params });
   }
 
   getReadingsByFarm(farmId: string, limit = 100, offset = 0): Observable<SensorReading[]> {
     const params = new HttpParams()
       .set('limit', limit.toString())
       .set('offset', offset.toString());
-    return this.http.get<SensorReading[]>(`${this.API_URL}/sensor-readings/by-farm/${farmId}`, { params });
+    return this.http.get<SensorReading[]>(`${this.API_URL}/sensor-readings/farm/${farmId}`, { params });
   }
 
   getReadingsByDevice(deviceId: string, limit = 100, offset = 0): Observable<SensorReading[]> {
     const params = new HttpParams()
       .set('limit', limit.toString())
       .set('offset', offset.toString());
-    return this.http.get<SensorReading[]>(`${this.API_URL}/sensor-readings/by-device/${deviceId}`, { params });
-  }
-
-  getReadingsByDeviceDateRange(deviceId: string, startDate: Date, endDate: Date, limit = 1000): Observable<SensorReading[]> {
-    const params = new HttpParams()
-      .set('startDate', startDate.toISOString())
-      .set('endDate', endDate.toISOString())
-      .set('limit', limit.toString());
-    return this.http.get<SensorReading[]>(`${this.API_URL}/sensor-readings/by-device/${deviceId}/date-range`, { params });
+    return this.http.get<SensorReading[]>(`${this.API_URL}/sensor-readings/device/${deviceId}`, { params });
   }
 
   getSensorStatistics(sensorId: string, days = 7): Observable<any> {
     const params = new HttpParams().set('days', days.toString());
-    return this.http.get<any>(`${this.API_URL}/sensor-readings/by-sensor/${sensorId}/statistics`, { params });
+    return this.http.get<any>(`${this.API_URL}/sensor-readings/sensor/${sensorId}/statistics`, { params });
   }
 
   getFarmStatistics(farmId: string, days = 7): Observable<any> {
     const params = new HttpParams().set('days', days.toString());
-    return this.http.get<any>(`${this.API_URL}/sensor-readings/by-farm/${farmId}/statistics`, { params });
+    return this.http.get<any>(`${this.API_URL}/sensor-readings/farm/${farmId}/statistics`, { params });
   }
 
   // Crop endpoints

@@ -1,0 +1,602 @@
+[
+  {
+    "id": "TC001",
+    "title": "Successful login with valid credentials",
+    "description": "Verify that a user can log in successfully using valid username and password, and is redirected to the correct dashboard based on role.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page"
+      },
+      {
+        "type": "action",
+        "description": "Enter valid username and password"
+      },
+      {
+        "type": "action",
+        "description": "Click the login button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that login is successful and user is taken to their respective dashboard (Farmer or Admin)"
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "Login failure with incorrect credentials",
+    "description": "Verify that providing incorrect login credentials displays appropriate error messages and prevents access.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page"
+      },
+      {
+        "type": "action",
+        "description": "Enter invalid username or password"
+      },
+      {
+        "type": "action",
+        "description": "Click the login button"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an error message is shown and access is denied"
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Role-based access control enforcement",
+    "description": "Verify that users with different roles (Farmer, Admin) have access only to allowed modules and UI elements.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Log in as Farmer"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify Farmer dashboard and menus are displayed, Admin-only features are hidden"
+      },
+      {
+        "type": "action",
+        "description": "Log out and login as Admin"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify Admin dashboard and full management features are accessible"
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Real-time dashboard sensor and device status display",
+    "description": "Verify that the dashboard displays real-time sensor data and device statuses and updates over time dynamically.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Log in as Farmer"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify real-time sensor readings, device statuses, and farm maps are shown accurately"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify floating action button (FAB) is present and functional for quick actions"
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Device management: view, filter, search, and pagination",
+    "description": "Verify device list loads with card and table views, supports filtering, search, and pagination.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to Devices management page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify devices load with both card and table views"
+      },
+      {
+        "type": "action",
+        "description": "Use search input with partial and full device names"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify search results update correctly"
+      },
+      {
+        "type": "action",
+        "description": "Apply filters by device status and type"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify filtered results match criteria"
+      },
+      {
+        "type": "action",
+        "description": "Navigate through pagination controls"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify pages load correctly and data updates"
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Bulk operations and export in device management",
+    "description": "Verify that users can select multiple devices to perform bulk enable/disable actions and export device data successfully.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to Devices management page"
+      },
+      {
+        "type": "action",
+        "description": "Select multiple devices using bulk selection"
+      },
+      {
+        "type": "action",
+        "description": "Perform bulk enable/disable action"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify all selected devices have their statuses updated accordingly"
+      },
+      {
+        "type": "action",
+        "description": "Use export function to export device list data"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify exported file contains correct and complete device data"
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Sensor readings visualization with auto-refresh and virtual scrolling",
+    "description": "Verify sensor readings display realistic data with charts, support virtual scrolling, and refresh automatically.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to Sensor Readings module"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify sensor data visualized with charts and color codings"
+      },
+      {
+        "type": "action",
+        "description": "Scroll through sensor list to trigger virtual scrolling"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify smooth rendering of sensors loading/unloading"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify sensor readings refresh automatically as new data arrives"
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Manual control and action logging",
+    "description": "Verify users can manually control equipment, see real-time action streams, and view detailed recent action histories.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to Actions/Automation module"
+      },
+      {
+        "type": "action",
+        "description": "Perform a manual control action on an equipment device"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify action is executed and reflected immediately"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify real-time action stream updates with the new action"
+      },
+      {
+        "type": "action",
+        "description": "Open action details dialog for a previous action"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify detailed information of the action is displayed correctly"
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Notification system real-time alerts and management",
+    "description": "Verify push notifications arrive in real-time with WebSocket, users can read, delete, mark as read in the Notification Center.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Trigger an alert event from backend (simulate IoT alert)"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify notification toast appears in real-time"
+      },
+      {
+        "type": "action",
+        "description": "Open Notification Center"
+      },
+      {
+        "type": "action",
+        "description": "Mark a notification as read"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify notification state updates to read"
+      },
+      {
+        "type": "action",
+        "description": "Delete a notification"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify notification is removed from the list"
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Multi-language UI support and RTL layout",
+    "description": "Verify UI languages dynamically switch between English, Arabic (with RTL layout), and French with proper translations and layout adjustments.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "In UI settings or language switcher, select Arabic language"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify UI texts translate to Arabic and layout switches to RTL"
+      },
+      {
+        "type": "action",
+        "description": "Switch language to French"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify UI texts translate to French and layout is LTR"
+      },
+      {
+        "type": "action",
+        "description": "Switch language back to English"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify UI returns to English texts and default LTR layout"
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Dark and light theme toggle with consistent UI styling",
+    "description": "Verify toggling between dark and light themes changes the UI styling consistently across all components respecting the glassmorphism and neumorphism design.",
+    "category": "ui",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Toggle application theme to dark mode"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify all UI components reflect the dark theme styling consistently"
+      },
+      {
+        "type": "action",
+        "description": "Toggle back to light mode"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify all UI components reflect the light theme styling consistently"
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Profile management: personal info edit and password change",
+    "description": "Verify users can update their personal profile data and securely change their password.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to user profile module"
+      },
+      {
+        "type": "action",
+        "description": "Edit personal information fields and save"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify updated data persists and displays correctly"
+      },
+      {
+        "type": "action",
+        "description": "Change password with current and new passwords"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify password change confirmation and login with new password success"
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "API error handling and authentication interceptor",
+    "description": "Verify that all API calls handle server errors gracefully, authentication tokens are attached properly, and unauthorized access redirects to login.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Trigger API call with expired or missing JWT token"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify user is redirected to login page"
+      },
+      {
+        "type": "action",
+        "description": "Trigger API call with server error (e.g., 500 status)"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify user-friendly error message is displayed without breaking the UI"
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Shared UI components presence and consistency",
+    "description": "Verify common UI components such as headers, footers, language switchers, floating action buttons, and loading screens render correctly and maintain style consistency.",
+    "category": "ui",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate through multiple application pages"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify header and footer are consistently displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify language switcher works and appears in expected places"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify global floating action buttons are present where expected"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify loading screens show during async data fetching"
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "Notification preferences configuration",
+    "description": "Verify users can configure notification settings such as enable/disable alert categories and notification methods.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Open Settings and navigate to Notification Preferences"
+      },
+      {
+        "type": "action",
+        "description": "Toggle notification categories on or off"
+      },
+      {
+        "type": "action",
+        "description": "Save changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify notifications respect the configured preferences in real-time"
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "Farm management: create, edit, and delete farms",
+    "description": "Verify that users can create new farms, edit existing farm details, and delete farms with confirmation.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to Farms management page"
+      },
+      {
+        "type": "action",
+        "description": "Create a new farm with valid data"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the new farm appears in the list"
+      },
+      {
+        "type": "action",
+        "description": "Edit an existing farm's details and save changes"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the edited details are updated correctly"
+      },
+      {
+        "type": "action",
+        "description": "Delete a farm after confirming the action"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the farm is no longer listed"
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "Search and filter functionality in farms and devices with no results",
+    "description": "Verify that searches and filters yielding no results display appropriate user feedback and UI states.",
+    "category": "error handling",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Perform a search with a non-existent farm/device name"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that a 'No results found' message is shown"
+      },
+      {
+        "type": "action",
+        "description": "Apply filters that exclude all farms/devices"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify 'No matching items' feedback is displayed clearly"
+      }
+    ]
+  },
+  {
+    "id": "TC018",
+    "title": "Floating UI tooltips and dropdowns positioning and responsiveness",
+    "description": "Verify advanced tooltips and dropdown menus position correctly relative to triggers, adjusting for viewport edges and scrolling.",
+    "category": "ui",
+    "priority": "Low",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Hover over UI elements with tooltips"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify tooltips appear in correct positions without clipping"
+      },
+      {
+        "type": "action",
+        "description": "Open dropdown menus in various page locations"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify dropdown menus reposition dynamically to remain fully visible"
+      },
+      {
+        "type": "action",
+        "description": "Resize window and scroll page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify tooltips and dropdowns recalculate positions accordingly"
+      }
+    ]
+  },
+  {
+    "id": "TC019",
+    "title": "Logout and guest guard enforcement",
+    "description": "Verify that logging out invalidates the session and guest guard prevents authenticated users from accessing login or register pages.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Log in with valid credentials"
+      },
+      {
+        "type": "action",
+        "description": "Log out from the application"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify user is redirected to login screen and session token is invalidated"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to navigate to login or register page while logged in"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify guest guard redirects authenticated user to dashboard"
+      }
+    ]
+  },
+  {
+    "id": "TC020",
+    "title": "Responsive layout and UI on multiple screen sizes",
+    "description": "Verify the application layout and UI components respond and adapt correctly on desktop, tablet, and mobile screen sizes including language and theme changes.",
+    "category": "ui",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Open the application on desktop resolution"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify layout and UI components display correctly without overflow or clipping"
+      },
+      {
+        "type": "action",
+        "description": "Resize window to tablet size"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify layout adjusts properly and remains usable"
+      },
+      {
+        "type": "action",
+        "description": "Resize to mobile width or use mobile device"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify UI is functional with accessible menus, buttons, and data display"
+      },
+      {
+        "type": "action",
+        "description": "Switch languages and theme while testing responsiveness"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify no UI breakage and smooth transitions occur"
+      }
+    ]
+  }
+]

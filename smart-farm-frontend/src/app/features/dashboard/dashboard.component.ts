@@ -14,19 +14,14 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslatePipe } from '../../core/pipes/translate.pipe';
 
 import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
-import { Farm, Device, SensorReading, Sensor } from '../../core/models/farm.model';
+import { Farm, Device, SensorReading } from '../../core/models/farm.model';
 import { NotificationService } from '../../core/services/notification.service';
 import { LanguageService } from '../../core/services/language.service';
 import { FarmManagementService } from '../../core/services/farm-management.service';
-import { WeatherService } from '../../core/services/weather.service';
-import { WeatherResponse } from '../../core/models/weather.model';
-import { User } from '../../core/models/user.model';
-import { interval, Subscription, forkJoin, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -46,8 +41,7 @@ import { catchError } from 'rxjs/operators';
     MatSelectModule,
     MatFormFieldModule,
     MatDividerModule,
-    MatTooltipModule,
-    TranslatePipe
+    MatTooltipModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
@@ -57,7 +51,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private notifications = inject(NotificationService);
   private authService = inject(AuthService);
   private farmManagement = inject(FarmManagementService);
-  private weatherService = inject(WeatherService);
   private router = inject(Router);
   public languageService = inject(LanguageService);
 
@@ -70,26 +63,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   recentReadings: SensorReading[] = [];
   statistics: any = {};
 
-  // Farm details
-  farmerName: string = '';
-  farmDetails: Farm | null = null;
-
-  // Weather data from OpenWeatherMap
-  weatherData: WeatherResponse | null = null;
-  weatherLoading = false;
-  weatherError: string | null = null;
-
-  // Optional sensor data (for enhanced insights)
-  sensorTemperature: number | null = null;
-  sensorHumidity: number | null = null;
-
-  // AI Insights
-  aiInsights: string[] = [];
-
-  // Map
-  private map: any = null;
-  private mapInitialized = false;
-
   // FAB Configuration with circular positioning
   circularDistance = 110; // Distance from center in pixels
 
@@ -101,35 +74,35 @@ export class DashboardComponent implements OnInit, OnDestroy {
     {
       route: '/sensor-readings',
       icon: 'timeline',
-      labelKey: 'dashboard.fab.liveReadings',
+      label: 'Live Readings',
       gradient: 'linear-gradient(135deg, #42A5F5 0%, #1E88E5 100%)',
       iconColor: '#ffffff'
     },
     {
       route: '/devices',
       icon: 'devices',
-      labelKey: 'dashboard.fab.devices',
+      label: 'Devices',
       gradient: 'linear-gradient(135deg, #66BB6A 0%, #43A047 100%)',
       iconColor: '#ffffff'
     },
     {
       route: '/actions',
       icon: 'settings_remote',
-      labelKey: 'dashboard.fab.actionsCenter',
+      label: 'Actions Center',
       gradient: 'linear-gradient(135deg, #FFA726 0%, #FB8C00 100%)',
       iconColor: '#ffffff'
     },
     {
       route: '/sensors',
       icon: 'sensors',
-      labelKey: 'dashboard.fab.sensorInfo',
+      label: 'Sensor Info',
       gradient: 'linear-gradient(135deg, #AB47BC 0%, #8E24AA 100%)',
       iconColor: '#ffffff'
     },
     {
       route: '/crops',
       icon: 'grass',
-      labelKey: 'dashboard.fab.crops',
+      label: 'Crops',
       gradient: 'linear-gradient(135deg, #26A69A 0%, #00897B 100%)',
       iconColor: '#ffffff'
     }
@@ -155,20 +128,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.farmManagement.selectedFarm$.subscribe(selectedFarm => {
       if (selectedFarm) {
         this.loadFarmData(selectedFarm);
-      } else {
-        // Load data for currently selected farm if available
-        const currentFarm = this.farmManagement.getSelectedFarm();
-        if (currentFarm) {
-          this.loadFarmData(currentFarm);
-        }
       }
     });
-
-    // Load initial farm data if available
-    const initialFarm = this.farmManagement.getSelectedFarm();
-    if (initialFarm) {
-      this.loadFarmData(initialFarm);
-    }
 
     // Start real-time updates
     this.startRealTimeUpdates();
@@ -177,10 +138,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.refreshSubscription) {
       this.refreshSubscription.unsubscribe();
-    }
-    if (this.map) {
-      this.map.remove();
-      this.map = null;
     }
   }
 
@@ -369,8 +326,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   loadFarmData(farm: Farm): void {
-    this.farmDetails = farm;
-    
     // Load devices for selected farm
     this.apiService.getDevicesByFarm(farm.farm_id).subscribe({
       next: (devices) => {
@@ -391,305 +346,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         console.error('Error loading farm readings:', error);
       }
     });
-
-    // Initialize map if coordinates available
-    if (farm.latitude && farm.longitude) {
-      setTimeout(() => {
-        this.initializeMap(farm.latitude!, farm.longitude!, farm.name, '', farm.location || '');
-      }, 100);
-    }
-
-    // Load farmer name
-    if (farm.owner_id) {
-      this.apiService.getUser(farm.owner_id).subscribe({
-        next: (user) => {
-          this.farmerName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.email || 'Unknown';
-          // Update map popup with farmer name if map is already initialized
-          if (this.map && this.mapInitialized) {
-            this.updateMapPopup(farm.name, this.farmerName, farm.location || '');
-          }
-        },
-        error: (error) => {
-          console.error('Error loading farmer:', error);
-          this.farmerName = 'Unknown';
-        }
-      });
-    }
-
-    // Load weather data from OpenWeatherMap API
-    if (farm.latitude && farm.longitude) {
-      this.loadWeatherData(farm.latitude, farm.longitude);
-    } else {
-      this.weatherError = 'Farm coordinates not available';
-    }
-
-    // Optionally load sensor data for enhanced insights (non-blocking)
-    this.loadSensorData(farm.farm_id);
-  }
-
-  initializeMap(lat: number, lng: number, farmName: string, ownerName: string = '', description: string = ''): void {
-    // Check if Leaflet is available
-    if (typeof (window as any).L === 'undefined') {
-      console.warn('Leaflet not loaded yet');
-      return;
-    }
-
-    const L = (window as any).L;
-    const mapContainer = document.getElementById('farm-map');
-    if (!mapContainer) {
-      return;
-    }
-
-    // Remove existing map if any
-    if (this.map) {
-      this.map.remove();
-    }
-
-    // Initialize map
-    this.map = L.map('farm-map').setView([lat, lng], 15);
-
-    // Add OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
-      maxZoom: 19
-    }).addTo(this.map);
-
-    // Build popup content
-    let popupContent = `<strong>${farmName}</strong>`;
-    if (ownerName && ownerName !== 'Unknown') {
-      popupContent += `<br><strong>Owner:</strong> ${ownerName}`;
-    }
-    if (description) {
-      popupContent += `<br><strong>Description:</strong> ${description}`;
-    }
-    popupContent += `<br><small>${lat}, ${lng}</small>`;
-
-    // Add marker
-    L.marker([lat, lng])
-      .addTo(this.map)
-      .bindPopup(popupContent)
-      .openPopup();
-
-    this.mapInitialized = true;
-  }
-
-  updateMapPopup(farmName: string, ownerName: string, description: string): void {
-    if (!this.map) return;
-
-    // Find the marker and update its popup
-    this.map.eachLayer((layer: any) => {
-      if (layer instanceof (window as any).L.Marker) {
-        let popupContent = `<strong>${farmName}</strong>`;
-        if (ownerName && ownerName !== 'Unknown') {
-          popupContent += `<br><strong>Owner:</strong> ${ownerName}`;
-        }
-        if (description) {
-          popupContent += `<br><strong>Description:</strong> ${description}`;
-        }
-        const latlng = layer.getLatLng();
-        popupContent += `<br><small>${latlng.lat}, ${latlng.lng}</small>`;
-        layer.setPopupContent(popupContent);
-      }
-    });
-  }
-
-  loadWeatherData(lat: number, lon: number): void {
-    this.weatherLoading = true;
-    this.weatherError = null;
-
-    this.weatherService.getWeather(lat, lon).pipe(
-      catchError((error) => {
-        console.error('Error loading weather data:', error);
-        this.weatherError = error.message || 'Failed to load weather data';
-        this.weatherLoading = false;
-        return of(null);
-      })
-    ).subscribe({
-      next: (data) => {
-        if (data) {
-          this.weatherData = data;
-          // Generate AI insights after weather data loads
-          this.generateAIInsights();
-        }
-        this.weatherLoading = false;
-      }
-    });
-  }
-
-  loadSensorData(farmId: string): void {
-    // Optional: Load sensor data for enhanced insights (non-blocking)
-    this.apiService.getSensorsByFarm(farmId).subscribe({
-      next: (sensors) => {
-        const tempSensor = sensors.find(s => 
-          s.type.toLowerCase().includes('temp') || 
-          s.unit.toLowerCase().includes('c') ||
-          s.unit.toLowerCase().includes('°')
-        );
-        const humiditySensor = sensors.find(s => 
-          s.type.toLowerCase().includes('humid') || 
-          s.unit.toLowerCase().includes('%')
-        );
-
-        const tempRequest = tempSensor 
-          ? this.apiService.getLatestReading(tempSensor.sensor_id).pipe(catchError(() => of(null)))
-          : of(null);
-        
-        const humidityRequest = humiditySensor
-          ? this.apiService.getLatestReading(humiditySensor.sensor_id).pipe(catchError(() => of(null)))
-          : of(null);
-
-        forkJoin([tempRequest, humidityRequest]).subscribe({
-          next: (readings) => {
-            const tempReading = (readings[0] || null) as SensorReading | null;
-            const humidityReading = (readings[1] || null) as SensorReading | null;
-
-            if (tempReading && tempSensor) {
-              const typeLower = tempSensor.type.toLowerCase();
-              const unitLower = tempSensor.unit.toLowerCase();
-              if (typeLower.includes('temp') || unitLower.includes('c') || unitLower.includes('°')) {
-                this.sensorTemperature = tempReading.value1 || tempReading.value2 || null;
-              } else {
-                this.sensorTemperature = tempReading.value1 || null;
-              }
-            }
-
-            if (humidityReading && humiditySensor) {
-              const typeLower = humiditySensor.type.toLowerCase();
-              const unitLower = humiditySensor.unit.toLowerCase();
-              if (typeLower.includes('humid') || unitLower.includes('%')) {
-                this.sensorHumidity = humidityReading.value2 || humidityReading.value1 || null;
-              } else {
-                this.sensorHumidity = humidityReading.value1 || null;
-              }
-            }
-
-            // Regenerate insights with sensor data
-            this.generateAIInsights();
-          },
-          error: (error) => {
-            console.error('Error loading sensor data:', error);
-          }
-        });
-      },
-      error: (error) => {
-        console.error('Error loading sensors:', error);
-      }
-    });
-  }
-
-  generateAIInsights(): void {
-    this.aiInsights = [];
-    
-    if (!this.weatherData) {
-      return;
-    }
-
-    const current = this.weatherData.current;
-    const temp = current.temp;
-    const feelsLike = current.feels_like;
-    const humidity = current.humidity;
-    const windSpeed = current.wind_speed;
-    const clouds = current.clouds;
-    const pop = this.weatherData.hourly[0]?.pop || 0;
-    
-    // Use sensor data if available, otherwise use weather API data
-    const actualTemp = this.sensorTemperature ?? temp;
-    const actualHumidity = this.sensorHumidity ?? humidity;
-
-    // Temperature-based insights
-    if (temp > 35) {
-      this.aiInsights.push('High temperature warning. Ensure adequate water supply and consider shade protection for sensitive crops.');
-    } else if (temp < 10) {
-      this.aiInsights.push('Low temperature detected. Protect crops from potential frost damage.');
-    } else if (feelsLike > temp + 3) {
-      this.aiInsights.push('High heat index. Crops may experience additional stress. Increase irrigation frequency.');
-    }
-
-    // Humidity-based insights
-    if (actualHumidity < 40 && temp > 25) {
-      this.aiInsights.push('Low humidity and high temperature detected. Consider irrigation to maintain optimal soil moisture.');
-    } else if (actualHumidity < 30) {
-      this.aiInsights.push('Very low humidity detected. Irrigation recommended to prevent crop stress.');
-    } else if (actualHumidity > 80) {
-      this.aiInsights.push('High humidity detected. Monitor for potential fungal issues and ensure proper ventilation.');
-    }
-
-    // Wind-based insights
-    if (windSpeed > 15) {
-      this.aiInsights.push('High wind speed detected. Secure any loose equipment and monitor for potential crop damage.');
-    }
-
-    // Precipitation probability
-    if (pop > 0.7) {
-      this.aiInsights.push('High probability of rain in the next hour. Consider adjusting irrigation schedules.');
-    } else if (pop > 0.5) {
-      this.aiInsights.push('Moderate chance of rain. Monitor weather conditions closely.');
-    }
-
-    // Cloud cover
-    if (clouds > 80) {
-      this.aiInsights.push('Heavy cloud cover. Reduced sunlight may affect photosynthesis. Monitor crop growth.');
-    } else if (clouds < 20 && temp > 30) {
-      this.aiInsights.push('Clear skies and high temperature. Ensure adequate irrigation and consider shade for sensitive crops.');
-    }
-
-    // Combined conditions
-    if (actualHumidity > 70 && temp > 30) {
-      this.aiInsights.push('High humidity and temperature combination. Monitor for heat stress and ensure proper ventilation.');
-    }
-
-    // Daily forecast insights
-    if (this.weatherData.daily && this.weatherData.daily.length > 0) {
-      const tomorrow = this.weatherData.daily[1];
-      if (tomorrow) {
-        if (tomorrow.pop > 0.7) {
-          this.aiInsights.push(`Tomorrow: High chance of rain (${Math.round(tomorrow.pop * 100)}%). Plan irrigation accordingly.`);
-        }
-        if (tomorrow.temp.max > 35) {
-          this.aiInsights.push(`Tomorrow: Very high temperature expected (${Math.round(tomorrow.temp.max)}°C). Prepare cooling measures.`);
-        }
-        if (tomorrow.temp.min < 5) {
-          this.aiInsights.push(`Tomorrow: Low temperature expected (${Math.round(tomorrow.temp.min)}°C). Protect crops from frost.`);
-        }
-      }
-    }
-
-    if (this.aiInsights.length === 0) {
-      this.aiInsights.push('Weather conditions are within normal ranges. Continue monitoring.');
-    }
-  }
-
-  // Helper methods for weather display
-  getWeatherIconUrl(icon: string): string {
-    return `https://openweathermap.org/img/wn/${icon}@2x.png`;
-  }
-
-  formatTime(timestamp: number): string {
-    return new Date(timestamp * 1000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-  }
-
-  formatDate(timestamp: number): string {
-    return new Date(timestamp * 1000).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-  }
-
-  getGoogleMapsUrl(): string {
-    const farm = this.selectedFarm;
-    if (farm?.latitude && farm?.longitude) {
-      return `https://www.google.com/maps?q=${farm.latitude},${farm.longitude}`;
-    }
-    return '';
-  }
-
-  hasMapData(): boolean {
-    const farm = this.selectedFarm;
-    return !!(farm?.latitude && farm?.longitude);
-  }
-
-  openInGoogleMaps(): void {
-    const url = this.getGoogleMapsUrl();
-    if (url) {
-      window.open(url, '_blank');
-    }
   }
 
   getFarmDisplayName(): string {

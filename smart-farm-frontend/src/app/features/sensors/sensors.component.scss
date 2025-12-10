@@ -42,7 +42,7 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
   }
-
+  
   p {
     margin: 0.5rem 0 0 0;
       font-size: 1.1rem;
@@ -50,7 +50,7 @@
       font-weight: 400;
     }
   }
-
+  
   .header-actions {
     display: flex;
     gap: 1rem;
@@ -102,226 +102,57 @@ body.dark-theme .sensors-header {
   }
 }
 
-// ===== TABS STYLING ===== (Enhanced TerraFlow Style with Aggressive Overrides)
+// ===== TABS STYLING ===== (TerraFlow Style)
 .sensors-tabs {
-  background: var(--card-bg, #ffffff) !important;
-  border-radius: 16px !important;
-  border: 1px solid var(--border-color, #e5e7eb) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
-  overflow: hidden !important;
-  animation: scaleIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
+  background: var(--card-bg, #ffffff);
+  border-radius: 16px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  animation: fadeIn 0.8s ease;
 
-// Use :host to ensure styles penetrate component encapsulation
-:host ::ng-deep .sensors-tabs {
   .mat-mdc-tab-group {
-    // Tab Header
     .mat-mdc-tab-header {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.03), rgba(59, 130, 246, 0.03)) !important;
-      border-bottom: 2px solid var(--border-color, #e5e7eb) !important;
-      padding: 0.5rem 1rem 0 !important;
-      min-height: 64px !important;
-      position: relative !important;
-      
-      // Add subtle accent line at top
-      &::before {
-        content: '' !important;
-        position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        height: 3px !important;
-        background: linear-gradient(90deg, #10b981, #3b82f6, #10b981) !important;
-        background-size: 200% 100% !important;
-        opacity: 0.4 !important;
-        animation: shimmerHeader 3s ease-in-out infinite !important;
-        z-index: 1 !important;
-      }
-    }
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.02), rgba(59, 130, 246, 0.02));
+      border-bottom: 1px solid var(--border-color, #e5e7eb);
 
-    // Enhanced Tab Labels Container - THIS IS THE KEY TARGET
-    .mat-mdc-tab-labels {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(59, 130, 246, 0.05)) !important;
-      border-radius: 12px !important;
-      padding: 6px !important;
-      margin: 0.5rem !important;
-      gap: 8px !important;
-      display: flex !important;
-      position: relative !important;
-      overflow: visible !important;
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04) !important;
-    }
+      .mat-mdc-tab {
+        font-weight: 600;
+        color: var(--text-secondary, #6b7280);
+        transition: all 0.3s ease;
 
-    // Enhanced Individual Tab Labels - AGGRESSIVE OVERRIDES
-    .mat-mdc-tab {
-      min-width: 160px !important;
-      height: 48px !important;
-      font-weight: 700 !important;
-      font-size: 0.9375rem !important;
-      color: var(--text-secondary, #6b7280) !important;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-      border-radius: 10px !important;
-      position: relative !important;
-      overflow: visible !important;
-      margin: 0 4px !important;
-      background: transparent !important;
-      opacity: 1 !important;
-      
-      // Tab content wrapper
-      .mdc-tab__content {
-        position: relative !important;
-        z-index: 2 !important;
-      }
-      
-      // Add subtle background on hover
-      &::before {
-        content: '' !important;
-        position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        bottom: 0 !important;
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(59, 130, 246, 0.08)) !important;
-        opacity: 0 !important;
-        transition: opacity 0.3s ease !important;
-        border-radius: 10px !important;
-        z-index: 0 !important;
-      }
-      
-      // Tab text label - CRITICAL
-      .mdc-tab__text-label {
-        position: relative !important;
-        z-index: 3 !important;
-        font-weight: 700 !important;
-        letter-spacing: 0.3px !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        color: inherit !important;
-      }
-      
-      // Active tab styling - AGGRESSIVE
-      &.mdc-tab--active {
-        color: #ffffff !important;
-        background: linear-gradient(135deg, #10b981 0%, #059669 50%, #3b82f6 100%) !important;
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4),
-                    0 2px 4px rgba(16, 185, 129, 0.2),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
-        transform: translateY(-2px) !important;
-        
-        .mdc-tab__text-label {
-          color: #ffffff !important;
-          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+        &.mdc-tab--active {
+          color: #10b981;
         }
-        
-        // Active tab indicator
-        &::after {
-          content: '' !important;
-          position: absolute !important;
-          bottom: -2px !important;
-          left: 50% !important;
-          transform: translateX(-50%) !important;
-          width: 60% !important;
-          height: 3px !important;
-          background: #ffffff !important;
-          border-radius: 2px !important;
-          box-shadow: 0 0 8px rgba(255, 255, 255, 0.5) !important;
-          z-index: 4 !important;
-        }
-      }
-      
-      // Hover effect
-      &:hover:not(.mdc-tab--active) {
-        color: #10b981 !important;
-        transform: translateY(-1px) !important;
-        
-        &::before {
-          opacity: 1 !important;
-        }
-        
-        .mdc-tab__text-label {
-          color: #10b981 !important;
-          font-weight: 700 !important;
-        }
-      }
-    }
 
-    // Hide default Material indicator
-    .mdc-tab-indicator {
-      display: none !important;
-    }
-    
-    .mat-mdc-tab-header-pagination {
-      display: none !important;
+        &:hover {
+          color: #10b981;
+        }
+      }
     }
 
     .mat-mdc-tab-body-wrapper {
       .mat-mdc-tab-body-content {
-        padding: 0 !important;
+        padding: 0;
       }
     }
   }
 }
 
-// Dark Theme Overrides
-body.dark-theme :host ::ng-deep .sensors-tabs {
+body.dark-theme .sensors-tabs {
+  background: var(--card-bg, #1e293b);
+  border-color: var(--border-color, #334155);
+
   .mat-mdc-tab-group {
     .mat-mdc-tab-header {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(59, 130, 246, 0.08)) !important;
-      border-bottom-color: var(--border-color, #475569) !important;
-      
-      &::before {
-        background: linear-gradient(90deg, #10b981, #34d399, #3b82f6, #60a5fa, #10b981) !important;
-        background-size: 300% 100% !important;
-        opacity: 0.6 !important;
-        animation: shimmerHeaderDark 4s ease-in-out infinite !important;
-      }
-    }
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(59, 130, 246, 0.05));
+      border-bottom-color: var(--border-color, #334155);
 
-    // Enhanced Dark Theme Tab Labels Container
-    .mat-mdc-tab-labels {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1)) !important;
-      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
-      border: 1px solid rgba(16, 185, 129, 0.2) !important;
-    }
+      .mat-mdc-tab {
+        color: var(--text-secondary, #cbd5e1);
 
-    // Enhanced Dark Theme Tab Labels
-    .mat-mdc-tab {
-      color: var(--text-secondary, #cbd5e1) !important;
-      
-      &::before {
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(59, 130, 246, 0.15)) !important;
-      }
-
-      &.mdc-tab--active {
-        color: #ffffff !important;
-        background: linear-gradient(135deg, #10b981 0%, #059669 30%, #3b82f6 70%, #2563eb 100%) !important;
-        box-shadow: 0 4px 16px rgba(16, 185, 129, 0.5),
-                    0 2px 8px rgba(16, 185, 129, 0.3),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.2),
-                    0 0 20px rgba(16, 185, 129, 0.3) !important;
-        transform: translateY(-2px) !important;
-        
-        .mdc-tab__text-label {
-          color: #ffffff !important;
-          text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
-        }
-        
-        &::after {
-          background: #34d399 !important;
-          box-shadow: 0 0 12px rgba(52, 211, 153, 0.8) !important;
-        }
-      }
-
-      &:hover:not(.mdc-tab--active) {
-        color: #34d399 !important;
-        
-        &::before {
-          opacity: 1 !important;
-          background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(59, 130, 246, 0.2)) !important;
-        }
-        
-        .mdc-tab__text-label {
-          color: #34d399 !important;
+        &.mdc-tab--active {
+          color: #10b981;
         }
       }
     }
@@ -331,7 +162,6 @@ body.dark-theme :host ::ng-deep .sensors-tabs {
 // ===== TAB CONTENT ===== (TerraFlow Style)
 .tab-content {
   padding: 0;
-  animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 // ===== CONTENT PANELS ===== (TerraFlow Style)
@@ -342,14 +172,12 @@ body.dark-theme :host ::ng-deep .sensors-tabs {
   box-shadow: none;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
-  animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .panel-header {
   padding: 1.5rem 1.5rem 1rem 1.5rem;
   border-bottom: 1px solid var(--border-color, #e5e7eb);
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.02), rgba(59, 130, 246, 0.02));
-  animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
   .panel-title {
     display: flex;
@@ -360,7 +188,6 @@ body.dark-theme :host ::ng-deep .sensors-tabs {
     mat-icon {
       font-size: 1.5rem;
       color: #10b981;
-      animation: float 3s ease-in-out infinite;
     }
 
     span {
@@ -398,184 +225,43 @@ body.dark-theme .content-panel {
   }
 }
 
-// ===== TABLE STYLES ===== (Enhanced TerraFlow Style)
+// ===== TABLE STYLES ===== (TerraFlow Style)
 .table-container {
   overflow-x: auto;
-  overflow-y: visible;
-  border-radius: 16px;
+  border-radius: 12px;
   border: 1px solid var(--border-color, #e5e7eb);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06),
-              0 0 0 1px rgba(16, 185, 129, 0.05);
-  background: var(--card-bg, #ffffff);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-
-  // Add subtle glow on hover
-  &:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05),
-                0 0 0 1px rgba(16, 185, 129, 0.1),
-                0 0 20px rgba(16, 185, 129, 0.05);
-    border-color: rgba(16, 185, 129, 0.2);
-    transform: translateY(-1px);
-  }
   
-  // Add scrollbar styling
-  &::-webkit-scrollbar {
-    height: 8px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: var(--light-bg, #f9fafb);
-    border-radius: 4px;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: linear-gradient(90deg, #10b981, #3b82f6);
-    border-radius: 4px;
-    
-    &:hover {
-      background: linear-gradient(90deg, #059669, #2563eb);
-    }
-  }
-
   .sensors-table,
   .readings-table {
     width: 100%;
-    background: transparent;
-    border-collapse: separate;
-    border-spacing: 0;
+    background: var(--card-bg, #ffffff);
 
-    // Enhanced Header Styling
     th {
-      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
-      font-weight: 700;
-      font-size: 0.875rem;
+      background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+      font-weight: 600;
       color: var(--text-primary, #1f2937);
-      padding: 1.25rem 1.5rem;
-      border-bottom: 3px solid var(--border-color, #e5e7eb);
-      position: relative;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      white-space: nowrap;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 1;
-      
-      // Add subtle shadow for depth
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
-      
-      // Add accent line at top
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, #10b981, #3b82f6, #10b981);
-        background-size: 200% 100%;
-        opacity: 0.6;
-        animation: shimmerHeader 3s ease-in-out infinite;
-        z-index: 0;
-        border-radius: 16px 16px 0 0;
-      }
-      
-      // Ensure text content is above the accent line
-      > * {
-        position: relative;
-        z-index: 2;
-      }
-      
-      // Add hover effect
-      &:hover {
-        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 50%, #cbd5e1 100%);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-        color: #10b981;
-        
-        &::before {
-          opacity: 0.9;
-          height: 4px;
-        }
-      }
-      
-      // First and last column styling
-      &:first-child {
-        border-top-left-radius: 16px;
-        padding-left: 2rem;
-        
-        &::before {
-          border-top-left-radius: 16px;
-        }
-      }
-      
-      &:last-child {
-        border-top-right-radius: 16px;
-        padding-right: 2rem;
-        
-        &::before {
-          border-top-right-radius: 16px;
-        }
-      }
+      padding: 1rem;
+      border-bottom: 2px solid var(--border-color, #e5e7eb);
     }
 
-    // Enhanced Cell Styling
     td {
-      padding: 1.25rem 1.5rem;
+      padding: 1rem;
       border-bottom: 1px solid var(--border-color, #e5e7eb);
-      transition: all 0.2s ease;
-      background: var(--card-bg, #ffffff);
-      
-      &:first-child {
-        padding-left: 2rem;
-      }
-      
-      &:last-child {
-        padding-right: 2rem;
-      }
     }
 
     .sensor-row,
     .reading-row {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
+      transition: all 0.3s ease;
 
       &:hover {
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(59, 130, 246, 0.08));
-        transform: translateX(4px);
-        box-shadow: -4px 0 8px rgba(16, 185, 129, 0.2);
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(59, 130, 246, 0.05));
+        transform: scale(1.01);
       }
 
       &:last-child td {
         border-bottom: none;
-        
-        &:first-child {
-          border-bottom-left-radius: 16px;
-        }
-        
-        &:last-child {
-          border-bottom-right-radius: 16px;
-        }
       }
     }
-    
-    // Header row styling
-    tr[mat-header-row] {
-      th {
-        // Additional styling for header row
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-      }
-    }
-  }
-}
-
-// Header shimmer animation
-@keyframes shimmerHeader {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
   }
 }
 
@@ -584,7 +270,7 @@ body.dark-theme .content-panel {
   align-items: center;
   gap: 0.75rem;
   transition: all 0.3s ease;
-
+  
   mat-icon {
     color: #10b981;
     font-size: 20px;
@@ -625,7 +311,7 @@ body.dark-theme .content-panel {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-
+  
   mat-icon {
     color: #10b981;
     font-size: 18px;
@@ -649,7 +335,7 @@ body.dark-theme .content-panel {
   align-items: center;
   gap: 0.5rem;
   color: var(--text-secondary, #6b7280);
-
+  
   mat-icon {
     color: var(--text-secondary, #6b7280);
     font-size: 18px;
@@ -660,376 +346,25 @@ body.dark-theme .content-panel {
 
 body.dark-theme .table-container {
   border-color: var(--border-color, #334155);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2),
-              0 0 0 1px rgba(16, 185, 129, 0.1);
-  background: var(--card-bg, #1e293b);
-
-  &:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3),
-                0 0 0 1px rgba(16, 185, 129, 0.2),
-                0 0 30px rgba(16, 185, 129, 0.15);
-    border-color: rgba(16, 185, 129, 0.4);
-    transform: translateY(-1px);
-  }
-  
-  // Dark theme scrollbar
-  &::-webkit-scrollbar-track {
-    background: #1e293b;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: linear-gradient(90deg, #10b981, #3b82f6);
-    
-    &:hover {
-      background: linear-gradient(90deg, #34d399, #60a5fa);
-    }
-  }
 
   .sensors-table,
   .readings-table {
-    background: transparent;
+    background: var(--card-bg, #1e293b);
 
-    // Enhanced Dark Theme Header Styling
-    th,
-    th[mat-header-cell],
-    .mat-mdc-header-cell {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%) !important;
-      background-color: #0f172a !important;
-      color: #f1f5f9 !important;
-      border-bottom: 3px solid #475569 !important;
-      font-weight: 700 !important;
-      font-size: 0.875rem !important;
-      letter-spacing: 0.5px !important;
-      text-transform: uppercase !important;
-      padding: 1.25rem 1.5rem !important;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), inset 0 -1px 2px rgba(255, 255, 255, 0.05) !important;
-      position: relative !important;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-      backdrop-filter: blur(10px) !important;
-      -webkit-backdrop-filter: blur(10px) !important;
-      z-index: 1 !important;
-      
-      // Ensure text content is above the accent line
-      > * {
-        position: relative !important;
-        z-index: 2 !important;
-      }
-      
-      // Enhanced accent line for dark theme
-      &::before {
-        content: '' !important;
-        position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        height: 3px !important;
-        background: linear-gradient(90deg, #10b981, #34d399, #3b82f6, #60a5fa, #10b981) !important;
-        background-size: 300% 100% !important;
-        opacity: 0.8 !important;
-        animation: shimmerHeaderDark 4s ease-in-out infinite !important;
-        border-radius: 16px 16px 0 0 !important;
-        z-index: 0 !important;
-      }
-      
-      // Hover effect for dark theme
-      &:hover {
-        background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%) !important;
-        color: #34d399 !important;
-        transform: translateY(-2px) !important;
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3), inset 0 -1px 2px rgba(255, 255, 255, 0.1) !important;
-        border-bottom-color: #10b981 !important;
-        
-        &::before {
-          opacity: 1 !important;
-          height: 4px !important;
-        }
-      }
-      
-      // First and last column styling
-      &:first-child {
-        border-top-left-radius: 16px !important;
-        padding-left: 2rem !important;
-        
-        &::before {
-          border-top-left-radius: 16px !important;
-        }
-      }
-      
-      &:last-child {
-        border-top-right-radius: 16px !important;
-        padding-right: 2rem !important;
-        
-        &::before {
-          border-top-right-radius: 16px !important;
-        }
-      }
-    }
-
-    // Target header rows specifically
-    tr[mat-header-row],
-    .mat-mdc-header-row {
-      th,
-      .mat-mdc-header-cell {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%) !important;
-        background-color: #0f172a !important;
-        color: #f1f5f9 !important;
-        border-bottom: 3px solid #475569 !important;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5) !important;
-      }
+    th {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: var(--text-primary, #f1f5f9);
+      border-bottom-color: var(--border-color, #334155);
     }
 
     td {
       border-bottom-color: var(--border-color, #334155);
-      color: var(--text-primary, #e2e8f0);
-      background: var(--card-bg, #1e293b);
-      padding: 1.25rem 1.5rem;
-      
-      &:first-child {
-        padding-left: 2rem;
-      }
-      
-      &:last-child {
-        padding-right: 2rem;
-      }
     }
 
     .sensor-row,
     .reading-row {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      
       &:hover {
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(59, 130, 246, 0.15)) !important;
-        transform: translateX(4px) !important;
-        box-shadow: -4px 0 12px rgba(16, 185, 129, 0.4) !important;
-      }
-      
-      &:last-child td {
-        &:first-child {
-          border-bottom-left-radius: 16px;
-        }
-        
-        &:last-child {
-          border-bottom-right-radius: 16px;
-        }
-      }
-    }
-  }
-}
-
-// Dark theme header shimmer animation
-@keyframes shimmerHeaderDark {
-  0%, 100% {
-    background-position: 0% 50%;
-    opacity: 0.6;
-  }
-  50% {
-    background-position: 100% 50%;
-    opacity: 1;
-  }
-}
-
-// Additional deep selector for Material table headers (using ::ng-deep to penetrate view encapsulation)
-::ng-deep {
-  // Light theme header enhancements
-  .sensors-table,
-  .readings-table {
-    .mat-mdc-header-cell,
-    th[mat-header-cell],
-    .mat-mdc-header-row th,
-    tr[mat-header-row] th {
-      position: relative;
-      overflow: hidden;
-      
-      // Add subtle glow effect on hover
-      &:hover::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.1), transparent);
-        animation: slideGlow 0.6s ease;
-      }
-    }
-  }
-  
-  // Dark theme header enhancements
-  body.dark-theme {
-    .sensors-table,
-    .readings-table {
-      .mat-mdc-header-cell,
-      th[mat-header-cell],
-      .mat-mdc-header-row th,
-      tr[mat-header-row] th {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%) !important;
-        background-color: #0f172a !important;
-        color: #f1f5f9 !important;
-        border-bottom: 3px solid #475569 !important;
-        font-weight: 700 !important;
-        font-size: 0.875rem !important;
-        letter-spacing: 0.5px !important;
-        text-transform: uppercase !important;
-        padding: 1.25rem 1.5rem !important;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), inset 0 -1px 2px rgba(255, 255, 255, 0.05) !important;
-        backdrop-filter: blur(10px) !important;
-        -webkit-backdrop-filter: blur(10px) !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        position: relative !important;
-        overflow: hidden !important;
-        z-index: 1 !important;
-        
-        // Ensure text content is above the accent line
-        > * {
-          position: relative !important;
-          z-index: 2 !important;
-        }
-        
-        &::before {
-          content: '' !important;
-          position: absolute !important;
-          top: 0 !important;
-          left: 0 !important;
-          right: 0 !important;
-          height: 3px !important;
-          background: linear-gradient(90deg, #10b981, #34d399, #3b82f6, #60a5fa, #10b981) !important;
-          background-size: 300% 100% !important;
-          opacity: 0.8 !important;
-          animation: shimmerHeaderDark 4s ease-in-out infinite !important;
-          z-index: 0 !important;
-          border-radius: 16px 16px 0 0 !important;
-        }
-        
-        &:hover {
-          background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%) !important;
-          color: #34d399 !important;
-          transform: translateY(-2px) !important;
-          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3), inset 0 -1px 2px rgba(255, 255, 255, 0.1) !important;
-          border-bottom-color: #10b981 !important;
-          
-          &::before {
-            opacity: 1 !important;
-            height: 4px !important;
-          }
-        }
-        
-        &:first-child {
-          border-top-left-radius: 16px !important;
-          padding-left: 2rem !important;
-          
-          &::before {
-            border-top-left-radius: 16px !important;
-          }
-        }
-        
-        &:last-child {
-          border-top-right-radius: 16px !important;
-          padding-right: 2rem !important;
-          
-          &::before {
-            border-top-right-radius: 16px !important;
-          }
-        }
-      }
-    }
-  }
-}
-
-// Glow animation for header hover
-@keyframes slideGlow {
-  0% {
-    left: -100%;
-  }
-  100% {
-    left: 100%;
-  }
-}
-
-// Dark theme table cell content
-body.dark-theme .sensor-id {
-  mat-icon {
-    color: #34d399;
-  }
-
-  span {
-    color: var(--text-primary, #f1f5f9);
-  }
-}
-
-body.dark-theme .sensor-unit {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(59, 130, 246, 0.15));
-  color: #6ee7b7;
-  border-color: rgba(16, 185, 129, 0.4);
-}
-
-body.dark-theme .sensor-value {
-  color: #6ee7b7;
-}
-
-body.dark-theme .location-info {
-  mat-icon {
-    color: #34d399;
-  }
-
-  span {
-    color: var(--text-primary, #e2e8f0);
-  }
-}
-
-body.dark-theme .device-id {
-  background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.15));
-  color: #fcd34d;
-  border-color: rgba(251, 191, 36, 0.4);
-}
-
-body.dark-theme .timestamp {
-  color: var(--text-secondary, #94a3b8);
-
-  mat-icon {
-    color: var(--text-secondary, #94a3b8);
-  }
-}
-
-// Dark theme mat-chip styling for sensor types
-body.dark-theme {
-  ::ng-deep .mat-mdc-standard-chip {
-    &.mat-primary {
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(37, 99, 235, 0.25)) !important;
-      color: #93c5fd !important;
-      border: 1px solid rgba(59, 130, 246, 0.4);
-
-      .mat-icon {
-        color: #93c5fd !important;
-      }
-    }
-
-    &.mat-accent {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(5, 150, 105, 0.25)) !important;
-      color: #6ee7b7 !important;
-      border: 1px solid rgba(16, 185, 129, 0.4);
-
-      .mat-icon {
-        color: #6ee7b7 !important;
-      }
-    }
-
-    &.mat-warn {
-      background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(220, 38, 38, 0.25)) !important;
-      color: #fca5a5 !important;
-      border: 1px solid rgba(239, 68, 68, 0.4);
-
-      .mat-icon {
-        color: #fca5a5 !important;
-      }
-    }
-
-    &:not(.mat-primary):not(.mat-accent):not(.mat-warn) {
-      background: linear-gradient(135deg, rgba(148, 163, 184, 0.25), rgba(100, 116, 139, 0.2)) !important;
-      color: #cbd5e1 !important;
-      border: 1px solid rgba(148, 163, 184, 0.3);
-
-      .mat-icon {
-        color: #cbd5e1 !important;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1));
       }
     }
   }
@@ -1042,7 +377,7 @@ body.dark-theme {
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(59, 130, 246, 0.05));
   border-radius: 16px;
   border: 2px dashed var(--border-color, #e5e7eb);
-
+  
   mat-icon {
     font-size: 64px;
     width: 64px;
@@ -1058,7 +393,7 @@ body.dark-theme {
     font-weight: 600;
     color: var(--text-primary, #1f2937);
   }
-
+  
   p {
     margin: 0 0 2rem 0;
     font-size: 1.1rem;
@@ -1080,7 +415,7 @@ body.dark-theme .no-data {
   }
 }
 
-// ===== LOADING CONTAINER & SKELETON ===== (TerraFlow Style)
+// ===== LOADING CONTAINER ===== (TerraFlow Style)
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -1100,109 +435,6 @@ body.dark-theme .loading-container p {
   color: var(--text-secondary, #cbd5e1);
 }
 
-// Skeleton Loading States
-.loading-skeleton {
-  padding: 2rem;
-  animation: fadeIn 0.6s ease;
-}
-
-.skeleton-tabs-header {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid var(--border-color, #e5e7eb);
-  padding-bottom: 1rem;
-}
-
-.skeleton-tab {
-  width: 150px;
-  height: 40px;
-  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
-  background-size: 200% 100%;
-  border-radius: 8px;
-  animation: shimmer 1.5s infinite;
-}
-
-.skeleton-content {
-  background: var(--card-bg, #ffffff);
-  border-radius: 16px;
-  padding: 1.5rem;
-  border: 1px solid var(--border-color, #e5e7eb);
-}
-
-.skeleton-panel-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.skeleton-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-.skeleton-title {
-  flex: 1;
-  height: 24px;
-  max-width: 200px;
-  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
-  background-size: 200% 100%;
-  border-radius: 8px;
-  animation: shimmer 1.5s infinite;
-}
-
-.skeleton-table {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.skeleton-table-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-}
-
-.skeleton-cell {
-  height: 48px;
-  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
-  background-size: 200% 100%;
-  border-radius: 8px;
-  animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
-// Dark theme skeleton
-body.dark-theme .skeleton-tabs-header {
-  border-bottom-color: var(--border-color, #334155);
-}
-
-body.dark-theme .skeleton-tab,
-body.dark-theme .skeleton-icon,
-body.dark-theme .skeleton-title,
-body.dark-theme .skeleton-cell {
-  background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
-  background-size: 200% 100%;
-}
-
-body.dark-theme .skeleton-content {
-  background: var(--card-bg, #1e293b);
-  border-color: var(--border-color, #334155);
-}
-
 // ===== ANIMATIONS =====
 @keyframes fadeIn {
   from {
@@ -1220,28 +452,6 @@ body.dark-theme .skeleton-content {
   50% { transform: translateY(-10px); }
 }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
 // ===== RESPONSIVE DESIGN =====
 @media (max-width: 1200px) {
   .sensors-container {
@@ -1254,7 +464,7 @@ body.dark-theme .skeleton-content {
     padding: 1rem;
     padding-top: 90px;
   }
-
+  
   .sensors-header {
     .header-content {
     flex-direction: column;
@@ -1266,87 +476,28 @@ body.dark-theme .skeleton-content {
     .header-info h1 {
       font-size: 2rem;
     }
-
+    
     .header-actions {
       align-self: stretch;
       justify-content: space-between;
     }
   }
-
-  // Enhanced tab labels for mobile
-  .sensors-tabs {
-    ::ng-deep {
-      .mat-mdc-tab-group {
-        .mat-mdc-tab-labels {
-          padding: 4px;
-          margin: 0.25rem;
-          gap: 4px;
-        }
-        
-        .mat-mdc-tab {
-          min-width: 120px;
-          height: 44px;
-          font-size: 0.8125rem;
-          margin: 0 2px;
-          
-          &.mdc-tab--active {
-            transform: translateY(-1px);
-          }
-        }
-      }
-    }
-  }
-
+  
   .table-container {
     font-size: 0.9rem;
-    border-radius: 12px;
-
-    .sensors-table,
-    .readings-table {
-      th, td {
-        padding: 0.75rem 1rem;
-        font-size: 0.8rem;
-      }
-      
-      th {
-        padding: 1rem;
-        font-size: 0.75rem;
-        letter-spacing: 0.3px;
-        
-        &:first-child {
-          padding-left: 1.25rem;
-          border-top-left-radius: 12px;
-        }
-        
-        &:last-child {
-          padding-right: 1.25rem;
-          border-top-right-radius: 12px;
-        }
-        
-        &::before {
-          height: 2px;
-        }
-      }
-      
-      td {
-        &:first-child {
-          padding-left: 1.25rem;
-        }
-        
-        &:last-child {
-          padding-right: 1.25rem;
-        }
-      }
+    
+    th, td {
+      padding: 8px 12px;
     }
   }
-
+  
   .sensor-id,
   .location-info,
   .timestamp {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.25rem;
-
+    
     mat-icon {
       font-size: 16px;
       width: 16px;
@@ -1396,4 +547,3 @@ body.dark-theme .skeleton-content {
 html {
   scroll-behavior: smooth;
 }
-

@@ -44,10 +44,10 @@ export class RegisterComponent {
   isLoading = false;
   hidePassword = true;
   hideConfirmPassword = true;
-
+  
   userRoles = [
     { value: UserRole.FARMER, label: 'Farmer' },
-    { value: UserRole.MODERATOR, label: 'Moderator' }
+    { value: UserRole.VIEWER, label: 'Viewer' }
   ];
 
   constructor() {
@@ -65,12 +65,12 @@ export class RegisterComponent {
   passwordMatchValidator(form: FormGroup) {
     const password = form.get('password');
     const confirmPassword = form.get('confirmPassword');
-
+    
     if (password && confirmPassword && password.value !== confirmPassword.value) {
       confirmPassword.setErrors({ passwordMismatch: true });
       return { passwordMismatch: true };
     }
-
+    
     return null;
   }
 
@@ -92,21 +92,6 @@ export class RegisterComponent {
         error: (error) => {
           this.isLoading = false;
           console.error('Registration error:', error);
-
-          // Extract error message from response
-          let errorMessage = 'Registration failed. Please try again.';
-          if (error?.error?.error?.message) {
-            errorMessage = error.error.error.message;
-          } else if (error?.error?.message) {
-            errorMessage = error.error.message;
-          } else if (error?.message) {
-            errorMessage = error.message;
-          }
-
-          this.snackBar.open(errorMessage, 'Close', {
-            duration: 5000,
-            panelClass: ['error-snackbar']
-          });
         }
       });
     } else {

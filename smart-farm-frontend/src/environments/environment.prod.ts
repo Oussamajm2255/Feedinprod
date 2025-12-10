@@ -31,37 +31,5 @@ export const environment = {
   ui: {
     searchDebounceMs: 300,
     refreshAnimationMs: 1000
-  },
-  
-  // OpenWeatherMap Configuration
-  openWeather: {
-    apiKey: 'YOUR_KEY_HERE' // Replace with your OpenWeatherMap API key
-  },
-  
-  // Notification System Configuration
-  notifications: {
-    // WebSocket settings
-    wsTimeout: 15000, // Longer timeout for production
-    wsMaxRetries: 10, // More retries for production
-    wsRetryDelay: 2000,
-    wsFallbackTimeout: 10000,
-    
-    // Polling settings
-    pollingInterval: 10000, // Less frequent in production
-    pollingEnabled: true,
-    
-    // Cache settings
-    maxCacheSize: 100,
-    pageSize: 20,
-    
-    // Auto-refresh
-    autoRefreshEnabled: true,
-    autoRefreshInterval: 60000, // 1 minute in production
-    
-    // Cooldown and quiet hours
-    cooldownMs: 900000, // 15 minutes
-    quietHoursEnabled: true,
-    quietHoursStart: 22,
-    quietHoursEnd: 6
   }
 };

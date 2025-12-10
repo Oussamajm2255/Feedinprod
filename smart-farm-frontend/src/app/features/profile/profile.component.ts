@@ -9,8 +9,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
-import { TranslatePipe } from '../../core/pipes/translate.pipe';
-import { LanguageService } from '../../core/services/language.service';
 
 import { AuthService } from '../../core/services/auth.service';
 import { ApiService } from '../../core/services/api.service';
@@ -28,8 +26,7 @@ import { User } from '../../core/models/user.model';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    MatTabsModule,
-    TranslatePipe
+    MatTabsModule
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
@@ -48,7 +45,6 @@ export class ProfileComponent implements OnInit {
   hidePassword = true;
   hideNewPassword = true;
   hideConfirmPassword = true;
-  protected languageService = inject(LanguageService);
 
   constructor() {
     this.profileForm = this.fb.group({
@@ -162,44 +158,17 @@ export class ProfileComponent implements OnInit {
   getErrorMessage(formGroup: FormGroup, fieldName: string): string {
     const control = formGroup.get(fieldName);
     if (control?.hasError('required')) {
-      return this.languageService.translate('validation.fieldRequiredWithName', {
-        field: this.getFieldLabel(fieldName)
-      });
+      return `${fieldName} is required`;
     }
     if (control?.hasError('email')) {
-      return this.languageService.translate('validation.invalidEmailWithName', {
-        field: this.getFieldLabel(fieldName)
-      });
+      return 'Please enter a valid email address';
     }
     if (control?.hasError('minlength')) {
-      return this.languageService.translate('validation.minLengthWithName', {
-        field: this.getFieldLabel(fieldName),
-        min: control.errors?.['minlength'].requiredLength
-      });
+      return `${fieldName} must be at least ${control.errors?.['minlength'].requiredLength} characters long`;
     }
     if (control?.hasError('passwordMismatch')) {
-      return this.languageService.translate('auth.passwordMismatch');
+      return 'Passwords do not match';
     }
     return '';
-  }
-
-  private getFieldLabel(fieldName: string): string {
-    const fieldMap: Record<string, string> = {
-      first_name: 'auth.firstName',
-      last_name: 'auth.lastName',
-      email: 'common.email',
-      phone: 'profile.fields.phone',
-      address: 'profile.fields.address',
-      city: 'profile.fields.city',
-      country: 'profile.fields.country',
-      date_of_birth: 'profile.fields.dateOfBirth',
-      gender: 'profile.fields.gender',
-      currentPassword: 'profile.currentPassword',
-      newPassword: 'profile.newPassword',
-      confirmPassword: 'profile.confirmNewPassword'
-    };
-
-    const key = fieldMap[fieldName] || `profile.fields.${fieldName}`;
-    return this.languageService.translate(key);
   }
 }

@@ -18,8 +18,6 @@ export class FarmsService {
   ) {}
 
   async findAll(includeDevices = false, ownerId?: string): Promise<Farm[]> {
-    console.log('FarmsService.findAll called with:', { includeDevices, ownerId });
-    
     const relations = [];
     if (includeDevices) {
       relations.push('devices', 'devices.sensors');
@@ -27,20 +25,10 @@ export class FarmsService {
 
     const whereCondition = ownerId ? { owner_id: ownerId } : {};
 
-    const farms = await this.farmRepository.find({
+    return this.farmRepository.find({
       where: whereCondition,
       relations,
     });
-    
-    console.log(`✅ Found ${farms.length} farms`, ownerId ? `for owner ${ownerId}` : '(all farms)');
-    
-    // If no farms found with owner filter, check if there are any farms at all
-    if (farms.length === 0 && ownerId) {
-      const allFarmsCount = await this.farmRepository.count();
-      console.log(`⚠️ No farms found for owner ${ownerId}, but there are ${allFarmsCount} total farms in database`);
-    }
-    
-    return farms;
   }
 
   async findOne(id: string, includeDevices = false, includeSensors = false): Promise<Farm> {
@@ -103,8 +91,6 @@ export class FarmsService {
       farm_id: data.farm_id || uuidv4(),
       name: data.name,
       location: data.location,
-      latitude: data.latitude,
-      longitude: data.longitude,
       owner_id: ownerId,
     });
     return this.farmRepository.save(farm);

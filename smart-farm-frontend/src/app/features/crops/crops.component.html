@@ -1,0 +1,102 @@
+<div class="crops-dashboard-container">
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>{{ 'crops.dashboard.loading' | translate }}</p>
+    </div>
+  }
+
+  <!-- Error State -->
+  @else if (error()) {
+    <div class="error-container">
+      <mat-icon>error_outline</mat-icon>
+      <h2>{{ error() }}</h2>
+      <p>{{ 'errors.tryAgain' | translate }}</p>
+    </div>
+  }
+
+  <!-- Main Dashboard -->
+  @else {
+    <div class="crops-dashboard">
+      <!-- Header Section -->
+      <div class="dashboard-header">
+        <div class="header-content">
+          <mat-icon class="header-icon">agriculture</mat-icon>
+          <div class="header-text">
+            <h1>{{ 'crops.dashboard.header' | translate }}</h1>
+            <p class="subtitle">{{ 'dashboard.farmDetails' | translate }}</p>
+          </div>
+        </div>
+
+        <!-- Crop Selector -->
+        <div class="selector-wrapper">
+          <app-crop-selector
+            [crops]="crops()"
+            [selectedCropId]="selectedCropId()"
+            [loading]="isLoadingData()"
+            (cropSelected)="onCropSelected($event)">
+          </app-crop-selector>
+        </div>
+      </div>
+
+      @if (selectedCrop()) {
+        <!-- KPIs Section -->
+        <div class="kpis-section">
+          <app-crop-kpis [kpis]="kpis()"></app-crop-kpis>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="content-grid">
+          <!-- Left Column -->
+          <div class="left-column">
+            <!-- Health & Analytics -->
+            <div class="panel-section">
+              <app-health-analytics-panel [analytics]="analytics()"></app-health-analytics-panel>
+            </div>
+
+            <!-- Smart Actions -->
+            <div class="panel-section">
+              <app-smart-actions-panel
+                [disabled]="!selectedCropId()"
+                (actionExecuted)="onActionExecuted($event)">
+              </app-smart-actions-panel>
+            </div>
+
+            <!-- Map & Comparison -->
+            <div class="panel-section">
+              <app-map-comparison-tabs [comparisonData]="comparisonData()"></app-map-comparison-tabs>
+            </div>
+          </div>
+
+          <!-- Right Column (Sidebar) -->
+          <div class="right-column">
+            <!-- Crop Details -->
+            <div class="panel-section">
+              <app-crop-details-sidebar [crop]="selectedCrop()"></app-crop-details-sidebar>
+            </div>
+
+            <!-- Events Timeline -->
+            <div class="panel-section">
+              <app-events-timeline [events]="events()"></app-events-timeline>
+            </div>
+
+            <!-- Sustainability Metrics -->
+            <div class="panel-section">
+              <app-sustainability-metrics [metrics]="sustainabilityMetrics()"></app-sustainability-metrics>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <!-- No Crop Selected State -->
+        <div class="no-crop-selected">
+          <div class="empty-state">
+            <mat-icon>agriculture</mat-icon>
+            <h2>{{ 'crops.dashboard.noCropSelected' | translate }}</h2>
+            <p>{{ 'crops.dashboard.selectCropDescription' | translate }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

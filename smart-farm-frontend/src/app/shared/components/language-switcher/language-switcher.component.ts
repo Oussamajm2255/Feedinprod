@@ -164,7 +164,7 @@ import { LanguageService, Language } from '../../../core/services/language.servi
 
     .menu-header {
       padding: 16px;
-      border-bottom: 1px solid var(--divider-color, rgba(0, 0, 0, 0.08));
+      border-bottom: 1px solid var(--header-border, rgba(0, 0, 0, 0.1));
       margin-bottom: 8px;
     }
 
@@ -225,9 +225,9 @@ import { LanguageService, Language } from '../../../core/services/language.servi
     }
 
     .language-item.selected {
-      background: var(--nav-item-active, rgba(16, 185, 129, 0.15));
+      background: var(--nav-item-active, rgba(46, 125, 50, 0.1));
       color: var(--header-text, #2c3e50);
-      border: 1px solid var(--primary-green, rgba(16, 185, 129, 0.3));
+      border: 1px solid rgba(46, 125, 50, 0.2);
     }
 
     .language-item.selected::before {
@@ -356,14 +356,14 @@ import { LanguageService, Language } from '../../../core/services/language.servi
       display: flex;
       align-items: center;
       gap: 6px;
-      background: var(--nav-item-active, rgba(16, 185, 129, 0.15));
+      background: rgba(46, 125, 50, 0.1);
       padding: 4px 8px;
       border-radius: 12px;
-      border: 1px solid var(--primary-green, rgba(16, 185, 129, 0.3));
+      border: 1px solid rgba(46, 125, 50, 0.2);
     }
 
     .check-icon {
-      color: var(--primary-green, #10b981);
+      color: #2e7d32;
       font-size: 16px;
       width: 16px;
       height: 16px;
@@ -371,7 +371,7 @@ import { LanguageService, Language } from '../../../core/services/language.servi
 
     .status-text {
       font-size: 11px;
-      color: var(--primary-green, #10b981);
+      color: #2e7d32;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -388,75 +388,20 @@ import { LanguageService, Language } from '../../../core/services/language.servi
 
     /* Dark theme adjustments */
     .dark-theme .language-menu {
-      background: var(--user-menu-bg, #1e293b);
+      background: var(--user-menu-bg, #2e7d32);
       box-shadow: var(--user-menu-shadow, 0 8px 32px rgba(0, 0, 0, 0.4));
-      border-color: var(--user-menu-border, rgba(255, 255, 255, 0.1));
-    }
-
-    body.dark-theme .language-menu .menu-header {
-      border-bottom-color: var(--divider-color, rgba(255, 255, 255, 0.1));
     }
 
     .dark-theme .menu-title {
-      color: var(--header-text, #f1f5f9);
-    }
-
-    .dark-theme .menu-title mat-icon {
-      color: var(--header-text-secondary, #cbd5e1);
+      color: var(--header-text, #ffffff);
     }
 
     .dark-theme .language-name {
-      color: var(--header-text, #f1f5f9);
-    }
-
-    .dark-theme .language-english {
-      color: var(--header-text-secondary, #cbd5e1);
+      color: var(--header-text, #ffffff);
     }
 
     .dark-theme .language-code {
       color: var(--header-text-secondary, rgba(255, 255, 255, 0.8));
-      background: var(--nav-item-hover, rgba(255, 255, 255, 0.08));
-    }
-
-    .dark-theme .language-item.selected {
-      background: var(--nav-item-active, rgba(16, 185, 129, 0.2));
-      border-color: var(--primary-green, rgba(16, 185, 129, 0.4));
-    }
-
-    .dark-theme .status-indicator {
-      background: var(--nav-item-active, rgba(16, 185, 129, 0.2));
-      border-color: var(--primary-green, rgba(16, 185, 129, 0.4));
-    }
-
-    /* Scrollbar in language menu */
-    .language-menu {
-      &::-webkit-scrollbar {
-        width: 6px;
-      }
-
-      &::-webkit-scrollbar-track {
-        background: var(--light-bg, #f1f1f1);
-        border-radius: 3px;
-      }
-
-      &::-webkit-scrollbar-thumb {
-        background: var(--border-color, #cbd5e1);
-        border-radius: 3px;
-
-        &:hover {
-          background: var(--text-secondary, #94a3b8);
-        }
-      }
-    }
-
-    .dark-theme .language-menu {
-      &::-webkit-scrollbar-track {
-        background: var(--card-bg, #1e293b);
-      }
-
-      &::-webkit-scrollbar-thumb {
-        background: var(--border-color, #475569);
-      }
     }
 
     /* Responsive Design */

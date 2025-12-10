@@ -20,7 +20,7 @@
 
 // ===== MAIN HEADER =====
 .feedin-header {
-  position: fixed;
+  position: sticky;
   top: 0;
   left: 0;
   right: 0;
@@ -33,12 +33,6 @@
   border-bottom-right-radius: 2rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-  // Ensure header stays on top when scrolling
-  will-change: transform;
-  transform: translateZ(0); // Force GPU acceleration
-  width: 100%;
-  overflow: visible; // Ensure all content is visible
 }
 
 body.dark-theme .feedin-header {
@@ -47,168 +41,38 @@ body.dark-theme .feedin-header {
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
 }
 
-// ===== HEADER CONTENT (Three Flex Groups) =====
+// ===== HEADER CONTENT (Single Row) =====
 .header-content {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  justify-content: space-between;
-  gap: 2rem; // Increased gap for better separation
+  gap: 2rem;
   padding: 1rem 2rem;
-  width: 100%;
+  max-width: 1800px;
   margin: 0 auto;
-  min-height: 80px; // Ensure consistent header height
-  height: 80px; // Fixed height to match padding-top
-  overflow: visible;
-  box-sizing: border-box;
-}
-
-@media (max-width: 1400px) {
-  .header-content {
-    gap: 1.75rem; // Slightly reduced but still good spacing
-    padding: 1rem 1.75rem;
-  }
-
-  .logo-section {
-    margin-right: 1.25rem;
-  }
-
-  .center-section {
-    margin-left: 0.75rem;
-    margin-right: 1rem;
-  }
-
-  .actions-section {
-    margin-left: 0.75rem;
-  }
-
-  // Desktop nav adjustments for medium-large screens
-  .nav-links-wrapper {
-    gap: 0.45rem; // Slightly tighter gap
-    padding: 0.45rem;
-  }
-
-  .nav-link {
-    padding: 0.6rem 0.875rem;
-    font-size: 0.875rem;
-    gap: 0.45rem;
-  }
 }
 
 @media (max-width: 1200px) {
   .header-content {
-    gap: 1.5rem; // Maintain good spacing
-    padding: 1rem 1.5rem;
-    min-height: 76px; // Slightly smaller on medium screens
-    height: 76px; // Fixed height to match padding-top
-  }
-
-  .logo-section {
-    margin-right: 1rem;
-  }
-
-  .center-section {
-    margin-left: 0.5rem;
-    margin-right: 0.75rem;
-  }
-
-  .actions-section {
-    margin-left: 0.75rem;
-  }
-
-  // Desktop nav adjustments for medium screens
-  .nav-links-wrapper {
-    gap: 0.4rem; // Tighter gap for smaller screens
-    padding: 0.4rem;
-  }
-
-  .nav-link {
-    padding: 0.55rem 0.75rem;
-    font-size: 0.85rem;
-    gap: 0.4rem;
-
-    .nav-icon,
-    .nav-icon-fa {
-      width: 18px;
-      height: 18px;
-      font-size: 0.9rem;
-    }
-  }
-}
-
-@media (max-width: 1024px) {
-  .header-content {
-    min-height: 72px; // Tablet height
-    height: 72px; // Fixed height to match padding-top
-    gap: 1rem; // Reduced gap for tablet
-    padding: 1rem 1.25rem;
-    flex-wrap: nowrap;
-    align-items: center;
-  }
-
-  .logo-section {
-    margin-right: 0.75rem;
-    flex: 0 0 auto;
-    min-width: 0;
-    max-width: calc(100% - 300px); // Leave space for actions
-  }
-
-  .center-section {
-    margin-left: 0.5rem;
-    margin-right: 0.75rem;
-    padding: 0 0.25rem;
-    flex: 0 1 auto;
-    min-width: 0;
-  }
-
-  .actions-section {
-    margin-left: 0.5rem;
-    flex: 0 0 auto;
-    justify-content: flex-end;
-  }
-}
-
-@media (max-width: 900px) {
-  .header-content {
-    flex-wrap: wrap;
+    grid-template-columns: auto 1fr auto;
     gap: 1rem;
+    padding: 1rem 1.5rem;
   }
 }
 
 @media (max-width: 768px) {
   .header-content {
-    gap: 0.5rem;
-    padding: 0.75rem 1rem;
-    min-height: 68px; // Mobile height
-    height: 68px; // Fixed height to match padding-top
-    flex-wrap: nowrap; // Prevent wrapping
-    align-items: center;
-  }
-
-  .logo-section {
-    flex: 0 0 auto;
-    min-width: 0;
-    max-width: calc(100% - 200px); // Leave space for actions
-    gap: 0.5rem;
-  }
-
-  .actions-section {
-    flex: 0 0 auto;
-    width: max-content; // Better browser support than fit-content
+    grid-template-columns: auto 1fr auto;
+    gap: 0.75rem;
+    padding: 1rem;
   }
 }
 
-// ===== LEFT: LOGO + FARM SELECTOR =====
+// ===== LEFT: LOGO SECTION =====
 .logo-section {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 1rem;
-  flex: 0 0 auto;
-  min-width: 220px;
-  max-width: 360px;
-  overflow: visible;
-  flex-basis: auto;
-  margin-right: 2rem; // Extra spacing from navigation tabs
 }
 
 .logo-wrapper {
@@ -247,141 +111,25 @@ body.dark-theme .feedin-header {
   color: var(--primary-green, #10b981);
 }
 
-// Mobile Farm Selector in Header
-.mobile-farm-selector {
-  display: none;
-
-  @media (max-width: 767px) {
-    display: block;
-    flex: 1;
-    min-width: 0;
-    max-width: 100%;
-  }
-
-  .mobile-farm-selector-trigger {
-    display: flex;
-    align-items: center; // Keep center for mobile (single line)
-    gap: 0.5rem;
-    padding: 0.5rem 0.75rem;
-    background: var(--card-bg, #ffffff);
-    border: 1px solid var(--border-color, #e5e7eb);
-    border-radius: 0.75rem;
-    cursor: pointer;
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--text-primary, #1f2937);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    width: 100%;
-    max-width: 100%;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-    // Allow button to shrink and text to wrap
-    flex-shrink: 1;
-
-    &:hover {
-      border-color: #10b981;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
-      transform: translateY(-1px);
-    }
-
-    &.active {
-      border-color: #10b981;
-      background: rgba(16, 185, 129, 0.05);
-    }
-
-    .selector-icon {
-      width: 16px;
-      height: 16px;
-      color: #10b981;
-      flex-shrink: 0;
-      transition: transform 0.3s ease;
-    }
-
-    &:hover .selector-icon {
-      transform: rotate(5deg) scale(1.1);
-    }
-
-    .selector-text {
-      flex: 1;
-      min-width: 0;
-      max-width: 100%;
-      overflow: hidden;
-      // Allow word wrapping for better readability with spaces
-      white-space: normal;
-      word-wrap: break-word;
-      word-break: break-word;
-      // Limit to 1 line max with ellipsis for mobile
-      display: -webkit-box;
-      -webkit-line-clamp: 1;
-      line-clamp: 1;
-      -webkit-box-orient: vertical;
-      line-height: 1.3;
-      max-height: 1.3em;
-    }
-
-    .selector-arrow {
-      width: 12px;
-      height: 12px;
-      color: var(--text-secondary, #6b7280);
-      transition: transform 0.3s ease;
-      flex-shrink: 0;
-
-      &.rotated {
-        transform: rotate(180deg);
-      }
-    }
-  }
-}
-
-body.dark-theme .mobile-farm-selector {
-  .mobile-farm-selector-trigger {
-    background: var(--card-bg, #0f172a);
-    border-color: var(--border-color, #334155);
-
-    &:hover {
-      background: rgba(16, 185, 129, 0.08);
-    }
-
-    &.active {
-      background: rgba(16, 185, 129, 0.12);
-    }
-  }
-}
-
-// ===== CENTER: NAVIGATION TABS =====
+// ===== CENTER: FARM SELECTOR + NAVIGATION =====
 .center-section {
   display: flex;
   align-items: center;
+  gap: 1rem;
   justify-content: center;
-  flex: 1 1 auto;
-  min-width: 320px;
-  max-width: none; // Let flexbox handle it naturally
-  overflow: visible; // Allow underline to be visible below
-  margin-left: 1rem; // Extra spacing from farm selector
-  margin-right: 1.5rem; // Extra spacing from right icons
-  padding: 0 0.5rem; // Internal padding for breathing room
-  padding-bottom: 0.75rem; // Space for active tab underline
+  flex: 1;
 }
 
-// Farm Selector in Left (Desktop)
+// Farm Selector in Center
 .nav-farm-selector {
   flex-shrink: 0;
-  min-width: 170px;
-  max-width: 220px;
 
   .farm-selector-trigger {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
     background: var(--light-bg, #f9fafb);
     border: 1px solid var(--border-color, #e5e7eb);
     border-radius: 0.75rem;
-    // Allow button to shrink and text to wrap
-    flex-shrink: 1;
-    width: 100%;
-    min-width: 0;
-    max-width: 100%;
 
     &:hover {
       background: rgba(16, 185, 129, 0.05);
@@ -396,18 +144,10 @@ body.dark-theme .mobile-farm-selector {
     .selector-icon {
       width: 18px;
       height: 18px;
-      flex-shrink: 0;
     }
 
     .selector-text {
       font-weight: 500;
-      flex: 1;
-      min-width: 0;
-      max-width: 150px;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      display: block;
     }
 
     .selector-arrow {
@@ -436,7 +176,7 @@ body.dark-theme .nav-farm-selector {
 // Farm Selector Trigger Button
 .farm-selector-trigger {
   display: flex;
-  align-items: center; // Keep center for better icon alignment
+  align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1.25rem;
   background: var(--card-bg, #ffffff);
@@ -447,11 +187,8 @@ body.dark-theme .nav-farm-selector {
   font-weight: 500;
   color: var(--text-primary, #1f2937);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  max-width: 100%;
-  min-width: 0;
-  // Allow button to shrink and text to wrap
-  flex-shrink: 1;
 
   &:hover {
     border-color: #10b981;
@@ -478,24 +215,8 @@ body.dark-theme .nav-farm-selector {
 
   .selector-text {
     flex: 1;
-    min-width: 0;
-    max-width: 220px;
     overflow: hidden;
-    white-space: nowrap;
     text-overflow: ellipsis;
-    display: block;
-
-    @media (max-width: 1400px) {
-      max-width: 200px;
-    }
-
-    @media (max-width: 1200px) {
-      max-width: 160px;
-    }
-
-    @media (max-width: 768px) {
-      max-width: 120px;
-    }
   }
 
   .selector-arrow {
@@ -503,7 +224,6 @@ body.dark-theme .nav-farm-selector {
     height: 16px;
     color: var(--text-secondary, #6b7280);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    flex-shrink: 0;
 
     &.rotated {
       transform: rotate(180deg);
@@ -523,22 +243,12 @@ body.dark-theme .farm-selector-trigger {
 }
 
 
-// ===== RIGHT: ICONS + USER MENU =====
+// ===== RIGHT: ACTIONS SECTION =====
 .actions-section {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 0.5rem;
-  flex-shrink: 0; // Prevent actions from shrinking
-  width: max-content; // Better browser support than fit-content - Ensure all actions are visible
-  overflow: visible;
-  margin-left: 1rem; // Extra spacing from navigation tabs
-  padding-left: 0.5rem; // Internal padding
-
-  @media (max-width: 900px) {
-    flex-wrap: nowrap; // Keep icons on one row
-    margin-left: 0.5rem;
-  }
 }
 
 // Consistent Action Buttons (Theme, Language, Notifications)
@@ -594,26 +304,6 @@ body.dark-theme .farm-selector-trigger {
     border-radius: 9px;
     box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
   }
-
-  // Active state (when on notifications page)
-  &.active {
-    background: rgba(16, 185, 129, 0.15);
-    border-color: rgba(16, 185, 129, 0.4);
-    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1);
-
-    .action-icon {
-      color: #10b981;
-    }
-
-    &:hover {
-      background: rgba(16, 185, 129, 0.2);
-      border-color: rgba(16, 185, 129, 0.5);
-    }
-  }
-
-  .action-icon.active {
-    color: #10b981;
-  }
 }
 
 body.dark-theme .action-btn {
@@ -626,26 +316,6 @@ body.dark-theme .action-btn {
   }
 
   &:hover .action-icon {
-    color: #34d399;
-  }
-
-  // Active state (when on notifications page) - Dark mode
-  &.active {
-    background: rgba(16, 185, 129, 0.22);
-    border-color: rgba(16, 185, 129, 0.5);
-    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.15);
-
-    .action-icon {
-      color: #34d399;
-    }
-
-    &:hover {
-      background: rgba(16, 185, 129, 0.28);
-      border-color: rgba(16, 185, 129, 0.6);
-    }
-  }
-
-  .action-icon.active {
     color: #34d399;
   }
 }
@@ -765,77 +435,70 @@ body.dark-theme .hamburger-line {
   background: var(--text-primary, #f1f5f9);
 }
 
-// ===== NAVIGATION (Inside Center Section) - DESKTOP ONLY =====
+// ===== NAVIGATION (Inside Center Section) =====
 .header-nav {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 0.5rem;
   flex: 1;
-  min-width: 0;
-  max-width: 100%;
-  overflow: visible; // Allow underline to be visible
+  justify-content: center;
 }
 
-// Hide navigation tabs below 900px (collapse completely on mobile)
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .header-nav {
     display: none;
   }
 }
 
-// Wrapper for nav links + animated underline (DESKTOP ONLY)
-.nav-links-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem; // Consistent spacing between nav items
-  padding: 0.5rem;
-  border-radius: 1rem;
-  background: rgba(0, 0, 0, 0.02);
-}
 
-body.dark-theme .nav-links-wrapper {
-  background: rgba(255, 255, 255, 0.03);
-}
-
-// Individual nav link (DESKTOP ONLY)
 .nav-link {
-  position: relative;
   display: flex;
   align-items: center;
-  gap: 0.5rem; // Consistent gap between icon and text
-  padding: 0.625rem 1rem; // Balanced, stable padding
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
   border-radius: 0.75rem;
   text-decoration: none;
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   font-weight: 500;
   color: var(--text-secondary, #6b7280);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  white-space: nowrap;
-  flex-shrink: 0; // CRITICAL: Prevent nav items from shrinking
-  width: max-content; // Better browser support than fit-content - Ensure stable width
-  cursor: pointer;
+  position: relative;
+e-space: nowrap;
 
-  // Subtle hover effect (no translateY to prevent jumping)
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -0.75rem;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #10b981, #3b82f6);
+    border-radius: 2px;
+    opacity: 0;
+    transform: scaleX(0);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
   &:hover {
     color: #10b981;
     background: rgba(16, 185, 129, 0.08);
+    transform: translateY(-1px);
 
     .nav-icon {
-      color: #10b981;
-    }
-
-    .nav-icon-fa {
+      transform: scale(1.1);
       color: #10b981;
     }
   }
 
-  // Active state without individual underline (handled by .nav-underline)
   &.active {
     color: #10b981;
     background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(59, 130, 246, 0.08));
     font-weight: 600;
+
+    &::after {
+      opacity: 1;
+      transform: scaleX(1);
+    }
 
     .nav-icon {
       color: #10b981;
@@ -846,20 +509,7 @@ body.dark-theme .nav-links-wrapper {
         fill: #10b981;
       }
     }
-
-    .nav-icon-fa {
-      color: #10b981;
-    }
   }
-}
-
-// Icons and text baseline alignment
-.nav-icon,
-.nav-icon-fa {
-  flex-shrink: 0; // Icons should never shrink
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .nav-icon {
@@ -867,27 +517,8 @@ body.dark-theme .nav-links-wrapper {
   height: 20px;
   color: var(--text-secondary, #6b7280);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  display: none; // Hide SVG when Font Awesome is used
 }
 
-// Font Awesome icon styles
-.nav-icon-fa {
-  font-size: 1rem;
-  width: 20px;
-  height: 20px;
-  color: var(--text-secondary, #6b7280);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  line-height: 1; // Ensure proper baseline alignment
-}
-
-// Text styling for consistent baseline
-.nav-text {
-  line-height: 1.5; // Match icon height for baseline alignment
-  display: inline-flex;
-  align-items: center;
-}
-
-// Dark theme adjustments for nav links
 body.dark-theme .nav-link {
   color: var(--text-secondary, #cbd5e1);
 
@@ -896,10 +527,6 @@ body.dark-theme .nav-link {
     background: rgba(16, 185, 129, 0.12);
 
     .nav-icon {
-      color: #34d399;
-    }
-
-    .nav-icon-fa {
       color: #34d399;
     }
   }
@@ -911,10 +538,6 @@ body.dark-theme .nav-link {
     .nav-icon {
       color: #34d399;
       fill: #34d399;
-    }
-
-    .nav-icon-fa {
-      color: #34d399;
     }
   }
 }
@@ -1247,90 +870,43 @@ body.dark-theme .no-farms-state {
   }
 }
 
-// ===== USER MENU - ENHANCED PROFESSIONAL DESIGN =====
+// ===== USER MENU DROPDOWN =====
 ::ng-deep .user-menu-dropdown {
   .mat-mdc-menu-panel {
-    min-width: 280px !important;
-    max-width: 320px !important;
-    border-radius: 16px !important;
-    box-shadow: var(--user-menu-shadow, 0 8px 32px rgba(0, 0, 0, 0.12)) !important;
-    background: var(--user-menu-bg, #ffffff) !important;
-    border: 1px solid var(--user-menu-border, rgba(0, 0, 0, 0.08)) !important;
-    overflow: visible !important; // Ensure menu content is fully visible
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    -webkit-backdrop-filter: blur(20px);
-    backdrop-filter: blur(20px);
-    z-index: 1001 !important; // Ensure menu appears above header
+    min-width: 280px;
+    border-radius: 1rem;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
   }
 
   .mat-mdc-menu-content {
-    padding: 0.75rem !important;
-    background: var(--user-menu-bg, #ffffff) !important;
+    padding: 0.5rem;
   }
 
-  // Override Material menu items background
-  .mat-mdc-menu-item {
-    background: transparent !important;
-
-    &:hover {
-      background: transparent !important;
-    }
-  }
-
-  // Override Material list items
-  .mdc-list-item {
-    background-color: transparent !important;
-  }
-
-  // Enhanced Header with User Info
   .user-menu-header {
     display: flex;
     align-items: center;
-    gap: 0.875rem;
-    padding: 1.25rem 1rem !important;
-    margin: -0.75rem -0.75rem 0.75rem -0.75rem !important;
-    border-bottom: 1px solid var(--divider-color, rgba(0, 0, 0, 0.08)) !important;
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.03), rgba(59, 130, 246, 0.02));
-    cursor: default;
+    gap: 1rem;
+    padding: 1rem !important;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(59, 130, 246, 0.05));
+    margin: -0.5rem -0.5rem 0.5rem -0.5rem;
     pointer-events: none;
-    transition: background 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
     .user-menu-avatar {
-      position: relative;
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10b981, #3b82f6);
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #10b981, #3b82f6);
-      flex-shrink: 0;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 
       .avatar-initials-large {
-        font-size: 1rem;
-        font-weight: 700;
-        color: #ffffff !important;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-
-      .avatar-status {
-        position: absolute;
-        bottom: -1px;
-        right: -1px;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        border: 2.5px solid var(--user-menu-bg, #ffffff);
-        background: #10b981;
-        box-shadow: 0 2px 4px rgba(16, 185, 129, 0.4);
-        animation: pulse-status 2s ease-in-out infinite;
-
-        &.online {
-          background: #10b981;
-        }
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #ffffff;
+        letter-spacing: 1px;
       }
     }
 
@@ -1339,487 +915,82 @@ body.dark-theme .no-farms-state {
       min-width: 0;
 
       .user-name {
-        font-size: 0.95rem;
+        font-size: 1rem;
         font-weight: 600;
-        color: var(--text-primary, #1f2937) !important;
-        white-space: nowrap;
+        color: var(--text-primary, #1f2937);
+        margin-bottom: 0.25rem;
         overflow: hidden;
         text-overflow: ellipsis;
-        line-height: 1.4;
-        margin-bottom: 0.125rem;
+        white-space: nowrap;
       }
 
       .user-email {
-        font-size: 0.8rem;
-        font-weight: 500;
-        color: var(--text-secondary, #6b7280) !important;
-        white-space: nowrap;
+        font-size: 0.85rem;
+        color: var(--text-secondary, #6b7280);
         overflow: hidden;
         text-overflow: ellipsis;
-        line-height: 1.3;
+        white-space: nowrap;
       }
     }
   }
 
-  // Enhanced Dividers
-  .menu-divider {
-    margin: 0.5rem 0 !important;
-    border-top-color: var(--divider-color, rgba(0, 0, 0, 0.08)) !important;
-    border-top-width: 1px !important;
-  }
+  .mat-mdc-menu-item {
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
 
-  // Enhanced Menu Items
-  .menu-item-compact {
-    display: flex;
-    align-items: center;
-    gap: 0.875rem;
-    border-radius: 10px;
-    padding: 0.75rem 1rem !important;
-    margin: 0.25rem 0;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
-    height: auto !important;
-    position: relative;
-    background: transparent;
-    color: var(--text-primary, #1f2937) !important;
-
-    // Active Route Indicator
-    .active-indicator {
-      position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 3px;
-      height: 60%;
-      background: linear-gradient(180deg, #10b981, #3b82f6);
-      border-radius: 0 3px 3px 0;
-      animation: slideInLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    &:hover {
+      background: rgba(16, 185, 129, 0.08);
     }
 
-    &.active {
-      background: var(--user-menu-item-active, rgba(16, 185, 129, 0.12)) !important;
-      color: #10b981 !important;
-      font-weight: 600;
-
-      .item-icon-wrapper {
-        transform: scale(1.05);
-        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
-      }
-
-      .menu-icon {
-        color: #10b981 !important;
-      }
+    .menu-icon {
+      width: 20px;
+      height: 20px;
+      margin-right: 0.75rem;
+      color: var(--text-secondary, #6b7280);
     }
 
-    .item-icon-wrapper {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      flex-shrink: 0;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-      .menu-icon {
-        width: 20px;
-        height: 20px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-
-      &.profile-icon {
-        background: rgba(16, 185, 129, 0.12) !important;
-        .menu-icon {
-          color: #10b981 !important;
-        }
-      }
-
-      &.settings-icon {
-        background: rgba(59, 130, 246, 0.12) !important;
-        .menu-icon {
-          color: #3b82f6 !important;
-        }
-      }
-
-      &.theme-icon {
-        background: rgba(139, 92, 246, 0.12) !important;
-        .menu-icon {
-          color: #8b5cf6 !important;
-        }
-      }
-
-      &.logout-icon {
-        background: rgba(239, 68, 68, 0.12) !important;
-        .menu-icon {
-          color: #ef4444 !important;
-        }
-      }
+    &:hover .menu-icon {
+      color: #10b981;
     }
 
-    .menu-item-label {
-      flex: 1;
-      color: var(--text-primary, #1f2937) !important;
-      transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    &:hover:not(.active) {
-      background: var(--user-menu-item-hover, rgba(16, 185, 129, 0.08)) !important;
-      transform: translateX(2px);
-
-      .item-icon-wrapper {
-        transform: scale(1.08);
-        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
-      }
-    }
-
-    &:active {
-      transform: translateX(1px) scale(0.98);
-    }
-
-    &.logout-item {
-      &:hover:not(.active) {
-        background: rgba(239, 68, 68, 0.08) !important;
-
-        .item-icon-wrapper {
-          box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
-        }
-      }
-
-      .text-danger {
-        color: #ef4444 !important;
-        font-weight: 600;
-      }
-    }
-
-    &.theme-toggle-item {
-      &:hover:not(.active) {
-        background: rgba(139, 92, 246, 0.08) !important;
-
-        .item-icon-wrapper {
-          box-shadow: 0 2px 8px rgba(139, 92, 246, 0.15);
-        }
-      }
+    .text-danger {
+      color: #ef4444;
     }
   }
 
-  // RTL Support
-  &.rtl {
-    .user-menu-header {
-      flex-direction: row-reverse;
-      .user-menu-avatar .avatar-status {
-        right: auto;
-        left: -1px;
-      }
-      .user-info {
-        text-align: right;
-      }
-    }
-    .menu-item-compact {
-      flex-direction: row-reverse;
-
-      .active-indicator {
-        left: auto;
-        right: 0;
-        border-radius: 3px 0 0 3px;
-      }
-    }
+  .mat-divider {
+    margin: 0.5rem 0;
   }
 }
 
-// Dark Theme Enhancements
 body.dark-theme ::ng-deep .user-menu-dropdown {
   .mat-mdc-menu-panel {
-    background: var(--user-menu-bg, #1e293b) !important;
-    background-color: var(--user-menu-bg, #1e293b) !important;
-    border-color: var(--user-menu-border, rgba(255, 255, 255, 0.1)) !important;
-    box-shadow: var(--user-menu-shadow, 0 8px 32px rgba(0, 0, 0, 0.5)) !important;
-  }
-
-  // Override Material's surface color
-  .mat-mdc-menu-panel .mdc-menu-surface {
-    background: var(--user-menu-bg, #1e293b) !important;
-    background-color: var(--user-menu-bg, #1e293b) !important;
-  }
-
-  .mat-mdc-menu-content {
-    background: var(--user-menu-bg, #1e293b) !important;
-    background-color: var(--user-menu-bg, #1e293b) !important;
-  }
-
-  // Force Material menu items to use dark background
-  .mat-mdc-menu-item {
-    background: transparent !important;
-    color: var(--text-primary, #f1f5f9) !important;
-
-    &:hover {
-      background: transparent !important;
-    }
-
-    &:focus {
-      background: transparent !important;
-    }
-
-    // Override Material's ripple and background
-    &::before,
-    &::after {
-      background-color: transparent !important;
-    }
-  }
-
-  // Override any Material surface colors
-  .mdc-list-item {
-    background-color: transparent !important;
-    color: var(--text-primary, #f1f5f9) !important;
-  }
-
-  // Override Material list item text
-  .mdc-list-item__primary-text,
-  .mdc-list-item__secondary-text {
-    color: var(--text-primary, #f1f5f9) !important;
-  }
-
-  // Ensure disabled items also have correct colors
-  .mat-mdc-menu-item[disabled] {
-    background: transparent !important;
-    color: var(--text-secondary, #94a3b8) !important;
-    opacity: 0.6;
-  }
-
-  // Override any Material ripple effects
-  .mat-ripple-element {
-    background-color: rgba(16, 185, 129, 0.1) !important;
+    background: var(--card-bg, #1e293b);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
   }
 
   .user-menu-header {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(59, 130, 246, 0.05));
-    border-bottom-color: var(--divider-color, rgba(255, 255, 255, 0.1)) !important;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(59, 130, 246, 0.08));
 
-    .user-menu-avatar {
-      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
-
-      .avatar-status {
-        border-color: var(--user-menu-bg, #1e293b) !important;
-      }
+    .user-info .user-name {
+      color: var(--text-primary, #f1f5f9);
     }
 
-    .user-info {
-      .user-name {
-        color: var(--text-primary, #f1f5f9) !important;
-      }
-      .user-email {
-        color: var(--text-secondary, #94a3b8) !important;
-      }
+    .user-info .user-email {
+      color: var(--text-secondary, #cbd5e1);
     }
   }
 
-  .menu-divider {
-    border-top-color: var(--divider-color, rgba(255, 255, 255, 0.1)) !important;
-  }
-
-  .menu-item-compact {
-    color: var(--text-primary, #f1f5f9) !important;
-    background: transparent !important;
-
-    // Ensure all text elements use dark mode colors
-    span,
-    .menu-item-label {
-      color: var(--text-primary, #f1f5f9) !important;
+  .mat-mdc-menu-item {
+    &:hover {
+      background: rgba(16, 185, 129, 0.12);
     }
 
-    &.active {
-      background: var(--user-menu-item-active, rgba(16, 185, 129, 0.18)) !important;
-      color: #34d399 !important;
-
-      span,
-      .menu-item-label {
-        color: #34d399 !important;
-      }
-
-      .menu-icon {
-        color: #34d399 !important;
-      }
-    }
-
-    .item-icon-wrapper {
-      &.profile-icon {
-        background: rgba(16, 185, 129, 0.18) !important;
-        .menu-icon {
-          color: #10b981 !important;
-        }
-      }
-
-      &.settings-icon {
-        background: rgba(59, 130, 246, 0.18) !important;
-        .menu-icon {
-          color: #3b82f6 !important;
-        }
-      }
-
-      &.theme-icon {
-        background: rgba(139, 92, 246, 0.18) !important;
-        .menu-icon {
-          color: #8b5cf6 !important;
-        }
-      }
-
-      &.logout-icon {
-        background: rgba(239, 68, 68, 0.18) !important;
-        .menu-icon {
-          color: #ef4444 !important;
-        }
-      }
-    }
-
-    &:hover:not(.active) {
-      background: var(--user-menu-item-hover, rgba(16, 185, 129, 0.12)) !important;
-    }
-
-    .menu-item-label,
-    span:not(.text-danger) {
-      color: var(--text-primary, #f1f5f9) !important;
-    }
-
-    &.logout-item {
-      &:hover:not(.active) {
-        background: rgba(239, 68, 68, 0.12) !important;
-      }
-
-      .text-danger {
-        color: #ef4444 !important;
-      }
-    }
-
-    &.theme-toggle-item {
-      &:hover:not(.active) {
-        background: rgba(139, 92, 246, 0.12) !important;
-      }
-    }
-  }
-}
-
-// Animations
-@keyframes pulse-status {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(0.95);
-  }
-}
-
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateY(-50%) translateX(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(-50%) translateX(0);
-  }
-}
-
-// Responsive User Menu Styles
-@media (max-width: 768px) {
-  ::ng-deep .user-menu-dropdown {
-    .mat-mdc-menu-panel {
-      min-width: 260px !important;
-      max-width: 90vw !important;
-    }
-
-    .user-menu-header {
-      padding: 1rem 0.875rem !important;
-      gap: 0.75rem;
-
-      .user-menu-avatar {
-        width: 40px;
-        height: 40px;
-
-        .avatar-initials-large {
-          font-size: 0.9rem;
-        }
-      }
-
-      .user-info {
-        .user-name {
-          font-size: 0.9rem;
-        }
-
-        .user-email {
-          font-size: 0.75rem;
-        }
-      }
-    }
-
-    .menu-item-compact {
-      padding: 0.625rem 0.875rem !important;
-      font-size: 0.875rem;
-
-      .item-icon-wrapper {
-        width: 32px;
-        height: 32px;
-
-        .menu-icon {
-          width: 18px;
-          height: 18px;
-        }
-      }
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  ::ng-deep .user-menu-dropdown {
-    .mat-mdc-menu-panel {
-      min-width: 240px !important;
-      max-width: 85vw !important;
-    }
-
-    .user-menu-header {
-      padding: 0.875rem 0.75rem !important;
-
-      .user-menu-avatar {
-        width: 36px;
-        height: 36px;
-
-        .avatar-initials-large {
-          font-size: 0.85rem;
-        }
-
-        .avatar-status {
-          width: 10px;
-          height: 10px;
-        }
-      }
-
-      .user-info {
-        .user-name {
-          font-size: 0.85rem;
-        }
-
-        .user-email {
-          font-size: 0.7rem;
-        }
-      }
-    }
-
-    .menu-item-compact {
-      padding: 0.5rem 0.75rem !important;
-      font-size: 0.85rem;
-      gap: 0.75rem;
-
-      .item-icon-wrapper {
-        width: 30px;
-        height: 30px;
-
-        .menu-icon {
-          width: 16px;
-          height: 16px;
-        }
-      }
+    &:hover .menu-icon {
+      color: #34d399;
     }
   }
 }
@@ -2179,58 +1350,9 @@ body.dark-theme .mobile-nav-link {
   }
 }
 
-// ===== MOBILE THEME SECTION =====
-.mobile-theme-section {
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
-}
-
-.mobile-theme-toggle {
-  width: 100%;
-  justify-content: flex-start;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-
-  svg {
-    width: 24px;
-    height: 24px;
-    color: var(--text-secondary, #6b7280);
-  }
-
-  &:hover {
-    background: rgba(16, 185, 129, 0.08);
-    color: #10b981;
-
-    svg {
-      color: #10b981;
-    }
-  }
-
-  &:active {
-    background: rgba(16, 185, 129, 0.12);
-  }
-}
-
-body.dark-theme .mobile-theme-toggle {
-  svg {
-    color: var(--text-secondary, #cbd5e1);
-  }
-
-  &:hover {
-    background: rgba(16, 185, 129, 0.12);
-    color: #34d399;
-
-    svg {
-      color: #34d399;
-    }
-  }
-}
-
 // ===== MOBILE LANGUAGE SECTION =====
 .mobile-language-section {
-  margin-top: 1.5rem;
+  margin-top: 2rem;
   padding-top: 1.5rem;
   border-top: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
 }
@@ -2418,7 +1540,7 @@ body.dark-theme ::ng-deep .more-menu-dropdown {
   }
 }
 
-// ===== MOBILE & TABLET BOTTOM NAVIGATION BAR =====
+// ===== MOBILE BOTTOM NAVIGATION BAR =====
 .mobile-bottom-nav {
   position: fixed;
   bottom: 0;
@@ -2430,12 +1552,8 @@ body.dark-theme ::ng-deep .more-menu-dropdown {
   backdrop-filter: blur(20px);
   border-top: 1px solid var(--glass-border, rgba(0, 0, 0, 0.08));
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
-  padding: 0.75rem 0 calc(0.75rem + env(safe-area-inset-bottom));
+  padding: 0.5rem 0 calc(0.5rem + env(safe-area-inset-bottom));
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border-top-left-radius: 1.5rem;
-  border-top-right-radius: 1.5rem;
-  margin: 0 0.5rem;
-  display: none; // Hidden by default, shown via media queries
 
   // Adjust opacity on scroll
   &.scrolled {
@@ -2456,25 +1574,11 @@ body.dark-theme .mobile-bottom-nav {
 .bottom-nav-content {
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: space-around;
   position: relative;
   max-width: 600px;
   margin: 0 auto;
-  padding: 0 1.5rem;
-  gap: 0.5rem;
-  width: 100%;
-
-  @media (max-width: 767px) {
-    gap: 0.375rem;
-    padding: 0 1rem;
-    max-width: 100%;
-  }
-
-  @media (min-width: 768px) and (max-width: 1024px) {
-    gap: 0.75rem;
-    padding: 0 1.75rem;
-    max-width: 700px;
-  }
+  padding: 0 1rem;
 }
 
 .bottom-nav-item {
@@ -2530,29 +1634,6 @@ body.dark-theme .mobile-bottom-nav {
   height: 24px;
   color: var(--text-secondary, #6b7280);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  display: none; // Hide SVG when Font Awesome is used
-}
-
-// Font Awesome icon styles for bottom nav
-.nav-item-icon-fa {
-  font-size: 1.25rem;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-secondary, #6b7280);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.bottom-nav-item:hover .nav-item-icon-fa {
-  transform: scale(1.1);
-  color: #10b981;
-}
-
-.bottom-nav-item.active .nav-item-icon-fa {
-  color: #10b981;
-  transform: scale(1.15);
 }
 
 .nav-item-label {
@@ -2617,18 +1698,83 @@ body.dark-theme .nav-item-label {
   color: var(--text-secondary, #cbd5e1);
 }
 
-body.dark-theme .nav-item-icon-fa {
-  color: var(--text-secondary, #cbd5e1);
+// ===== FLOATING ACTION BUTTON (FAB) - BOTTOM RIGHT =====
+.mobile-fab {
+  position: fixed;
+  bottom: calc(80px + env(safe-area-inset-bottom));
+  right: 1rem;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #10b981, #059669);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4),
+              0 8px 32px rgba(16, 185, 129, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 998;
+
+  &:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 6px 24px rgba(16, 185, 129, 0.5),
+                0 12px 48px rgba(16, 185, 129, 0.4);
+  }
+
+  &:active {
+    transform: translateY(-2px) scale(0.95);
+  }
+
+  .fab-icon {
+    width: 28px;
+    height: 28px;
+    color: white;
+    z-index: 2;
+    position: relative;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover .fab-icon {
+    transform: rotate(90deg);
+  }
+
+  .fab-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.6) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+    z-index: 1;
+  }
 }
 
-body.dark-theme .bottom-nav-item:hover .nav-item-icon-fa {
-  color: #34d399;
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
 }
 
-body.dark-theme .bottom-nav-item.active .nav-item-icon-fa {
-  color: #34d399;
-}
+body.dark-theme .mobile-fab {
+  background: linear-gradient(135deg, #10b981, #34d399);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.5),
+              0 8px 32px rgba(16, 185, 129, 0.4);
 
+  &:hover {
+    box-shadow: 0 6px 24px rgba(16, 185, 129, 0.6),
+                0 12px 48px rgba(16, 185, 129, 0.5);
+  }
+}
 
 // ===== RTL SUPPORT =====
 .feedin-header.rtl {
@@ -2667,66 +1813,22 @@ body.dark-theme .bottom-nav-item.active .nav-item-icon-fa {
     flex-direction: row-reverse;
   }
 
+  .mobile-fab {
+    left: 1rem;
+    right: auto;
+  }
 }
 
 // ===== RESPONSIVE ADJUSTMENTS =====
-// Below 900px: Tabs collapse, farm selector goes full-width on mobile
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .header-content {
-    flex-wrap: wrap;
+    grid-template-columns: auto auto;
     gap: 1rem;
-  }
-
-  .logo-section {
-    order: 1;
-    flex: 1 1 100%; // Full width on mobile
-    min-width: 0;
-    max-width: 100%;
-
-    @media (min-width: 769px) {
-      flex: 0 1 auto; // Auto width on tablet
-    }
+    padding: 1rem 1.5rem;
   }
 
   .center-section {
-    order: 3;
-    display: none; // Navigation moved to bottom nav
-    width: 100%;
-  }
-
-  .actions-section {
-    order: 2;
-    gap: 0.5rem;
-    flex-shrink: 0;
-
-    .action-btn,
-    .user-avatar {
-      width: 42px;
-      height: 42px;
-    }
-
-    .action-icon {
-      width: 22px;
-      height: 22px;
-    }
-
-    // Ensure theme toggle is always visible on tablet and mobile
-    .action-btn:first-child {
-      display: flex !important; // Theme toggle - always visible
-    }
-
-    // Hide language switcher on tablet/mobile (available in mobile menu)
-    .language-switcher {
-      display: none;
-    }
-  }
-}
-
-// Tablet and Mobile (≤1024px)
-@media (max-width: 1024px) {
-  .header-content {
-    gap: 1rem;
-    padding: 1rem 1.5rem;
+    display: none;
   }
 
   .actions-section {
@@ -2752,117 +1854,18 @@ body.dark-theme .bottom-nav-item.active .nav-item-icon-fa {
   .avatar-initials {
     font-size: 0.85rem;
   }
-
-  // Add bottom padding to body to accommodate bottom nav on tablet
-  body {
-    padding-bottom: 72px;
-  }
 }
 
-// Mobile (≤767px)
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .feedin-header {
     border-bottom-left-radius: 1.5rem;
     border-bottom-right-radius: 1.5rem;
   }
 
-  .header-content {
-    gap: 0.5rem;
-    padding: 0.75rem 1rem;
-    min-height: 64px;
-    height: auto;
-    flex-wrap: nowrap;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .logo-section {
-    flex: 0 0 auto;
-    min-width: 0;
-    max-width: calc(100% - 180px); // Leave space for actions
-    gap: 0.5rem;
-    order: 1;
-
-    .logo-wrapper {
-      flex-shrink: 0;
-      padding: 0.25rem;
-    }
-
-    .feedin-logo {
-      height: 40px; // Smaller logo on mobile
-    }
-  }
-
-  .mobile-farm-selector {
-    flex: 1;
-    min-width: 0;
-    max-width: 100%;
-
-    .mobile-farm-selector-trigger {
-      padding: 0.5rem;
-      font-size: 0.8rem;
-      gap: 0.375rem;
-
-      .selector-icon {
-        width: 14px;
-        height: 14px;
-      }
-
-      .selector-text {
-        font-size: 0.75rem;
-      }
-
-      .selector-arrow {
-        width: 10px;
-        height: 10px;
-      }
-    }
-  }
-
   .actions-section {
-    gap: 0.375rem;
-    flex-wrap: nowrap;
-    justify-content: flex-end;
-    flex-shrink: 0;
-    order: 2;
-    width: max-content; // Better browser support than fit-content
-
-    .action-btn,
-    .user-avatar,
-    .mobile-menu-toggle {
-      width: 38px;
-      height: 38px;
-      min-width: 38px;
-    }
-
-    .action-icon {
-      width: 18px;
-      height: 18px;
-    }
-
-    .notification-badge {
-      top: 2px;
-      right: 2px;
-      min-width: 16px;
-      height: 16px;
-      font-size: 0.65rem;
-      padding: 0 4px;
-    }
-
-    // Hide language switcher on mobile (available in mobile menu)
-    .language-switcher {
+    .language-switcher,
+    .action-btn:first-child:not(.mobile-menu-toggle) {
       display: none;
-    }
-
-    // Theme toggle should always be visible
-    .action-btn:first-child {
-      display: flex !important;
-    }
-
-    // Mobile menu toggle should be visible
-    .mobile-menu-toggle {
-      display: flex !important;
-      margin-left: 0.25rem;
     }
   }
 
@@ -2873,17 +1876,11 @@ body.dark-theme .bottom-nav-item.active .nav-item-icon-fa {
 
   .mobile-bottom-nav {
     display: flex;
-    padding: 0.625rem 0 calc(0.625rem + env(safe-area-inset-bottom));
   }
 
   // Hide more menu on mobile
   .more-menu-wrapper {
     display: none;
-  }
-
-  // Hide center section navigation on mobile (using bottom nav)
-  .center-section {
-    display: none !important;
   }
 }
 
@@ -2893,79 +1890,8 @@ body.dark-theme .bottom-nav-item.active .nav-item-icon-fa {
     border-bottom-right-radius: 1rem;
   }
 
-  .header-content {
-    padding: 0.625rem 0.875rem;
-    gap: 0.375rem;
-    min-height: 60px;
-  }
-
   .feedin-logo {
-    height: 36px;
-  }
-
-  .logo-section {
-    max-width: calc(100% - 160px); // Less space for actions on small screens
-    gap: 0.375rem;
-
-    .logo-wrapper {
-      padding: 0.125rem;
-    }
-  }
-
-  .mobile-farm-selector {
-    .mobile-farm-selector-trigger {
-      padding: 0.375rem;
-      font-size: 0.7rem;
-
-      .selector-icon {
-        width: 12px;
-        height: 12px;
-      }
-
-      .selector-text {
-        font-size: 0.7rem;
-      }
-
-      .selector-arrow {
-        width: 8px;
-        height: 8px;
-      }
-    }
-  }
-
-  .actions-section {
-    gap: 0.25rem;
-
-    .action-btn,
-    .user-avatar,
-    .mobile-menu-toggle {
-      width: 36px;
-      height: 36px;
-      min-width: 36px;
-    }
-
-    .action-icon {
-      width: 16px;
-      height: 16px;
-    }
-
-    .notification-badge {
-      top: 1px;
-      right: 1px;
-      min-width: 14px;
-      height: 14px;
-      font-size: 0.6rem;
-      padding: 0 3px;
-    }
-
-    .avatar-circle {
-      width: 32px;
-      height: 32px;
-    }
-
-    .avatar-initials {
-      font-size: 0.75rem;
-    }
+    height: 44px;
   }
 
   // Mobile language section adjustments for small screens
@@ -2998,12 +1924,6 @@ body.dark-theme .bottom-nav-item.active .nav-item-icon-fa {
   }
 
   // Smaller bottom nav items
-  .nav-item-icon-fa {
-    font-size: 1.1rem;
-    width: 22px;
-    height: 22px;
-  }
-
   .nav-item-icon {
     width: 22px;
     height: 22px;
@@ -3011,154 +1931,73 @@ body.dark-theme .bottom-nav-item.active .nav-item-icon-fa {
 
   .nav-item-label {
     font-size: 0.65rem;
-    max-width: 55px;
+    max-width: 60px;
   }
 
-  .bottom-nav-item {
-    padding: 0.5rem 0.25rem;
-  }
+  .mobile-fab {
+    width: 52px;
+    height: 52px;
+    bottom: calc(76px + env(safe-area-inset-bottom));
+    right: 0.75rem;
 
-  .bottom-nav-content {
-    gap: 0.25rem;
-    padding: 0 0.75rem;
-  }
+    &:hover {
+      transform: translateY(-4px) scale(1.05);
+    }
 
+    .fab-icon {
+      width: 26px;
+      height: 26px;
+    }
+  }
 }
 
+// RTL Support for FAB
+.mobile-bottom-nav.rtl .mobile-fab {
+  right: auto;
+  left: 1rem;
+}
 
 // Tablet specific adjustments (768px - 1024px)
-@media (min-width: 768px) and (max-width: 1024px) {
-  .feedin-header {
-    border-bottom-left-radius: 1.5rem;
-    border-bottom-right-radius: 1.5rem;
-  }
-
-  .header-content {
-    gap: 0.75rem;
-    padding: 0.875rem 1.25rem;
-    min-height: 70px;
-    height: auto;
-    flex-wrap: nowrap;
-    align-items: center;
-  }
-
-  .logo-section {
-    flex: 0 0 auto;
-    min-width: 0;
-    max-width: 280px; // Limit logo section width
-    gap: 0.75rem;
-    order: 1;
-
-    .feedin-logo {
-      height: 48px; // Medium logo on tablet
-    }
-
-    .nav-farm-selector {
-      .farm-selector-trigger {
-        padding: 0.5rem 0.875rem;
-        font-size: 0.85rem;
-
-        .selector-icon {
-          width: 16px;
-          height: 16px;
-        }
-
-        .selector-text {
-          max-width: 140px;
-        }
-
-        .selector-arrow {
-          width: 12px;
-          height: 12px;
-        }
-      }
-    }
-  }
-
+@media (min-width: 769px) and (max-width: 1024px) {
   .center-section {
-    display: none !important; // Hide center section on tablet - navigation moved to bottom nav
+    display: flex;
   }
 
-  .actions-section {
-    gap: 0.375rem;
-    flex-shrink: 0;
-    order: 2;
-    margin-left: auto;
-    width: max-content; // Better browser support than fit-content
-
-    .action-btn,
-    .user-avatar,
-    .mobile-menu-toggle {
-      width: 40px;
-      height: 40px;
-      min-width: 40px;
-    }
-
-    .action-icon {
-      width: 19px;
-      height: 19px;
-    }
-
-    .avatar-circle {
-      width: 36px;
-      height: 36px;
-    }
-
-    .avatar-initials {
-      font-size: 0.875rem;
-    }
-
-    // Hide language switcher on tablet (available in mobile menu)
-    .language-switcher {
+  // Show only primary nav items on tablet
+  .header-nav {
+    .nav-link:nth-child(n+5) {
       display: none;
     }
-
-    // Mobile menu toggle should be visible on tablet
-    .mobile-menu-toggle {
-      display: flex !important;
-    }
   }
 
-  // Show bottom navigation on tablet
-  .mobile-bottom-nav {
-    display: flex;
-    margin: 0 1rem;
-    padding: 0.75rem 0 calc(0.75rem + env(safe-area-inset-bottom));
-    border-top-left-radius: 1.75rem;
-    border-top-right-radius: 1.75rem;
-  }
-
-  // Show more menu trigger in bottom nav if needed
+  // Show more menu trigger
   .more-menu-wrapper {
-    display: none; // More menu not needed in bottom nav
+    display: flex;
   }
 
-  // Tablet bottom nav items - slightly larger
-  .bottom-nav-item {
-    padding: 0.625rem 0.5rem;
+  // Compress padding
+  .nav-link {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+    gap: 0.35rem;
 
-    .nav-item-icon-fa {
-      font-size: 1.35rem;
-      width: 26px;
-      height: 26px;
-    }
-
-    .nav-item-icon {
-      width: 26px;
-      height: 26px;
-    }
-
-    .nav-item-label {
-      font-size: 0.75rem;
-      max-width: 70px;
+    .nav-icon {
+      width: 18px;
+      height: 18px;
     }
   }
 
-  .bottom-nav-content {
-    gap: 0.75rem;
-    padding: 0 1.75rem;
-    max-width: 700px;
+  .farm-selector-trigger {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+
+    .selector-icon {
+      width: 18px;
+      height: 18px;
+    }
+
+    .selector-text {
+      max-width: 120px;
+    }
   }
 }
-
-

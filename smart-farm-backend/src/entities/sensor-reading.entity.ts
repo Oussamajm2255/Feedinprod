@@ -1,12 +1,10 @@
 // src/entities/sensor-reading.entity.ts
 
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, PrimaryColumn, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { Sensor } from './sensor.entity';
 
 @Entity('sensor_readings')
 export class SensorReading {
-  // Note: Schema has composite PK (id, created_at) for partitioning
-  // TypeORM will handle this, but we define id as primary for queries
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -14,7 +12,7 @@ export class SensorReading {
   @JoinColumn({ name: 'sensor_id', referencedColumnName: 'sensor_id' })
   sensor: Sensor;
 
-  @Column({ type: 'varchar', length: 36 })
+  @Column()
   sensor_id: string;
 
   @Column({ type: 'float', nullable: true })
@@ -23,6 +21,6 @@ export class SensorReading {
   @Column({ type: 'float', nullable: true })
   value2: number;
 
-  @CreateDateColumn({ type: 'timestamp', precision: 6 })
-  created_at: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 }

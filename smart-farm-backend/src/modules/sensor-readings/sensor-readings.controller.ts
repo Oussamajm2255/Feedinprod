@@ -95,19 +95,6 @@ export class SensorReadingsController {
     return this.sensorReadingsService.getReadingsByDevice(deviceId, limitNum, offsetNum);
   }
 
-  @Get('by-device/:deviceId/date-range')
-  async getReadingsByDeviceDateRange(
-    @Param('deviceId') deviceId: string,
-    @Query('startDate') startDate: string,
-    @Query('endDate') endDate: string,
-    @Query('limit') limit?: string
-  ) {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const limitNum = limit ? parseInt(limit, 10) : 1000;
-    return this.sensorReadingsService.getReadingsByDeviceDateRange(deviceId, start, end, limitNum);
-  }
-
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.sensorReadingsService.findOne(+id);

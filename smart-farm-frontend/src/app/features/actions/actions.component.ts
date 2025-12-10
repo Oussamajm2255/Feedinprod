@@ -226,7 +226,7 @@ interface ActionStats {
                     <span class="date-range-text">
                       {{ fromDateFilter.value | date:'shortDate' }} - {{ toDateFilter.value | date:'shortDate' }}
                     </span>
-                    <button mat-icon-button
+                    <button mat-icon-button 
                             class="clear-date-range"
                             (click)="clearDateRange()"
                             matTooltip="Clear date range">
@@ -1140,7 +1140,7 @@ interface ActionStats {
 
             .mat-mdc-select-arrow-wrapper {
               transform: translateY(0) !important;
-
+              
               .mat-mdc-select-arrow {
                 color: var(--primary-green) !important;
                 transition: all 0.3s ease !important;

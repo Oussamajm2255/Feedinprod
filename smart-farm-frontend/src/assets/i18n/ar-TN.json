@@ -179,65 +179,7 @@
       "offline": "غير متصل",
       "maintenance": "صيانة",
       "online": "متصل",
-      "devices": "أجهزة",
-      "systemHealth": "صحة النظام"
-    },
-    "statusBadges": {
-      "excellent": "ممتاز",
-      "good": "جيد",
-      "needsAttention": "يحتاج للانتباه",
-      "connected": "متصل",
-      "systemOperational": "جميع الأنظمة تعمل",
-      "optimal": "مثالي",
-      "checkRequired": "يتطلب فحص"
-    },
-    "sections": {
-      "farmMap": {
-        "title": "خريطة المزرعة",
-        "openInMaps": "افتح في خرائط جوجل",
-        "noData": "إحداثيات المزرعة غير متوفرة"
-      },
-      "farmDetails": {
-        "title": "تفاصيل المزرعة",
-        "labels": {
-          "name": "اسم المزرعة",
-          "owner": "المالك",
-          "location": "الموقع",
-          "coordinates": "الإحداثيات",
-          "id": "معرّف المزرعة",
-          "created": "تاريخ الإنشاء",
-          "updated": "آخر تحديث"
-        },
-        "noData": "لا توجد بيانات للمزرعة"
-      },
-      "weather": {
-        "title": "الطقس ورؤى الذكاء الاصطناعي",
-        "loading": "جاري تحميل بيانات الطقس...",
-        "feelsLike": "درجة الإحساس {{value}}°م",
-        "details": {
-          "humidity": "الرطوبة",
-          "wind": "سرعة الرياح",
-          "clouds": "الغيوم",
-          "rainChance": "احتمال هطول المطر",
-          "sunrise": "شروق الشمس",
-          "sunset": "غروب الشمس"
-        },
-        "units": {
-          "wind": "م/ث"
-        },
-        "hourlyTitle": "الـ 24 ساعة القادمة",
-        "dailyTitle": "توقعات 7 أيام",
-        "aiInsightsTitle": "رؤى الذكاء الاصطناعي",
-        "noData": "لا تتوفر بيانات الطقس. نحتاج إلى إحداثيات المزرعة."
-      }
-    },
-    "fab": {
-      "quickActions": "إجراءات سريعة",
-      "liveReadings": "قراءات مباشرة",
-      "devices": "الأجهزة",
-      "actionsCenter": "مركز الإجراءات",
-      "sensorInfo": "معلومات المستشعر",
-      "crops": "المحاصيل"
+      "devices": "أجهزة"
     },
     "controlCenter": {
       "title": "مركز التحكم في المزرعة الذكية",
@@ -294,17 +236,6 @@
   "devices": {
     "title": "الأجهزة",
     "subtitle": "عرض معلومات أجهزة إنترنت الأشياء الخاصة بك",
-    "pageAriaLabel": "Devices overview",
-    "aria": {
-      "headerActions": "Device actions",
-      "toggleViewTo": "Switch to {{view}} view",
-      "filters": "Device filters",
-      "filterControls": "عناصر تحكم التصفية"
-    },
-    "viewModes": {
-      "cards": "card",
-      "table": "table"
-    },
     "addDevice": "إضافة جهاز",
     "editDevice": "تعديل الجهاز",
     "deleteDevice": "حذف الجهاز",
@@ -347,64 +278,12 @@
       "light": "إضاءة",
       "ledLight": "إضاءة LED",
       "roofMotor": "محرك السقف",
-      "windowMotor": "محرك النافذة",
-      "monitor": "شاشة مراقبة"
+      "windowMotor": "محرك النافذة"
     },
     "deviceCreated": "تم إنشاء الجهاز بنجاح",
     "deviceUpdated": "تم تحديث الجهاز بنجاح",
     "deviceDeleted": "تم حذف الجهاز بنجاح",
     "devicesDeleted": "تم حذف {{count}} أجهزة بنجاح",
-    "card": {
-      "ariaLabel": "Device card for {{name}}",
-      "statusLabel": "{{status}} status, last seen {{lastSeen}}",
-      "locationLabel": "Located in {{location}}",
-      "actionsAria": "Device actions",
-      "viewDetailsAria": "View details for {{name}}",
-      "activateActionAria": "Activate {{name}}",
-      "deactivateActionAria": "Deactivate {{name}}"
-    },
-    "exportHeaders": {
-      "name": "Name",
-      "type": "Type",
-      "location": "Location",
-      "status": "Status",
-      "lastSeen": "Last seen",
-      "description": "Description"
-    },
-    "devicesDeletedSuccess": "{{count}} devices deleted successfully",
-    "confirmBulkStatusChange": "Change status of {{count}} devices to {{status}}?",
-    "bulkStatusUpdated": "Status updated to {{status}} for {{count}} devices",
-    "notAvailableShort": "N/A",
-    "uptimeDaysHours": "{{days}}d {{hours}}h",
-    "uptimeHoursMinutes": "{{hours}}h {{minutes}}m",
-    "uptimeMinutes": "{{minutes}}m",
-    "sensorLocationUnknown": "Location unavailable",
-    "noReadings": "لا توجد قراءات",
-    "noReadingsDescription": "لم نستلم أي قراءات لهذا الجهاز بعد.",
-    "noActions": "لا توجد إجراءات للجهاز",
-    "noActionsDescription": "لم يتم تسجيل أي إجراءات يدوية أو آلية حديثاً لهذا الجهاز.",
-    "tabs": {
-      "overview": "Overview",
-      "sensors": "Sensors ({{count}})",
-      "readings": "Recent readings",
-      "actions": "Actions ({{count}})"
-    },
-    "dialog": {
-      "ariaLabel": "Device details for {{name}}"
-    },
-    "readings": {
-      "value1": "Value 1",
-      "value2": "Value 2"
-    },
-    "actionStatus": {
-      "ack": "Acknowledged",
-      "pending": "Pending",
-      "error": "Error",
-      "failed": "Failed",
-      "sent": "Sent",
-      "queued": "Queued",
-      "unknown": "Unknown"
-    },
     "confirmDelete": "هل أنت متأكد من حذف {{name}}؟",
     "confirmBulkDelete": "هل أنت متأكد من حذف {{count}} أجهزة: {{names}}؟",
     "deleteDeviceConfirmation": "هل أنت متأكد من حذف هذا الجهاز؟",
@@ -417,7 +296,6 @@
     "ipAddress": "عنوان IP",
     "macAddress": "عنوان MAC",
     "description": "الوصف",
-    "deviceInformation": "معلومات الجهاز",
     "createdAt": "تاريخ الإنشاء",
     "basicInfo": "المعلومات الأساسية",
     "sensors": "المستشعرات",
@@ -425,7 +303,6 @@
     "noSensorsDescription": "لا توجد مستشعرات مرتبطة بهذا الجهاز",
     "sensorId": "معرف المستشعر",
     "unit": "الوحدة",
-    "thresholds": "العتبات",
     "minCritical": "الحد الأدنى الحرج",
     "maxCritical": "الحد الأقصى الحرج",
     "statistics": "الإحصائيات",
@@ -476,11 +353,9 @@
     "searchPlaceholder": "البحث عن الأجهزة...",
     "filterByStatus": "التصفية حسب الحالة",
     "filterByType": "التصفية حسب النوع",
-    "filterByTypeScopedHint": "إظهار الأنواع المتاحة لهذه المزرعة",
     "allStatuses": "جميع الحالات",
     "allTypes": "جميع الأنواع",
     "clearFilters": "مسح الفلاتر",
-    "activeFiltersCount": "{{count}} active filters",
     "selectedCount": "{{count}} محدد",
     "deleteSelected": "حذف المحدد",
     "toggleView": "تبديل العرض",
@@ -513,12 +388,6 @@
     "status": "الحالة",
     "location": "الموقع",
     "noSensors": "لا توجد مستشعرات",
-    "noSensorsFound": "لم يتم العثور على مستشعرات",
-    "adjustFilters": "حاول ضبط الفلاتر أو مصطلحات البحث",
-    "orphanedSensorsWarning": "تحذير المستشعرات اليتيمة",
-    "orphanedSensorsMessage": "مستشعر(ات) بدون جهاز أب صالح",
-    "unknownDevice": "جهاز غير معروف",
-    "parentDevice": "الجهاز الأب",
     "sensorDetails": "تفاصيل المستشعر",
     "currentValue": "القيمة الحالية",
     "minValue": "الحد الأدنى",
@@ -557,9 +426,6 @@
     "liveData": "البيانات المباشرة",
     "historicalData": "البيانات التاريخية",
     "noReadings": "لا توجد قراءات متاحة",
-    "recentReadings": "قراءات حديثة",
-    "primaryValue": "القيمة الأساسية",
-    "secondaryValue": "القيمة الثانوية",
     "lastReading": "آخر قراءة",
     "readingHistory": "تاريخ القراءات",
     "exportData": "تصدير البيانات",
@@ -663,6 +529,21 @@
       "OFFLINE": "غير متصل"
     }
   },
+  "manualControl": {
+    "title": "مركز تحكم الأجهزة",
+    "subtitle": "تنفيذ إجراءات يدوية على أجهزة المزرعة الذكية",
+    "onlineDevices": "الأجهزة المتصلة",
+    "pendingActions": "الإجراءات المعلقة",
+    "statusPending": "في الانتظار",
+    "statusSuccess": "نجح",
+    "statusFailed": "فشل",
+    "statusTimeout": "انتهت المهلة",
+    "actionSentMessage": "تم إرسال الإجراء \"{{actionName}}\" إلى الجهاز - في انتظار التأكيد...",
+    "actionSuccessMessage": "✅ تم تنفيذ الإجراء \"{{actionName}}\" بنجاح!",
+    "actionFailedMessage": "❌ فشل الإجراء \"{{actionName}}\": {{error}}",
+    "actionTimeoutMessage": "⏰ انتهت مهلة الإجراء \"{{actionName}}\"",
+    "loadDevicesError": "فشل في تحميل الأجهزة"
+  },
   "notifications": {
     "title": "تنبيهات المزرعة",
     "subtitle": "ابق على اطلاع بما يحدث في مزرعتك",
@@ -691,42 +572,6 @@
     "endHour": "ساعة النهاية",
     "cooldown": "فترة الانتظار",
     "cooldownMinutes": "فترة الانتظار (بالدقائق)",
-    "settingsPage": {
-      "title": "إعدادات الإشعارات",
-      "subtitle": "اضبط نوافذ التسليم والمستويات والمصادر للتنبيهات",
-      "quietHoursDescription": "إسكات الإشعارات خلال ساعات محددة",
-      "cooldownDescription": "أقل مدة بين إشعارين متشابهين",
-      "levelsTitle": "فئات الإشعارات · المستويات",
-      "levelsDescription": "اختر مستويات الأهمية التي تريد استلامها",
-      "sourcesTitle": "فئات الإشعارات · المصادر",
-      "sourcesDescription": "حدد المصادر المسموح لها بإرسال التنبيهات",
-      "actionsInfo": "يتم تطبيق التغييرات مباشرة بعد الحفظ",
-      "placeholders": {
-        "startHour": "22",
-        "endHour": "6",
-        "cooldown": "15"
-      },
-      "labels": {
-        "hourSuffix": ":00",
-        "minutes": "دقائق"
-      },
-      "quietHoursInfo": "سيتم إسكات الإشعارات من <strong>{{start}}</strong> إلى <strong>{{end}}</strong>",
-      "cooldownInfo": "لن يتكرر نفس نوع الإشعار قبل مرور <strong>{{minutes}}</strong> دقيقة",
-      "levelDescriptions": {
-        "critical": "مشكلات عاجلة تتطلب تدخلاً فورياً",
-        "warning": "تنبيهات مهمة تحتاج الانتباه",
-        "info": "معلومات عامة وتحديثات",
-        "success": "عمليات ناجحة واكتمال المهام"
-      },
-      "sourceDescriptions": {
-        "sensors": "مستشعرات الحرارة والرطوبة والتربة",
-        "devices": "أجهزة إنترنت الأشياء والمعدات",
-        "actions": "الإجراءات التلقائية والمحفزات",
-        "system": "حالة النظام وتحديثاته",
-        "maintenance": "تذكيرات الصيانة وجدولها",
-        "security": "تنبيهات الأمان وسجلات الوصول"
-      }
-    },
     "categories": "الفئات",
     "critical": "حرج",
     "warning": "تحذير",
@@ -808,18 +653,8 @@
     "mapView": "عرض الخريطة",
     "farm": "المزرعة",
     "allFarms": "جميع المزارع",
-    "selectFarm": "اختر مزرعة",
     "device": "الجهاز",
     "allDevices": "جميع الأجهزة",
-    "selectDevice": "اختر جهاز",
-    "sensor": "المستشعر",
-    "allSensors": "جميع المستشعرات",
-    "selectSensor": "اختر مستشعر",
-    "startDate": "تاريخ البداية",
-    "selectStartDate": "اختر تاريخ البداية",
-    "endDate": "تاريخ النهاية",
-    "selectEndDate": "اختر تاريخ النهاية",
-    "sensorFilterApplied": "تم تطبيق فلتر المستشعر: {{sensor}}",
     "search": "بحث",
     "searchPlaceholder": "البحث في الإشعارات...",
     "preparingInsights": "جارٍ تحضير رؤيتك...",
@@ -856,25 +691,7 @@
     "allClear": "كل شيء واضح",
     "allCaughtUp": "لقد اطلعت على جميع إشعاراتك",
     "upToDate": "محدّث",
-    "noCriticalIssues": "لم يتم اكتشاف مشاكل حرجة",
-    "activeFilters": "فلتر نشط",
-    "suggestedActions": {
-      "checkVentilation": "تحقق من عمل التهوية. فكر في فتح النوافذ إذا كان الجو أبرد بالخارج.",
-      "checkHeating": "تحقق من عمل التدفئة. فكر في إغلاق النوافذ أو إضافة عزل.",
-      "improveCirculation": "حسّن دوران الهواء. تحقق من عمل جهاز إزالة الرطوبة بشكل صحيح.",
-      "checkWater": "تحقق من مستويات المياه. فكر في رش النباتات أو إضافة جهاز ترطيب.",
-      "checkDevicePower": "تحقق من طاقة الجهاز واتصال الواي فاي. حاول إعادة تشغيل الجهاز.",
-      "retryAction": "حاول الإجراء مرة أخرى بعد بضع دقائق. تحقق مما إذا كان الجهاز يستجيب."
-    },
-    "time": {
-      "justNow": "الآن",
-      "minutesAgo_one": "منذ دقيقة واحدة",
-      "minutesAgo_other": "منذ {{count}} دقيقة",
-      "hoursAgo_one": "منذ ساعة واحدة",
-      "hoursAgo_other": "منذ {{count}} ساعة",
-      "daysAgo_one": "منذ يوم واحد",
-      "daysAgo_other": "منذ {{count}} يوم"
-    }
+    "noCriticalIssues": "لم يتم اكتشاف مشاكل حرجة"
   },
   "actions": {
     "title": "مركز الإجراءات",
@@ -1073,80 +890,8 @@
     "healthStatus": "حالة الصحة",
     "irrigationSchedule": "جدول الري",
     "fertilizationSchedule": "جدول التسميد",
-    "common": {
-      "noLocation": "لا يوجد موقع",
-      "relative": {
-        "justNow": "الآن",
-        "minutesAgo": "منذ {{count}} د",
-        "hoursAgo": "منذ {{count}} س",
-        "yesterday": "أمس",
-        "daysAgo": "منذ {{count}} ي"
-      }
-    },
     "dashboard": {
-      "states": {
-        "loading": {
-          "title": "جاري تحميل لوحة مراقبة المحاصيل",
-          "subtitle": "نجهّز بيانات وتحليلات محاصيلك..."
-        },
-        "error": {
-          "title": "حدث خطأ ما",
-          "cta": "أعد المحاولة",
-          "retryAria": "إعادة تحميل لوحة المحاصيل"
-        },
-        "empty": {
-          "title": "لا توجد محاصيل",
-          "subtitle": "ابدأ بإنشاء أول محصول لمتابعة صحته ونموه.",
-          "cta": "إنشاء محصول",
-          "ctaAria": "إنشاء أول محصول لك"
-        }
-      },
-      "header": {
-        "selectCrop": "اختيار المحصول",
-        "selectAria": "اختر محصولاً لعرضه",
-        "actions": {
-          "refresh": "تحديث البيانات",
-          "refreshAria": "تحديث بيانات لوحة المحاصيل",
-          "edit": "تعديل المحصول",
-          "editAria": "تعديل تفاصيل المحصول",
-          "viewAll": "كل المحاصيل",
-          "viewAllAria": "عرض كل المحاصيل"
-        }
-      },
-      "aria": {
-        "status": "الحالة: {{status}}"
-      },
-      "kpi": {
-        "ariaLabel": "مؤشرات الأداء الرئيسية"
-      },
-      "details": {
-        "title": "تفاصيل المحصول",
-        "variety": "الصنف",
-        "planted": "تاريخ الزراعة",
-        "expectedHarvest": "موعد الحصاد المتوقع",
-        "status": "الحالة",
-        "description": "الوصف",
-        "notes": "ملاحظات",
-        "notAvailable": "غير متوفر",
-        "ariaLabel": "تفاصيل المحصول وأجهزة الاستشعار"
-      },
-      "sensors": {
-        "title": "المستشعرات المتصلة",
-        "empty": "لا توجد مستشعرات مرتبطة بهذا المحصول"
-      },
-      "actions": {
-        "ariaLabel": "إجراءات الأجهزة الذكية"
-      },
-      "timeline": {
-        "title": "الأحداث الأخيرة",
-        "ariaLabel": "الخط الزمني للأحداث",
-        "hideAria": "إخفاء الخط الزمني",
-        "showAria": "إظهار الخط الزمني"
-      },
-      "errors": {
-        "loadCrops": "تعذّر تحميل المحاصيل",
-        "loadDashboard": "تعذّر تحميل لوحة المحاصيل"
-      },
+      "header": "نظرة عامة على المحاصيل",
       "selectCrop": "اختر محصولاً",
       "healthAnalytics": "الصحة والتحليلات",
       "cropDetails": "تفاصيل المحصول",
@@ -1156,230 +901,8 @@
       "sustainability": "مقاييس الاستدامة",
       "noCropSelected": "لم يتم اختيار محصول",
       "selectCropDescription": "يرجى اختيار محصول من القائمة المنسدلة أعلاه لعرض لوحة المعلومات الخاصة به",
-      "loading": "جاري تحميل لوحة المحاصيل",
-      "error": "خطأ في تحميل بيانات المحصول",
-      "loadingMessage": "جاري جلب بيانات المحاصيل والتحليلات...",
-      "errorTitle": "عذراً! حدث خطأ ما",
-      "tryAgain": "حاول مرة أخرى",
-      "noCropsTitle": "لم يتم العثور على محاصيل",
-      "noCropsMessage": "ابدأ بإنشاء محصولك الأول لمراقبة صحته ونموه.",
-      "createCrop": "إنشاء محصول",
-      "selectCropAria": "اختر محصولاً للعرض",
-      "connectedSensors": "أجهزة الاستشعار المتصلة",
-      "noSensors": "لا توجد أجهزة استشعار متصلة بهذا المحصول",
-      "variety": "الصنف",
-      "planted": "تاريخ الزراعة",
-      "description": "الوصف",
-      "notes": "ملاحظات",
-      "noLocation": "لا يوجد موقع",
-      "na": "غير متوفر",
-      "refreshData": "تحديث البيانات",
-      "allCrops": "جميع المحاصيل",
-      "viewAll": "عرض جميع المحاصيل",
-      "kpiSection": "مؤشرات الأداء الرئيسية",
-      "detailsSidebar": "تفاصيل المحصول وأجهزة الاستشعار",
-      "actionsSection": "إجراءات الأجهزة الذكية",
-      "eventsSection": "الجدول الزمني للأحداث الأخيرة",
-      "recentEvents": "الأحداث الأخيرة",
-      "actionsAlertsNotifications": "الإجراءات والتنبيهات والإشعارات",
-      "allEvents": "جميع الأحداث",
-      "alerts": "التنبيهات",
-      "notifications": "الإشعارات",
-      "loadingEvents": "جاري تحميل الأحداث...",
-      "noEventsFound": "لم يتم العثور على أحداث",
-      "noEventsMessage": "لا توجد أحداث {{filter}} في آخر 7 أيام.",
-      "loadMoreEvents": "تحميل المزيد من الأحداث",
-      "markAllRead": "تحديد الكل كمقروء",
-      "refresh": "تحديث",
-      "controlDevices": "التحكم في الأجهزة لمنطقة المحصول هذه",
-      "manual": "يدوي",
-      "auto": "تلقائي",
-      "loadingDeviceActions": "جاري تحميل إجراءات الأجهزة...",
-      "noControllableDevices": "لا توجد أجهزة قابلة للتحكم",
-      "noDevicesMessage": "لا توجد أجهزة مهيأة لمنطقة المحصول هذه.",
-      "allOn": "تشغيل الكل",
-      "allOff": "إيقاف الكل",
-      "turnOn": "تشغيل",
-      "turnOff": "إيقاف",
-      "automatedControlActive": "التحكم التلقائي نشط",
-      "realTimeMonitoring": "مراقبة أجهزة الاستشعار في الوقت الفعلي",
-      "last7Days": "آخر 7 أيام",
-      "last30Days": "آخر 30 يوم",
-      "loadingSensorData": "جاري تحميل بيانات أجهزة الاستشعار...",
-      "noSensorsConnected": "لا توجد أجهزة استشعار متصلة",
-      "noSensorsMessage": "قم بتوصيل أجهزة الاستشعار بهذا المحصول لبدء مراقبة صحته.",
-      "soilMoisture": "رطوبة التربة",
-      "temperature": "درجة الحرارة",
-      "humidity": "الرطوبة",
-      "showTimeline": "إظهار الجدول الزمني",
-      "hideTimeline": "إخفاء الجدول الزمني"
-    },
-    "kpi": {
-      "tooltips": {
-        "all": "عرض كل المحاصيل",
-        "healthRatio": "المحاصيل السليمة مقابل المتأثرة",
-        "growthStage": "مرحلة النمو الحالية",
-        "soilMoisture": "متوسط رطوبة التربة",
-        "temperature": "متوسط الحرارة",
-        "humidity": "متوسط الرطوبة"
-      },
-      "labels": {
-        "total": "إجمالي المحاصيل",
-        "healthRatio": "نسبة الصحة",
-        "growthStage": "مرحلة النمو",
-        "soilMoisture": "رطوبة التربة",
-        "temperature": "الحرارة",
-        "humidity": "الرطوبة",
-        "lastUpdated": "آخر تحديث"
-      },
-      "relative": {
-        "never": "أبداً"
-      }
-    },
-    "health": {
-      "title": "تحليلات الصحة",
-      "subtitle": "مراقبة المستشعرات في الوقت الفعلي",
-      "timeRange": {
-        "last7": "آخر 7 أيام",
-        "last30": "آخر 30 يوماً"
-      },
-      "loading": "جاري تحميل بيانات المستشعرات...",
-      "empty": {
-        "title": "لا توجد مستشعرات متصلة",
-        "description": "اربط مستشعرات بهذا المحصول لبدء المتابعة."
-      },
-      "tabs": {
-        "soilMoisture": "رطوبة التربة",
-        "temperature": "الحرارة",
-        "humidity": "الرطوبة"
-      },
-      "chartPlaceholder": "الرسوم جاهزة - ثبّت ngx-echarts للتفعيل",
-      "chartTitles": {
-        "soilMoisture": "رطوبة التربة مع مرور الوقت",
-        "temperature": "درجة الحرارة مع مرور الوقت",
-        "humidity": "الرطوبة مع مرور الوقت"
-      },
-      "chartLabels": {
-        "unknown": "غير معروف",
-        "minWarning": "تحذير أدنى",
-        "maxWarning": "تحذير أقصى"
-      }
-    },
-    "smartActions": {
-      "title": "الإجراءات الذكية",
-      "subtitle": "تحكم في الأجهزة الخاصة بهذه المنطقة",
-      "modes": {
-        "manual": "يدوي",
-        "auto": "آلي"
-      },
-      "loading": "جاري تحميل إجراءات الأجهزة...",
-      "empty": {
-        "title": "لا توجد أجهزة قابلة للتحكم",
-        "description": "لا توجد أجهزة مهيأة لهذه المنطقة."
-      },
-      "actions": {
-        "turnOn": "تشغيل",
-        "turnOff": "إيقاف"
-      },
-      "autoIndicator": "التحكم الآلي مفعل",
-      "availableActions": {
-        "tooltip": "تنفيذ {{action}}",
-        "on": "تشغيل",
-        "off": "إيقاف",
-        "start": "بدء",
-        "stop": "إيقاف",
-        "open": "فتح",
-        "close": "غلق"
-      },
-      "quickActions": {
-        "allOn": "تشغيل الكل",
-        "allOnTooltip": "تشغيل جميع الأجهزة",
-        "allOff": "إيقاف الكل",
-        "allOffTooltip": "إيقاف جميع الأجهزة",
-        "refreshTooltip": "تحديث حالة الأجهزة"
-      },
-      "status": {
-        "on": "تشغيل",
-        "off": "إيقاف",
-        "auto": "آلي"
-      },
-      "actionTypes": {
-        "irrigation": "ري",
-        "ventilation": "تهوية",
-        "lighting": "إضاءة",
-        "heating": "تدفئة",
-        "pump": "مضخة",
-        "control": "تحكم"
-      },
-      "defaultDescription": "تحكم في {{name}}",
-      "snackbar": {
-        "autoMode": "تم التبديل إلى التحكم الآلي",
-        "manualMode": "تم التبديل إلى التحكم اليدوي",
-        "loadError": "فشل في تحميل إجراءات الأجهزة",
-        "deviceSuccess": "{{device}} في وضع {{action}}",
-        "deviceError": "تعذّر التحكم في {{device}}"
-      }
-    },
-    "timeline": {
-      "title": "الأحداث الأخيرة",
-      "subtitle": "الإجراءات والتنبيهات والإشعارات",
-      "actions": {
-        "markAllRead": "وضع الكل كمقروء",
-        "loadMore": "تحميل المزيد من الأحداث"
-      },
-      "filters": {
-        "all": "كل الأحداث",
-        "actions": "إجراءات",
-        "alerts": "تنبيهات",
-        "notifications": "إشعارات"
-      },
-      "loading": "جاري تحميل الأحداث...",
-      "empty": {
-        "title": "لا توجد أحداث",
-        "description": "لا توجد أحداث {{filter}} خلال آخر 7 أيام."
-      },
-      "groups": {
-        "today": "اليوم",
-        "yesterday": "أمس",
-        "count": "{{count}} حدث"
-      },
-      "status": {
-        "success": "ناجح",
-        "warning": "تحذير",
-        "error": "خطأ",
-        "info": "معلومة"
-      },
-      "events": {
-        "actionTitle": "{{action}} - {{device}}",
-        "actionDefault": "إجراء",
-        "deviceDefault": "جهاز",
-        "actionDescription": "تم التشغيل بواسطة {{source}}",
-        "systemSource": "النظام",
-        "noDescription": "لا توجد تفاصيل"
-      },
-      "irrigationStarted": "بدأ الري",
-      "fertilizerAdded": "تمت إضافة السماد",
-      "diseaseAlert": "تنبيه مرض",
-      "today": "اليوم",
-      "yesterday": "أمس",
-      "noEvents": "لا توجد أحداث حديثة"
-    },
-    "details": {
-      "name": "الاسم",
-      "variety": "الصنف",
-      "status": "الحالة",
-      "plantingDate": "تاريخ الزراعة",
-      "expectedHarvest": "الحصاد المتوقع"
-    },
-    "statuses": {
-      "planted": "مزروع",
-      "growing": "في النمو",
-      "harvested": "محصود",
-      "failed": "فشل"
-    },
-    "analytics": {
-      "title": "التحليلات",
-      "loading": "جاري تحميل التحليلات..."
+      "loading": "جاري تحميل بيانات المحصول...",
+      "error": "خطأ في تحميل بيانات المحصول"
     },
     "kpis": {
       "yield": "المحصول",
@@ -1402,6 +925,14 @@
       "actionExecuted": "تم تنفيذ الإجراء بنجاح",
       "actionFailed": "فشل الإجراء",
       "confirmTurnOnIrrigation": "هل أنت متأكد من بدء الري؟"
+    },
+    "timeline": {
+      "irrigationStarted": "بدأ الري",
+      "fertilizerAdded": "تمت إضافة السماد",
+      "diseaseAlert": "تنبيه مرض",
+      "today": "اليوم",
+      "yesterday": "أمس",
+      "noEvents": "لا توجد أحداث حديثة"
     },
     "sustainability": {
       "waterSaved": "المياه الموفرة",
@@ -1446,56 +977,7 @@
     "accountInfo": "معلومات الحساب",
     "memberSince": "عضو منذ",
     "lastLogin": "آخر دخول",
-    "accountStatus": "حالة الحساب",
-    "descriptions": {
-      "personalInfo": "قم بتحديث بياناتك الشخصية ومعلومات الاتصال",
-      "security": "حافظ على أمان حسابك باستخدام كلمة مرور قوية",
-      "accountInfo": "اعرض معلومات حسابك ونشاطه"
-    },
-    "sections": {
-      "fullName": "الاسم الكامل",
-      "contact": "معلومات الاتصال",
-      "location": "الموقع",
-      "additional": "تفاصيل إضافية"
-    },
-    "fields": {
-      "phone": "رقم الهاتف",
-      "address": "العنوان",
-      "city": "المدينة",
-      "country": "البلد",
-      "dateOfBirth": "تاريخ الميلاد",
-      "gender": "الجنس",
-      "userId": "معرّف المستخدم",
-      "role": "الدور"
-    },
-    "placeholders": {
-      "firstName": "أدخل الاسم الأول",
-      "lastName": "أدخل الاسم الأخير",
-      "email": "name@example.com",
-      "phone": "+216 00 000 000",
-      "address": "عنوان الشارع",
-      "city": "المدينة",
-      "country": "البلد",
-      "gender": "الجنس",
-      "currentPassword": "أدخل كلمة المرور الحالية",
-      "newPassword": "أدخل كلمة المرور الجديدة",
-      "confirmPassword": "أكد كلمة المرور الجديدة"
-    },
-    "tooltips": {
-      "dateOfBirth": "اختر تاريخ ميلادك"
-    },
-    "securityRequirements": {
-      "title": "متطلبات كلمة المرور",
-      "items": {
-        "minLength": "على الأقل 6 أحرف",
-        "mixCharacters": "استعمل مزيجاً من الحروف والأرقام",
-        "unique": "لا تعِد استخدام كلمات المرور في حسابات أخرى"
-      }
-    },
-    "actions": {
-      "changePhoto": "تغيير صورة الملف الشخصي",
-      "togglePasswordVisibility": "إظهار/إخفاء كلمة المرور"
-    }
+    "accountStatus": "حالة الحساب"
   },
   "settings": {
     "title": "الإعدادات",
@@ -1525,69 +1007,6 @@
       "analytics": "التحليلات",
       "cookies": "ملفات تعريف الارتباط",
       "locationTracking": "تتبع الموقع"
-    },
-    "page": {
-      "subtitle": "أدِر تفضيلات التطبيق وإعداداته",
-      "cards": {
-        "badgeComingSoon": "قريباً",
-        "notifications": {
-          "subtitle": "اضبط ساعات الهدوء والفئات وفترات التهدئة للتنبيهات",
-          "tags": {
-            "quietHours": "ساعات الهدوء",
-            "categories": "الفئات",
-            "cooldown": "فترة التهدئة"
-          }
-        },
-        "appearance": {
-          "title": "المظهر",
-          "subtitle": "خصّص السمة والألوان وتفضيلات العرض",
-          "tags": {
-            "theme": "السمة",
-            "darkMode": "الوضع الداكن",
-            "colors": "الألوان"
-          }
-        },
-        "languageRegion": {
-          "title": "اللغة والمنطقة",
-          "subtitle": "حدد لغتك المفضلة والتنسيقات الإقليمية",
-          "tags": {
-            "language": "اللغة",
-            "timezone": "المنطقة الزمنية",
-            "dateFormat": "تنسيق التاريخ"
-          }
-        },
-        "privacy": {
-          "title": "الخصوصية والأمان",
-          "subtitle": "أدِر بيانات الخصوصية والجلسات وإعدادات الأمان",
-          "tags": {
-            "twoFactor": "المصادقة الثنائية",
-            "sessions": "الجلسات",
-            "dataExport": "تصدير البيانات"
-          }
-        },
-        "system": {
-          "title": "تفضيلات النظام",
-          "subtitle": "اضبط سلوك النظام والخيارات المتقدمة",
-          "tags": {
-            "autoRefresh": "تحديث تلقائي",
-            "cache": "الذاكرة المؤقتة",
-            "api": "واجهة API"
-          }
-        },
-        "support": {
-          "title": "المساعدة والدعم",
-          "subtitle": "الوصول إلى المستندات والأسئلة الشائعة والدعم",
-          "tags": {
-            "docs": "الوثائق",
-            "faq": "الأسئلة الشائعة",
-            "contact": "تواصل"
-          }
-        }
-      },
-      "info": {
-        "title": "تحتاج مساعدة؟",
-        "description": "تتيح لك الإعدادات تخصيص تجربة TerraFlow الخاصة بك. يتم حفظ التغييرات تلقائياً وتُطبق فوراً."
-      }
     }
   },
   "farms": {
@@ -1632,10 +1051,7 @@
     "password": "يجب أن تحتوي كلمة المرور على 8 أحرف على الأقل",
     "fieldRequired": "هذا الحقل مطلوب",
     "invalidEmail": "عنوان بريد إلكتروني غير صالح",
-    "invalidPassword": "كلمة مرور غير صالحة",
-    "fieldRequiredWithName": "{{field}} مطلوب",
-    "invalidEmailWithName": "يرجى إدخال بريد إلكتروني صالح لـ {{field}}",
-    "minLengthWithName": "{{field}} يجب أن يتكون من {{min}} أحرف على الأقل"
+    "invalidPassword": "كلمة مرور غير صالحة"
   },
   "errors": {
     "networkError": "خطأ في الشبكة",
@@ -1809,8 +1225,6 @@
     "hoursAgo": "منذ {{count}} ساعة",
     "never": "أبداً",
     "soilMoistureRule": "الري التلقائي عندما تكون رطوبة التربة < 20%",
-    "temperatureRule": "التنظيم التلقائي عندما تكون درجة الحرارة خارج نطاق 18-25°C",
-    "actionExecutingTooltip": "الإجراء \"{{actionName}}\" قيد التنفيذ حالياً. يرجى الانتظار...",
-    "deviceOfflineTooltip": "لا يمكن تنفيذ هذا الإجراء لأن \"{{deviceName}}\" حالياً {{status}}. يجب أن يكون الجهاز متصلاً أو نشطاً لتنفيذ الإجراءات."
+    "temperatureRule": "التنظيم التلقائي عندما تكون درجة الحرارة خارج نطاق 18-25°C"
   }
 }

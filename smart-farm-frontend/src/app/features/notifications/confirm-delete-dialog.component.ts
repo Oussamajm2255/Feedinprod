@@ -43,28 +43,31 @@ import { LanguageService } from '../../core/services/language.service';
   `,
   styles: [`
     .glass-dialog {
-      padding: var(--space-2);
-      background: var(--glass-bg-strong);
-      backdrop-filter: var(--glass-blur);
-      border-radius: var(--radius-2xl);
+      padding: 8px;
+      background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.9) 0%,
+        rgba(248, 250, 252, 0.9) 100%
+      );
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
     }
 
     .dialog-icon {
       position: relative;
-      width: var(--space-20);
-      height: var(--space-20);
-      margin: 0 auto var(--space-5);
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: var(--radius-full);
-      background: linear-gradient(135deg, var(--danger-200) 0%, var(--danger-300) 100%);
+      border-radius: 50%;
+      background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
 
       mat-icon {
-        font-size: var(--space-10);
-        width: var(--space-10);
-        height: var(--space-10);
-        color: var(--danger-800);
+        font-size: 40px;
+        width: 40px;
+        height: 40px;
+        color: #991b1b;
         z-index: 2;
         position: relative;
       }
@@ -74,9 +77,9 @@ import { LanguageService } from '../../core/services/language.service';
       position: absolute;
       width: 100%;
       height: 100%;
-      border-radius: var(--radius-full);
-      background: var(--glow-danger);
-      animation: pulse-dialog var(--duration-slower) var(--ease-in-out) infinite;
+      border-radius: 50%;
+      background: rgba(244, 63, 94, 0.3);
+      animation: pulse-dialog 2s ease-in-out infinite;
     }
 
     @keyframes pulse-dialog {
@@ -92,110 +95,136 @@ import { LanguageService } from '../../core/services/language.service';
 
     .dialog-title {
       text-align: center;
-      font-size: var(--text-2xl);
-      font-weight: var(--font-bold);
-      color: var(--text-primary);
-      margin: 0 0 var(--space-4) 0;
+      font-size: 24px;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0 0 16px 0;
     }
 
     .dialog-content {
       text-align: center;
-      padding: 0 var(--space-5) var(--space-6);
+      padding: 0 20px 24px;
 
       p {
         margin: 0;
-        font-size: var(--text-sm);
-        color: var(--text-secondary);
-        line-height: var(--leading-normal);
+        font-size: 15px;
+        color: #475569;
+        line-height: 1.6;
       }
     }
 
     .dialog-actions {
       display: flex;
-      gap: var(--space-3);
-      padding: 0 var(--space-5) var(--space-5);
+      gap: 12px;
+      padding: 0 20px 20px;
       justify-content: center;
     }
 
     .glass-button {
-      border-radius: var(--radius-lg);
-      padding: var(--space-2) var(--space-6);
-      font-weight: var(--font-semibold);
-      font-size: var(--text-sm);
-      transition: all var(--duration-normal) var(--ease-in-out);
+      border-radius: 12px;
+      padding: 10px 24px;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
       &.cancel {
-        background: var(--bg-secondary);
-        color: var(--text-secondary);
-        border: 1px solid var(--border-secondary);
+        background: rgba(241, 245, 249, 0.8);
+        color: #475569;
+        border: 1px solid rgba(203, 213, 225, 0.5);
 
         &:hover {
-          background: var(--bg-tertiary);
+          background: rgba(226, 232, 240, 0.9);
           transform: translateY(-2px);
-          box-shadow: var(--shadow-md);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
       }
 
       &.delete {
-        background: var(--gradient-danger);
+        background: linear-gradient(135deg, #f43f5e 0%, #dc2626 100%);
         color: white;
         border: none;
         display: flex;
         align-items: center;
-        gap: var(--space-2);
+        gap: 6px;
 
         mat-icon {
-          font-size: var(--text-lg);
-          width: var(--text-lg);
-          height: var(--text-lg);
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
         }
 
         &:hover {
-          background: linear-gradient(135deg, var(--danger-600) 0%, var(--danger-700) 100%);
+          background: linear-gradient(135deg, #e11d48 0%, #b91c1c 100%);
           transform: translateY(-2px);
-          box-shadow: 0 8px 24px var(--glow-danger);
+          box-shadow: 0 8px 24px rgba(244, 63, 94, 0.4);
+        }
+      }
+    }
+
+    // Dark mode support
+    .dark-theme .glass-dialog {
+      background: linear-gradient(135deg,
+        rgba(30, 35, 50, 0.95) 0%,
+        rgba(20, 25, 40, 0.95) 100%
+      );
+
+      .dialog-title {
+        color: #f1f5f9;
+      }
+
+      .dialog-content p {
+        color: #cbd5e1;
+      }
+
+      .glass-button.cancel {
+        background: rgba(51, 65, 85, 0.8);
+        color: #cbd5e1;
+        border-color: rgba(71, 85, 105, 0.5);
+
+        &:hover {
+          background: rgba(71, 85, 105, 0.9);
         }
       }
     }
 
     // Accessibility
     .glass-button:focus-visible {
-      outline: 2px solid var(--border-focus);
+      outline: 2px solid #667eea;
       outline-offset: 2px;
     }
 
     // Mobile responsive
     @media (max-width: 480px) {
       .glass-dialog {
-        padding: var(--space-1);
+        padding: 4px;
       }
 
       .dialog-icon {
-        width: var(--space-16);
-        height: var(--space-16);
+        width: 64px;
+        height: 64px;
 
         mat-icon {
-          font-size: var(--space-8);
-          width: var(--space-8);
-          height: var(--space-8);
+          font-size: 32px;
+          width: 32px;
+          height: 32px;
         }
       }
 
       .dialog-title {
-        font-size: var(--text-xl);
+        font-size: 20px;
       }
 
       .dialog-content {
-        padding: 0 var(--space-4) var(--space-5);
+        padding: 0 16px 20px;
 
         p {
-          font-size: var(--text-xs);
+          font-size: 14px;
         }
       }
 
       .dialog-actions {
         flex-direction: column;
-        padding: 0 var(--space-4) var(--space-4);
+        padding: 0 16px 16px;
 
         .glass-button {
           width: 100%;

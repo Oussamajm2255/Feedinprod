@@ -1,4 +1,4 @@
-<div class="devices-container" role="main" [attr.aria-label]="languageService.t()('devices.pageAriaLabel')">
+<div class="devices-container" role="main" [attr.aria-label]="languageService.t()('devices.title')">
   <!-- Enhanced Header with Floating UI -->
   <div class="devices-header">
     <div class="header-content">
@@ -6,21 +6,19 @@
         <h1 id="page-title">{{ languageService.t()('devices.title') }}</h1>
         <p>{{ languageService.t()('devices.subtitle') }}</p>
       </div>
-      <div
-        class="header-actions"
-        role="toolbar"
-        [attr.aria-label]="languageService.t()('devices.aria.headerActions')">
+      <div class="header-actions" role="toolbar" aria-label="Device actions">
         <!-- View Mode Toggle -->
         <button
           mat-icon-button
           (click)="toggleViewMode()"
+          appTooltip="{{ languageService.t()('devices.toggleView') }}"
+          [tooltipOptions]="{ placement: 'bottom', delay: 300 }"
           class="action-btn"
-          [attr.aria-label]="languageService.t()('devices.aria.toggleViewTo', { view: viewMode === 'table' ? languageService.t()('devices.viewModes.cards') : languageService.t()('devices.viewModes.table') })"
+          [attr.aria-label]="'Toggle to ' + (viewMode === 'table' ? 'card' : 'table') + ' view'"
           [attr.title]="languageService.t()('devices.toggleView')"
           aria-live="polite"
           type="button">
           <mat-icon aria-hidden="true">{{ viewMode === 'table' ? 'view_module' : 'table_view' }}</mat-icon>
-          <span class="cdk-visually-hidden">{{ languageService.t()('devices.toggleView') }}</span>
         </button>
 
         <!-- Refresh Button -->
@@ -28,6 +26,8 @@
           mat-icon-button
           (click)="refreshDevices()"
           [disabled]="isLoading"
+          appTooltip="{{ languageService.t()('common.refresh') }}"
+          [tooltipOptions]="{ placement: 'bottom', delay: 300 }"
           class="action-btn"
           [class.refreshing]="isLoading"
           [attr.aria-label]="languageService.t()('common.refresh')"
@@ -35,17 +35,25 @@
           [attr.aria-busy]="isLoading"
           type="button">
           <mat-icon aria-hidden="true">refresh</mat-icon>
-          <span class="cdk-visually-hidden">{{ languageService.t()('common.refresh') }}</span>
+        </button>
+
+        <!-- Device Actions Dropdown -->
+        <button
+          mat-icon-button
+          appDropdown="device-actions-menu"
+          [dropdownOptions]="{ placement: 'bottom-end', trigger: 'click' }"
+          class="action-btn"
+          [attr.aria-label]="languageService.t()('devices.moreActions')"
+          [attr.title]="languageService.t()('devices.moreActions')"
+          type="button">
+          <mat-icon aria-hidden="true">more_vert</mat-icon>
         </button>
       </div>
     </div>
   </div>
 
   <!-- Enhanced Filters Panel -->
-  <div
-    class="filters-panel"
-    role="search"
-    [attr.aria-label]="languageService.t()('devices.aria.filters')">
+  <div class="filters-panel" role="search" aria-label="Device filters">
     <div class="filters-content">
       <div class="filters-header">
         <h3>
@@ -53,6 +61,8 @@
           {{ languageService.t()('devices.searchAndFilter') }}
           <button
             mat-icon-button
+            appTooltip="{{ languageService.t()('devices.clearAllFilters') }}"
+            [tooltipOptions]="{ placement: 'top', delay: 300 }"
             (click)="clearFilters()"
             [disabled]="!hasActiveFilters"
             class="clear-btn-icon"
@@ -60,32 +70,21 @@
             [attr.title]="languageService.t()('devices.clearAllFilters')"
             type="button">
             <mat-icon aria-hidden="true">clear</mat-icon>
-          <span class="cdk-visually-hidden">{{ languageService.t()('devices.clearAllFilters') }}</span>
           </button>
         </h3>
-        <span *ngIf="activeFilterCount > 0" class="active-filters-badge" aria-live="polite">
-          {{ languageService.t()('devices.activeFiltersCount', { count: activeFilterCount }) }}
+        <span *ngIf="activeFilterCount > 0" class="active-filters-badge">
+          {{ activeFilterCount }} {{ languageService.t()('devices.activeFilters') }}
         </span>
       </div>
 
-      <div
-        class="filters-grid"
-        role="group"
-        [attr.aria-label]="languageService.t()('devices.aria.filterControls')">
-        <label class="cdk-visually-hidden" [attr.for]="'device-search-input'">
-          {{ languageService.t()('devices.search') }}
-        </label>
-        <mat-form-field
-          appearance="outline"
-          class="search-field"
-          [ngClass]="{ 'is-active': !!searchTerm }">
+      <div class="filters-grid" role="group" aria-label="Filter controls">
+        <mat-form-field appearance="outline" class="search-field">
           <mat-label id="device-search-label">{{ languageService.t()('devices.search') }}</mat-label>
-          <mat-icon matPrefix aria-hidden="true">search</mat-icon>
           <input
             matInput
             [(ngModel)]="searchTerm"
             (input)="onSearchChange()"
-            placeholder="{{ languageService.t()('devices.searchPlaceholder') }}"
+            [placeholder]="languageService.t()('devices.searchPlaceholder')"
             [attr.aria-label]="languageService.t()('devices.search')"
             [attr.aria-labelledby]="'device-search-label'"
             [attr.title]="languageService.t()('devices.searchPlaceholder')"
@@ -94,12 +93,10 @@
             name="device-search"
             type="search"
             autocomplete="off">
+          <mat-icon matSuffix aria-hidden="true">search</mat-icon>
         </mat-form-field>
 
-        <mat-form-field
-          appearance="outline"
-          class="filter-field"
-          [ngClass]="{ 'is-active': !!statusFilter }">
+        <mat-form-field appearance="outline" class="filter-field">
           <mat-label>{{ languageService.t()('devices.filterByStatus') }}</mat-label>
           <mat-select
             [(ngModel)]="statusFilter"
@@ -112,10 +109,7 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field
-          appearance="outline"
-          class="filter-field"
-          [ngClass]="{ 'is-active': !!deviceTypeFilter }">
+        <mat-form-field appearance="outline" class="filter-field">
           <mat-label>{{ languageService.t()('devices.filterByType') }}</mat-label>
           <mat-select
             [(ngModel)]="deviceTypeFilter"
@@ -126,9 +120,6 @@
               {{ getDeviceTypeTranslation(type) }}
             </mat-option>
           </mat-select>
-          <mat-hint align="end" *ngIf="typeOptionsAreFarmScoped">
-            {{ languageService.t()('devices.filterByTypeScopedHint') }}
-          </mat-hint>
         </mat-form-field>
       </div>
     </div>
@@ -152,93 +143,66 @@
   </div>
 
   <!-- Device Cards View -->
-  <div
-    class="devices-grid"
-    *ngIf="viewMode === 'cards' && !isLoading"
-    role="list"
-    aria-live="polite">
+  <div class="devices-grid" *ngIf="viewMode === 'cards' && !isLoading">
     <mat-card
       *ngFor="let device of paginatedDevices; trackBy: trackByDeviceId"
       class="device-card"
       [class.offline]="device.status === 'offline'"
       [class.maintenance]="device.status === 'maintenance'"
-      [class.online]="device.status === 'online'"
       tabindex="0"
-      role="listitem"
-      [attr.aria-labelledby]="'device-title-' + device.device_id"
-      [attr.aria-describedby]="'device-status-' + device.device_id"
-      [attr.aria-label]="getDeviceCardAriaLabel(device)">
+      role="article"
+      [attr.aria-label]="device.name + ' device card'">
 
-      <div class="device-card__header">
-        <div class="device-card__identity">
-          <div
-            class="device-avatar"
-            [style.background]="getDeviceTypeGradient(device.device_type || 'unknown')"
-            aria-hidden="true">
-            <mat-icon>{{ getDeviceIcon(device.device_type || 'unknown') }}</mat-icon>
+      <mat-card-header>
+        <div mat-card-avatar class="device-avatar" [style.background]="getDeviceTypeGradient(device.device_type || 'unknown')">
+          <mat-icon>{{ getDeviceIcon(device.device_type || 'unknown') }}</mat-icon>
+        </div>
+        <mat-card-title>{{ device.name }}</mat-card-title>
+        <mat-card-subtitle>{{ device.location }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="device-info">
+          <div class="info-item">
+            <span class="label">{{ languageService.t()('devices.type') }}:</span>
+            <span class="value">{{ getDeviceTypeTranslation(device.device_type || 'unknown') }}</span>
           </div>
-          <div class="device-card__text">
-            <h3
-              class="device-card__title"
-              [id]="'device-title-' + device.device_id"
-              [matTooltip]="device.name"
-              matTooltipShowDelay="600">
-              {{ device.name }}
-            </h3>
-            <p
-              class="device-card__location"
-              [attr.aria-label]="getDeviceLocationLabel(device)"
-              [matTooltip]="device.location"
-              matTooltipShowDelay="600">
-              <mat-icon aria-hidden="true">place</mat-icon>
-              <span>{{ device.location }}</span>
-            </p>
+          <div class="info-item">
+            <span class="label">{{ languageService.t()('devices.lastSeen') }}:</span>
+            <span class="value">{{ formatLastSeen(device.last_seen) }}</span>
           </div>
         </div>
 
-        <div
-          class="device-card__status"
-          role="status"
-          [attr.aria-label]="getDeviceCardStatusLabel(device)"
-          [attr.id]="'device-status-' + device.device_id">
+        <div class="device-status">
           <mat-chip
-            [class]="'status-chip ' + device.status">
+            [class]="'status-chip ' + device.status"
+            appTooltip="{{ getStatusDescription(device.status) }}"
+            [tooltipOptions]="{ placement: 'top', delay: 300 }">
             <mat-icon class="status-icon">{{ getStatusIcon(device.status) }}</mat-icon>
             {{ getStatusTranslation(device.status) }}
           </mat-chip>
         </div>
-      </div>
-
-      <mat-card-content class="device-card__content">
-        <dl class="device-card__info" role="presentation">
-          <div class="info-item">
-            <dt>{{ languageService.t()('devices.type') }}</dt>
-            <dd>{{ getDeviceTypeTranslation(device.device_type || 'unknown') }}</dd>
-          </div>
-          <div class="info-item">
-            <dt>{{ languageService.t()('devices.deviceId') }}</dt>
-            <dd class="code">{{ device.device_id }}</dd>
-          </div>
-          <div class="info-item">
-            <dt>{{ languageService.t()('devices.lastSeen') }}</dt>
-            <dd>{{ formatLastSeen(device.last_seen) }}</dd>
-          </div>
-          <div class="info-item" *ngIf="device.description">
-            <dt>{{ languageService.t()('devices.description') }}</dt>
-            <dd class="info-item__description">{{ device.description }}</dd>
-          </div>
-        </dl>
       </mat-card-content>
 
-      <mat-card-actions class="device-card__actions" [attr.aria-label]="languageService.t()('devices.card.actionsAria')">
+      <mat-card-actions>
         <button
-          mat-raised-button
-          color="primary"
-          class="view-details-btn"
+          mat-button
           (click)="viewDeviceDetails(device)"
-          [attr.aria-label]="languageService.t()('devices.card.viewDetailsAria', { name: device.name })">
+          appTooltip="{{ languageService.t()('devices.viewDetailsTooltip') }}"
+          [tooltipOptions]="{ placement: 'top', delay: 300 }">
           <mat-icon>visibility</mat-icon>
           {{ languageService.t()('common.view') }}
+        </button>
+
+        <button
+          mat-button
+          (click)="toggleDeviceStatus(device)"
+          [disabled]="device.status === 'maintenance' || isTogglingStatus[device.device_id]"
+          appTooltip="{{ getToggleActionTooltip(device) }}"
+          [tooltipOptions]="{ placement: 'top', delay: 300 }">
+          <mat-spinner *ngIf="isTogglingStatus[device.device_id]" diameter="20" class="button-spinner"></mat-spinner>
+          <mat-icon *ngIf="!isTogglingStatus[device.device_id]">{{ getToggleActionIcon(device) }}</mat-icon>
+          {{ getToggleActionText(device) }}
         </button>
       </mat-card-actions>
     </mat-card>
@@ -285,7 +249,9 @@
         </th>
         <td mat-cell *matCellDef="let device">
           <mat-chip
-            [class]="'status-chip ' + device.status">
+            [class]="'status-chip ' + device.status"
+            appTooltip="{{ getStatusDescription(device.status) }}"
+            [tooltipOptions]="{ placement: 'top', delay: 300 }">
             <mat-icon class="status-icon">{{ getStatusIcon(device.status) }}</mat-icon>
             {{ getStatusTranslation(device.status) }}
           </mat-chip>
@@ -297,7 +263,9 @@
           {{ languageService.t()('devices.lastSeen') }}
         </th>
         <td mat-cell *matCellDef="let device">
-          <span>
+          <span
+            appTooltip="{{ formatLastSeenDetailed(device.last_seen) }}"
+            [tooltipOptions]="{ placement: 'top', delay: 300 }">
             {{ formatLastSeen(device.last_seen) }}
           </span>
         </td>
@@ -308,23 +276,25 @@
           {{ languageService.t()('common.actions') }}
         </th>
         <td mat-cell *matCellDef="let device">
-          <div class="table-actions">
-            <button
-              mat-icon-button
-              (click)="viewDeviceDetails(device)"
-              [attr.aria-label]="languageService.t()('devices.card.viewDetailsAria', { name: device.name })">
-              <mat-icon>visibility</mat-icon>
-            </button>
+          <button
+            mat-icon-button
+            (click)="viewDeviceDetails(device)"
+            appTooltip="{{ languageService.t()('devices.viewDetails') }}"
+            [tooltipOptions]="{ placement: 'top', delay: 300 }"
+            [attr.aria-label]="'View ' + device.name + ' details'">
+            <mat-icon>visibility</mat-icon>
+          </button>
 
-            <button
-              mat-icon-button
-              (click)="toggleDeviceStatus(device)"
-              [disabled]="device.status === 'maintenance' || isTogglingStatus[device.device_id]"
-              [attr.aria-label]="getDeviceToggleAriaLabel(device)">
-              <mat-spinner *ngIf="isTogglingStatus[device.device_id]" diameter="20"></mat-spinner>
-              <mat-icon *ngIf="!isTogglingStatus[device.device_id]">{{ getToggleActionIcon(device) }}</mat-icon>
-            </button>
-          </div>
+          <button
+            mat-icon-button
+            (click)="toggleDeviceStatus(device)"
+            [disabled]="device.status === 'maintenance' || isTogglingStatus[device.device_id]"
+            appTooltip="{{ getToggleActionTooltip(device) }}"
+            [tooltipOptions]="{ placement: 'top', delay: 300 }"
+            [attr.aria-label]="getToggleActionText(device)">
+            <mat-spinner *ngIf="isTogglingStatus[device.device_id]" diameter="20"></mat-spinner>
+            <mat-icon *ngIf="!isTogglingStatus[device.device_id]">{{ getToggleActionIcon(device) }}</mat-icon>
+          </button>
         </td>
       </ng-container>
 
@@ -343,7 +313,7 @@
   </div>
 
   <!-- Loading Overlay for Refresh -->
-  <div class="loading-overlay" *ngIf="isLoading && devices.length > 0" aria-live="assertive">
+  <div class="loading-overlay" *ngIf="isLoading && devices.length > 0">
     <mat-spinner diameter="50"></mat-spinner>
     <p>{{ languageService.t()('common.loading') }}</p>
   </div>
@@ -361,7 +331,7 @@
 
   <!-- No Devices State -->
   <div class="empty-state" *ngIf="!isLoading && devices.length === 0">
-    <mat-icon class="empty-icon">sensors</mat-icon>
+    <mat-icon class="empty-icon">devices_other</mat-icon>
     <h3>{{ languageService.t()('devices.noDevicesFound') }}</h3>
     <p>{{ languageService.t()('devices.noDevicesDescription') }}</p>
     <button mat-raised-button color="primary" (click)="refreshDevices()">
@@ -371,3 +341,16 @@
   </div>
 </div>
 
+<!-- Hidden Dropdown Content Template (used by FloatingUI) -->
+<div id="device-actions-menu" class="dropdown-template">
+  <div class="dropdown-menu" role="menu">
+    <button class="dropdown-item" (click)="exportDeviceData()" tabindex="0" type="button" role="menuitem">
+      <mat-icon>download</mat-icon>
+      <span>{{ languageService.t()('devices.exportData') }}</span>
+    </button>
+    <button class="dropdown-item" (click)="showDeviceStatistics()" tabindex="0" type="button" role="menuitem">
+      <mat-icon>analytics</mat-icon>
+      <span>{{ languageService.t()('devices.viewStatistics') }}</span>
+    </button>
+  </div>
+</div>

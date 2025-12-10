@@ -13,6 +13,7 @@ export type SensorStatus = 'normal' | 'warning' | 'critical' | 'offline';
 export interface SensorDisplayConfig {
   icon: string;
   displayName: string;
+  emoji: string;
   color: {
     light: string;
     dark: string;
@@ -30,6 +31,7 @@ export const SENSOR_TYPE_CONFIG: Record<string, SensorDisplayConfig> = {
   temperature: {
     icon: 'thermostat',
     displayName: 'Temperature',
+    emoji: '🌡️',
     color: {
       light: '#ef4444',
       dark: '#fca5a5',
@@ -42,6 +44,7 @@ export const SENSOR_TYPE_CONFIG: Record<string, SensorDisplayConfig> = {
   humidity: {
     icon: 'water_drop',
     displayName: 'Humidity',
+    emoji: '💧',
     color: {
       light: '#3b82f6',
       dark: '#93c5fd',
@@ -54,6 +57,7 @@ export const SENSOR_TYPE_CONFIG: Record<string, SensorDisplayConfig> = {
   soil_moisture: {
     icon: 'grass',
     displayName: 'Soil Moisture',
+    emoji: '🌱',
     color: {
       light: '#84cc16',
       dark: '#bef264',
@@ -66,6 +70,7 @@ export const SENSOR_TYPE_CONFIG: Record<string, SensorDisplayConfig> = {
   light: {
     icon: 'light_mode',
     displayName: 'Light Intensity',
+    emoji: '☀️',
     color: {
       light: '#f59e0b',
       dark: '#fcd34d',
@@ -78,6 +83,7 @@ export const SENSOR_TYPE_CONFIG: Record<string, SensorDisplayConfig> = {
   ph: {
     icon: 'science',
     displayName: 'pH Level',
+    emoji: '⚗️',
     color: {
       light: '#8b5cf6',
       dark: '#c4b5fd',
@@ -90,6 +96,7 @@ export const SENSOR_TYPE_CONFIG: Record<string, SensorDisplayConfig> = {
   pressure: {
     icon: 'speed',
     displayName: 'Pressure',
+    emoji: '🌀',
     color: {
       light: '#06b6d4',
       dark: '#67e8f9',
@@ -102,6 +109,7 @@ export const SENSOR_TYPE_CONFIG: Record<string, SensorDisplayConfig> = {
   irrigation: {
     icon: 'sprinkler',
     displayName: 'Irrigation',
+    emoji: '💦',
     color: {
       light: '#0284c7',
       dark: '#7dd3fc',
@@ -114,6 +122,7 @@ export const SENSOR_TYPE_CONFIG: Record<string, SensorDisplayConfig> = {
   water_flow: {
     icon: 'waves',
     displayName: 'Water Flow',
+    emoji: '🌊',
     color: {
       light: '#0369a1',
       dark: '#93c5fd',
@@ -126,6 +135,7 @@ export const SENSOR_TYPE_CONFIG: Record<string, SensorDisplayConfig> = {
   all: {
     icon: 'sensors',
     displayName: 'All Sensors',
+    emoji: '📡',
     color: {
       light: '#10b981',
       dark: '#34d399',
@@ -243,6 +253,13 @@ export function getSensorDisplayName(type: string): string {
   return SENSOR_TYPE_CONFIG[normalizedType]?.displayName || type;
 }
 
+/**
+ * Get sensor emoji
+ */
+export function getSensorEmoji(type: string): string {
+  const normalizedType = type.toLowerCase().replace(/[_-]/g, '_');
+  return SENSOR_TYPE_CONFIG[normalizedType]?.emoji || '📊';
+}
 
 /**
  * Get sensor color for light/dark mode
@@ -419,63 +436,5 @@ export function parseUniqueSensorId(uniqueId: string): { baseSensorId: string; t
     baseSensorId: uniqueId.substring(0, lastDashIndex),
     type: uniqueId.substring(lastDashIndex + 1),
   };
-}
-
-/**
- * Extract action purpose from sensor action fields
- * Identifies the purpose (roof, humidifier, etc.) from MQTT action strings
- * 
- * @param actionLow - Action string for low threshold (e.g., "mqtt:smartfarm/actuators/dht11H/close_roof")
- * @param actionHigh - Action string for high threshold (e.g., "mqtt:smartfarm/actuators/dht11H/open_roof")
- * @returns Human-readable purpose label (e.g., "Roof Control", "Humidifier Control", or null)
- */
-export function extractActionPurpose(actionLow?: string, actionHigh?: string): string | null {
-  // Combine both actions to check for purpose
-  const actions = [actionLow, actionHigh].filter(Boolean).join(' ');
-  
-  if (!actions) return null;
-  
-  // Extract action commands from MQTT topics
-  // Format: "mqtt:smartfarm/actuators/dht11H/close_roof"
-  const actionPatterns = [
-    { keywords: ['roof', 'open_roof', 'close_roof'], label: 'Roof Control', icon: 'roofing' },
-    { keywords: ['humidifier', 'humidifier_on', 'humidifier_off'], label: 'Humidifier Control', icon: 'humidity_high' },
-    { keywords: ['fan', 'fan_on', 'fan_off'], label: 'Fan Control', icon: 'air' },
-    { keywords: ['heater', 'heater_on', 'heater_off'], label: 'Heater Control', icon: 'local_fire_department' },
-    { keywords: ['irrigation', 'irrigation_on', 'irrigation_off'], label: 'Irrigation Control', icon: 'water_drop' },
-    { keywords: ['ventilator', 'ventilator_on', 'ventilator_off'], label: 'Ventilator Control', icon: 'air' },
-    { keywords: ['water_pump', 'water_pump_on', 'water_pump_off'], label: 'Water Pump Control', icon: 'water_pump' },
-    { keywords: ['light', 'light_on', 'light_off'], label: 'Light Control', icon: 'light_mode' },
-  ];
-  
-  const lowerActions = actions.toLowerCase();
-  
-  for (const pattern of actionPatterns) {
-    if (pattern.keywords.some(keyword => lowerActions.includes(keyword))) {
-      return pattern.label;
-    }
-  }
-  
-  return null;
-}
-
-/**
- * Get icon for action purpose
- */
-export function getActionPurposeIcon(purpose: string | null): string {
-  if (!purpose) return 'settings';
-  
-  const iconMap: Record<string, string> = {
-    'Roof Control': 'roofing',
-    'Humidifier Control': 'humidity_high',
-    'Fan Control': 'air',
-    'Heater Control': 'local_fire_department',
-    'Irrigation Control': 'water_drop',
-    'Ventilator Control': 'air',
-    'Water Pump Control': 'water_pump',
-    'Light Control': 'light_mode',
-  };
-  
-  return iconMap[purpose] || 'settings';
 }
 

@@ -166,150 +166,6 @@
       "location": "Location",
       "selectFarm": "Select Farm"
     },
-    "kpi": {
-      "tooltips": {
-        "all": "View all crops",
-        "healthRatio": "Healthy vs stressed crops",
-        "growthStage": "Current growth stage",
-        "soilMoisture": "Average soil moisture across all sensors",
-        "temperature": "Average temperature across all sensors",
-        "humidity": "Average humidity across all sensors"
-      },
-      "labels": {
-        "total": "Total Crops",
-        "healthRatio": "Health Ratio",
-        "growthStage": "Growth Stage",
-        "soilMoisture": "Soil Moisture",
-        "temperature": "Temperature",
-        "humidity": "Humidity",
-        "lastUpdated": "Last Updated"
-      },
-      "relative": {
-        "never": "Never"
-      }
-    },
-    "health": {
-      "title": "Health Analytics",
-      "subtitle": "Real-time sensor monitoring",
-      "timeRange": {
-        "last7": "Last 7 days",
-        "last30": "Last 30 days"
-      },
-      "loading": "Loading sensor data...",
-      "empty": {
-        "title": "No Sensors Connected",
-        "description": "Connect sensors to this crop to start monitoring its health."
-      },
-      "tabs": {
-        "soilMoisture": "Soil Moisture",
-        "temperature": "Temperature",
-        "humidity": "Humidity"
-      },
-      "chartPlaceholder": "Chart visualization ready - Install ngx-echarts to enable",
-      "chartTitles": {
-        "soilMoisture": "Soil Moisture Over Time",
-        "temperature": "Temperature Over Time",
-        "humidity": "Humidity Over Time"
-      },
-      "chartLabels": {
-        "unknown": "Unknown",
-        "minWarning": "Min Warning",
-        "maxWarning": "Max Warning"
-      }
-    },
-    "smartActions": {
-      "title": "Smart Actions",
-      "subtitle": "Control devices for this crop zone",
-      "modes": {
-        "manual": "Manual",
-        "auto": "Auto"
-      },
-      "loading": "Loading device actions...",
-      "empty": {
-        "title": "No Controllable Devices",
-        "description": "No devices are configured for this crop zone."
-      },
-      "actions": {
-        "turnOn": "Turn On",
-        "turnOff": "Turn Off"
-      },
-      "autoIndicator": "Automated Control Active",
-      "availableActions": {
-        "tooltip": "Execute {{action}}",
-        "on": "On",
-        "off": "Off",
-        "start": "Start",
-        "stop": "Stop",
-        "open": "Open",
-        "close": "Close"
-      },
-      "quickActions": {
-        "allOn": "All On",
-        "allOnTooltip": "Turn on all devices",
-        "allOff": "All Off",
-        "allOffTooltip": "Turn off all devices",
-        "refreshTooltip": "Refresh device status"
-      },
-      "status": {
-        "on": "On",
-        "off": "Off",
-        "auto": "Auto"
-      },
-      "actionTypes": {
-        "irrigation": "Irrigation",
-        "ventilation": "Ventilation",
-        "lighting": "Lighting",
-        "heating": "Heating",
-        "pump": "Pump",
-        "control": "Control"
-      },
-      "defaultDescription": "Control {{name}}",
-      "snackbar": {
-        "autoMode": "Switched to Automatic Control",
-        "manualMode": "Switched to Manual Control",
-        "loadError": "Failed to load device actions",
-        "deviceSuccess": "{{device}} turned {{action}}",
-        "deviceError": "Failed to control {{device}}"
-      }
-    },
-    "timeline": {
-      "title": "Recent Events",
-      "subtitle": "Actions, alerts, and notifications",
-      "actions": {
-        "markAllRead": "Mark all as read",
-        "loadMore": "Load More Events"
-      },
-      "filters": {
-        "all": "All Events",
-        "actions": "Actions",
-        "alerts": "Alerts",
-        "notifications": "Notifications"
-      },
-      "loading": "Loading events...",
-      "empty": {
-        "title": "No Events Found",
-        "description": "No {{filter}} events in the last 7 days."
-      },
-      "groups": {
-        "today": "Today",
-        "yesterday": "Yesterday",
-        "count": "{{count}} events"
-      },
-      "status": {
-        "success": "Success",
-        "warning": "Warning",
-        "error": "Error",
-        "info": "Info"
-      },
-      "events": {
-        "actionTitle": "{{action}} - {{device}}",
-        "actionDefault": "Action",
-        "deviceDefault": "Device",
-        "actionDescription": "Triggered by {{source}}",
-        "systemSource": "System",
-        "noDescription": "No description"
-      }
-    },
     "statistics": {
       "totalDevices": "Total Devices",
       "activeDevices": "Active Devices",
@@ -323,65 +179,7 @@
       "offline": "offline",
       "maintenance": "maintenance",
       "online": "online",
-      "devices": "devices",
-      "systemHealth": "System Health"
-    },
-    "statusBadges": {
-      "excellent": "Excellent",
-      "good": "Good",
-      "needsAttention": "Needs attention",
-      "connected": "Connected",
-      "systemOperational": "All systems operational",
-      "optimal": "Optimal",
-      "checkRequired": "Check required"
-    },
-    "sections": {
-      "farmMap": {
-        "title": "Farm Map",
-        "openInMaps": "Open in Google Maps",
-        "noData": "Farm location coordinates not available"
-      },
-      "farmDetails": {
-        "title": "Farm Details",
-        "labels": {
-          "name": "Farm Name",
-          "owner": "Owner",
-          "location": "Location",
-          "coordinates": "Coordinates",
-          "id": "Farm ID",
-          "created": "Created",
-          "updated": "Last Updated"
-        },
-        "noData": "No farm data available"
-      },
-      "weather": {
-        "title": "Weather & AI Insights",
-        "loading": "Loading weather data...",
-        "feelsLike": "Feels like {{value}}°C",
-        "details": {
-          "humidity": "Humidity",
-          "wind": "Wind Speed",
-          "clouds": "Clouds",
-          "rainChance": "Rain Chance",
-          "sunrise": "Sunrise",
-          "sunset": "Sunset"
-        },
-        "units": {
-          "wind": "m/s"
-        },
-        "hourlyTitle": "Next 24 Hours",
-        "dailyTitle": "7-Day Forecast",
-        "aiInsightsTitle": "AI Insights",
-        "noData": "No weather data available. Farm coordinates are required."
-      }
-    },
-    "fab": {
-      "quickActions": "Quick Actions",
-      "liveReadings": "Live Readings",
-      "devices": "Devices",
-      "actionsCenter": "Actions Center",
-      "sensorInfo": "Sensor Info",
-      "crops": "Crops"
+      "devices": "devices"
     },
     "controlCenter": {
       "title": "Smart Farm Control Center",
@@ -438,17 +236,6 @@
   "devices": {
     "title": "Devices",
     "subtitle": "View information about your IoT devices",
-    "pageAriaLabel": "Devices overview",
-    "aria": {
-      "headerActions": "Device actions",
-      "toggleViewTo": "Switch to {{view}} view",
-      "filters": "Device filters",
-      "filterControls": "Filter controls"
-    },
-    "viewModes": {
-      "cards": "card",
-      "table": "table"
-    },
     "deviceName": "Device Name",
     "deviceType": "Device Type",
     "location": "Location",
@@ -472,7 +259,6 @@
     "searchPlaceholder": "Search devices...",
     "filterByStatus": "Filter by Status",
     "filterByType": "Filter by Type",
-    "filterByTypeScopedHint": "Showing device types available in this farm",
     "allStatuses": "All Statuses",
     "allTypes": "All Types",
     "clearFilters": "Clear Filters",
@@ -490,7 +276,6 @@
     "macAddress": "MAC Address",
     "firmwareVersion": "Firmware Version",
     "description": "Description",
-    "deviceInformation": "Device information",
     "deviceId": "Device ID",
     "createdAt": "Created At",
     "basicInfo": "Basic Information",
@@ -499,7 +284,6 @@
     "noSensorsDescription": "This device has no associated sensors",
     "sensorId": "Sensor ID",
     "unit": "Unit",
-    "thresholds": "Thresholds",
     "minCritical": "Min Critical",
     "maxCritical": "Max Critical",
     "statistics": "Statistics",
@@ -513,39 +297,19 @@
     "restartInitiated": "Device restart initiated",
     "updateFirmware": "Update Firmware",
     "firmwareUpdateInitiated": "Firmware update initiated",
-    "type": "Type",
     "deviceTypes": {
       "sensor": "Sensor",
       "controller": "Controller",
       "gateway": "Gateway",
       "camera": "Camera",
       "actuator": "Actuator",
-      "monitor": "Monitor",
-      "unknown": "Unknown",
-      "dht11Sensor": "DHT11 Sensor",
-      "dht22Sensor": "DHT22 Sensor",
-      "soilMoistureSensor": "Soil Moisture Sensor",
-      "waterPump": "Water Pump",
-      "irrigationPump": "Irrigation Pump",
-      "fan": "Fan",
-      "ventilator": "Ventilator",
-      "heater": "Heater",
-      "light": "Light",
-      "ledLight": "LED Light",
-      "roofMotor": "Roof Motor",
-      "windowMotor": "Window Motor"
+      "monitor": "Monitor"
     },
-    "statusOnline": "Online",
-    "statusOffline": "Offline",
-    "statusActive": "Active",
-    "statusInactive": "Inactive",
-    "statusError": "Error",
     "editDeviceDescription": "Edit device information and settings",
     "addDeviceDescription": "Add a new device to your farm",
     "searchAndFilter": "Search & Filter",
     "clearAllFilters": "Clear all filters and reset search",
     "activeFilters": "active filters",
-    "activeFiltersCount": "{{count}} active filters",
     "noResultsFound": "No results found",
     "tryAdjustingFilters": "Try adjusting your filters or search terms",
     "viewDetailsTooltip": "View device details and sensor readings",
@@ -576,57 +340,6 @@
     "moreActions": "More actions",
     "loadError": "Failed to load devices",
     "loadErrorDescription": "An error occurred while loading devices. Please try again.",
-    "card": {
-      "ariaLabel": "{{name}} device card",
-      "statusLabel": "{{status}} status, last seen {{lastSeen}}",
-      "locationLabel": "Located in {{location}}",
-      "actionsAria": "Device actions",
-      "viewDetailsAria": "View details for {{name}}",
-      "activateActionAria": "Activate {{name}}",
-      "deactivateActionAria": "Deactivate {{name}}"
-    },
-    "exportHeaders": {
-      "name": "Name",
-      "type": "Type",
-      "location": "Location",
-      "status": "Status",
-      "lastSeen": "Last seen",
-      "description": "Description"
-    },
-    "devicesDeletedSuccess": "{{count}} devices deleted successfully",
-    "confirmBulkStatusChange": "Change status of {{count}} devices to {{status}}?",
-    "bulkStatusUpdated": "Status updated to {{status}} for {{count}} devices",
-    "notAvailableShort": "N/A",
-    "uptimeDaysHours": "{{days}}d {{hours}}h",
-    "uptimeHoursMinutes": "{{hours}}h {{minutes}}m",
-    "uptimeMinutes": "{{minutes}}m",
-    "sensorLocationUnknown": "Location unavailable",
-    "noReadings": "No readings available",
-    "noReadingsDescription": "We have not received any readings for this device yet.",
-    "noActions": "No device actions",
-    "noActionsDescription": "No recent manual or automated actions were recorded for this device.",
-    "tabs": {
-      "overview": "Overview",
-      "sensors": "Sensors ({{count}})",
-      "readings": "Recent readings",
-      "actions": "Actions ({{count}})"
-    },
-    "dialog": {
-      "ariaLabel": "Device details for {{name}}"
-    },
-    "readings": {
-      "value1": "Value 1",
-      "value2": "Value 2"
-    },
-    "actionStatus": {
-      "ack": "Acknowledged",
-      "pending": "Pending",
-      "error": "Error",
-      "failed": "Failed",
-      "sent": "Sent",
-      "queued": "Queued",
-      "unknown": "Unknown"
-    },
     "statusDescription": {
       "online": "Device is connected and operational",
       "offline": "Device is disconnected",
@@ -648,12 +361,6 @@
     "status": "Status",
     "location": "Location",
     "noSensors": "No sensors",
-    "noSensorsFound": "No Sensors Found",
-    "adjustFilters": "Try adjusting your filters or search terms",
-    "orphanedSensorsWarning": "Orphaned Sensors Warning",
-    "orphanedSensorsMessage": "sensor(s) without valid parent device",
-    "unknownDevice": "Unknown Device",
-    "parentDevice": "Parent Device",
     "sensorDetails": "Sensor Details",
     "currentValue": "Current Value",
     "minValue": "Min Value",
@@ -683,10 +390,7 @@
       "kmh": "km/h",
       "mm": "mm",
       "ppm": "ppm",
-      "unknown": "Unknown",
-      "°c": "°C",
-      "°f": "°F",
-      "%": "%"
+      "unknown": "Unknown"
     }
   },
   "sensorReadings": {
@@ -695,9 +399,6 @@
     "liveData": "Live Data",
     "historicalData": "Historical Data",
     "noReadings": "No readings available",
-    "recentReadings": "recent readings",
-    "primaryValue": "Primary Value",
-    "secondaryValue": "Secondary Value",
     "lastReading": "Last Reading",
     "readingHistory": "Reading History",
     "exportData": "Export Data",
@@ -828,42 +529,6 @@
     "endHour": "End Hour",
     "cooldown": "Cooldown",
     "cooldownMinutes": "Cooldown (minutes)",
-    "settingsPage": {
-      "title": "Notification Settings",
-      "subtitle": "Fine-tune delivery windows, levels, and sources for alerts",
-      "quietHoursDescription": "Silence notifications during specific hours",
-      "cooldownDescription": "Minimum time between repeated notifications",
-      "levelsTitle": "Notification Categories · Levels",
-      "levelsDescription": "Choose which severity levels to receive",
-      "sourcesTitle": "Notification Categories · Sources",
-      "sourcesDescription": "Select the sources that can reach you",
-      "actionsInfo": "Changes are applied immediately after saving",
-      "placeholders": {
-        "startHour": "22",
-        "endHour": "6",
-        "cooldown": "15"
-      },
-      "labels": {
-        "hourSuffix": ":00",
-        "minutes": "minutes"
-      },
-      "quietHoursInfo": "Notifications will be silenced from <strong>{{start}}</strong> to <strong>{{end}}</strong>",
-      "cooldownInfo": "Same notification type won't repeat within <strong>{{minutes}}</strong> minutes",
-      "levelDescriptions": {
-        "critical": "Urgent issues requiring immediate attention",
-        "warning": "Important alerts needing attention",
-        "info": "General information and updates",
-        "success": "Successful operations and completions"
-      },
-      "sourceDescriptions": {
-        "sensors": "Temperature, humidity, and soil sensors",
-        "devices": "Connected IoT devices and equipment",
-        "actions": "Automated actions and triggers",
-        "system": "System status and health updates",
-        "maintenance": "Maintenance reminders and schedules",
-        "security": "Security alerts and access logs"
-      }
-    },
     "categories": "Categories",
     "critical": "Critical",
     "warning": "Warning",
@@ -911,16 +576,6 @@
     "actionCompleted": "Action Completed",
     "thresholdWarning": "Threshold Warning",
     "markAsUnread": "Mark as Unread",
-    "markedAsUnread": "Marked as unread",
-    "markAsUnreadError": "Error marking notification as unread",
-    "markFilteredAsRead": "Mark Filtered as Read",
-    "markedFilteredAsRead": "Marked {{count}} notification(s) as read",
-    "markFilteredAsReadError": "Error marking filtered notifications as read",
-    "markAsReadError": "Error marking notification as read",
-    "advancedFilters": "Advanced Filters",
-    "apply": "Apply",
-    "applyFilters": "Apply Filters",
-    "filtersApplied": "Filters applied successfully",
     "deleteNotification": "Delete Notification",
     "deleteAll": "Delete All",
     "noNotifications": "No Notifications",
@@ -955,18 +610,8 @@
     "mapView": "Map View",
     "farm": "Farm",
     "allFarms": "All Farms",
-    "selectFarm": "Select a farm",
     "device": "Device",
     "allDevices": "All Devices",
-    "selectDevice": "Select a device",
-    "sensor": "Sensor",
-    "allSensors": "All Sensors",
-    "selectSensor": "Select a sensor",
-    "startDate": "Start Date",
-    "selectStartDate": "Select start date",
-    "endDate": "End Date",
-    "selectEndDate": "Select end date",
-    "sensorFilterApplied": "Sensor filter applied: {{sensor}}",
     "search": "Search",
     "searchPlaceholder": "Search notifications...",
     "preparingInsights": "Preparing your insights...",
@@ -1004,25 +649,7 @@
     "allClear": "All Clear",
     "allCaughtUp": "You're all caught up with your notifications",
     "upToDate": "Up to Date",
-    "noCriticalIssues": "No critical issues detected",
-    "activeFilters": "active filter(s)",
-    "suggestedActions": {
-      "checkVentilation": "Check if ventilation is working. Consider opening windows if it's cooler outside.",
-      "checkHeating": "Check if heating is working. Consider closing windows or adding insulation.",
-      "improveCirculation": "Improve air circulation. Check if dehumidifier is working properly.",
-      "checkWater": "Check water levels. Consider misting plants or adding a humidifier.",
-      "checkDevicePower": "Check device power and WiFi connection. Try restarting the device.",
-      "retryAction": "Try the action again in a few minutes. Check if the device is responding."
-    },
-    "time": {
-      "justNow": "Just now",
-      "minutesAgo_one": "{{count}} minute ago",
-      "minutesAgo_other": "{{count}} minutes ago",
-      "hoursAgo_one": "{{count}} hour ago",
-      "hoursAgo_other": "{{count}} hours ago",
-      "daysAgo_one": "{{count}} day ago",
-      "daysAgo_other": "{{count}} days ago"
-    }
+    "noCriticalIssues": "No critical issues detected"
   },
   "actions": {
     "title": "Actions Center",
@@ -1258,80 +885,8 @@
     "healthStatus": "Health Status",
     "irrigationSchedule": "Irrigation Schedule",
     "fertilizationSchedule": "Fertilization Schedule",
-    "common": {
-      "noLocation": "No location",
-      "relative": {
-        "justNow": "Just now",
-        "minutesAgo": "{{count}}m ago",
-        "hoursAgo": "{{count}}h ago",
-        "yesterday": "Yesterday",
-        "daysAgo": "{{count}}d ago"
-      }
-    },
     "dashboard": {
-      "states": {
-        "loading": {
-          "title": "Loading Crop Dashboard",
-          "subtitle": "Fetching your crop data and analytics..."
-        },
-        "error": {
-          "title": "Oops! Something Went Wrong",
-          "cta": "Try Again",
-          "retryAria": "Retry loading dashboard"
-        },
-        "empty": {
-          "title": "No Crops Found",
-          "subtitle": "Start by creating your first crop to monitor its health and growth.",
-          "cta": "Create Crop",
-          "ctaAria": "Create your first crop"
-        }
-      },
-      "header": {
-        "selectCrop": "Select Crop",
-        "selectAria": "Select a crop to view",
-        "actions": {
-          "refresh": "Refresh Data",
-          "refreshAria": "Refresh dashboard data",
-          "edit": "Edit Crop",
-          "editAria": "Edit crop details",
-          "viewAll": "All Crops",
-          "viewAllAria": "View all crops"
-        }
-      },
-      "aria": {
-        "status": "Status: {{status}}"
-      },
-      "kpi": {
-        "ariaLabel": "Key Performance Indicators"
-      },
-      "details": {
-        "title": "Crop Details",
-        "variety": "Variety",
-        "planted": "Planted",
-        "expectedHarvest": "Expected Harvest",
-        "status": "Status",
-        "description": "Description",
-        "notes": "Notes",
-        "notAvailable": "N/A",
-        "ariaLabel": "Crop details and sensors"
-      },
-      "sensors": {
-        "title": "Connected Sensors",
-        "empty": "No sensors connected to this crop"
-      },
-      "actions": {
-        "ariaLabel": "Smart device actions"
-      },
-      "timeline": {
-        "title": "Recent Events",
-        "ariaLabel": "Recent events timeline",
-        "hideAria": "Hide timeline",
-        "showAria": "Show timeline"
-      },
-      "errors": {
-        "loadCrops": "Failed to load crops",
-        "loadDashboard": "Failed to load crop dashboard"
-      },
+      "header": "Crop Overview",
       "selectCrop": "Select Crop",
       "healthAnalytics": "Health & Analytics",
       "cropDetails": "Crop Details",
@@ -1342,99 +897,7 @@
       "noCropSelected": "No crop selected",
       "selectCropDescription": "Please select a crop from the dropdown above to view its dashboard",
       "loading": "Loading crop data...",
-      "error": "Error loading crop data",
-      "loadingMessage": "Fetching your crop data and analytics...",
-      "errorTitle": "Oops! Something Went Wrong",
-      "tryAgain": "Try Again",
-      "noCropsTitle": "No Crops Found",
-      "noCropsMessage": "Start by creating your first crop to monitor its health and growth.",
-      "createCrop": "Create Crop",
-      "selectCropAria": "Select a crop to view",
-      "connectedSensors": "Connected Sensors",
-      "noSensors": "No sensors connected to this crop",
-      "variety": "Variety",
-      "planted": "Planted",
-      "description": "Description",
-      "notes": "Notes",
-      "noLocation": "No location",
-      "na": "N/A",
-      "refreshData": "Refresh Data",
-      "allCrops": "All Crops",
-      "viewAll": "View all crops",
-      "kpiSection": "Key Performance Indicators",
-      "detailsSidebar": "Crop details and sensors",
-      "actionsSection": "Smart device actions",
-      "eventsSection": "Recent events timeline",
-      "recentEvents": "Recent Events",
-      "actionsAlertsNotifications": "Actions, alerts, and notifications",
-      "allEvents": "All Events",
-      "alerts": "Alerts",
-      "notifications": "Notifications",
-      "loadingEvents": "Loading events...",
-      "noEventsFound": "No Events Found",
-      "noEventsMessage": "No {{filter}} events in the last 7 days.",
-      "loadMoreEvents": "Load More Events",
-      "markAllRead": "Mark all as read",
-      "refresh": "Refresh",
-      "controlDevices": "Control devices for this crop zone",
-      "manual": "Manual",
-      "auto": "Auto",
-      "loadingDeviceActions": "Loading device actions...",
-      "noControllableDevices": "No Controllable Devices",
-      "noDevicesMessage": "No devices are configured for this crop zone.",
-      "allOn": "All On",
-      "allOff": "All Off",
-      "turnOn": "Turn On",
-      "turnOff": "Turn Off",
-      "automatedControlActive": "Automated Control Active",
-      "realTimeMonitoring": "Real-time sensor monitoring",
-      "last7Days": "Last 7 days",
-      "last30Days": "Last 30 days",
-      "loadingSensorData": "Loading sensor data...",
-      "noSensorsConnected": "No Sensors Connected",
-      "noSensorsMessage": "Connect sensors to this crop to start monitoring its health.",
-      "soilMoisture": "Soil Moisture",
-      "temperature": "Temperature",
-      "humidity": "Humidity"
-    },
-    "details": {
-      "name": "Name",
-      "variety": "Variety",
-      "status": "Status",
-      "plantingDate": "Planting Date",
-      "expectedHarvest": "Expected Harvest"
-    },
-    "statuses": {
-      "planted": "Planted",
-      "growing": "Growing",
-      "harvested": "Harvested",
-      "failed": "Failed"
-    },
-    "analytics": {
-      "title": "Analytics",
-      "loading": "Loading analytics..."
-    },
-    "kpi": {
-      "tooltips": {
-        "all": "View all crops",
-        "healthRatio": "Healthy vs stressed crops",
-        "growthStage": "Current growth stage",
-        "soilMoisture": "Average soil moisture across all sensors",
-        "temperature": "Average temperature across all sensors",
-        "humidity": "Average humidity across all sensors"
-      },
-      "labels": {
-        "total": "Total Crops",
-        "healthRatio": "Health Ratio",
-        "growthStage": "Growth Stage",
-        "soilMoisture": "Soil Moisture",
-        "temperature": "Temperature",
-        "humidity": "Humidity",
-        "lastUpdated": "Last Updated"
-      },
-      "relative": {
-        "never": "Never"
-      }
+      "error": "Error loading crop data"
     },
     "kpis": {
       "yield": "Yield",
@@ -1454,48 +917,11 @@
       "alertTechnician": "Alert Technician",
       "confirmAction": "Confirm Action",
       "turnOnIrrigation": "Turn on irrigation for {{zone}}?",
-      "actionExecuted": "Action executed",
-      "actionExecutedSuccessfully": "Action executed successfully",
+      "actionExecuted": "Action executed successfully",
       "actionFailed": "Action failed",
       "confirmTurnOnIrrigation": "Are you sure you want to start irrigation?"
     },
     "timeline": {
-      "title": "Recent Events",
-      "subtitle": "Actions, alerts, and notifications",
-      "actions": {
-        "markAllRead": "Mark all as read",
-        "loadMore": "Load More Events"
-      },
-      "filters": {
-        "all": "All Events",
-        "actions": "Actions",
-        "alerts": "Alerts",
-        "notifications": "Notifications"
-      },
-      "loading": "Loading events...",
-      "empty": {
-        "title": "No Events Found",
-        "description": "No {{filter}} events in the last 7 days."
-      },
-      "groups": {
-        "today": "Today",
-        "yesterday": "Yesterday",
-        "count": "{{count}} events"
-      },
-      "status": {
-        "success": "Success",
-        "warning": "Warning",
-        "error": "Error",
-        "info": "Info"
-      },
-      "events": {
-        "actionTitle": "{{action}} on {{device}}",
-        "actionDefault": "Action",
-        "deviceDefault": "Device",
-        "actionDescription": "Triggered by {{source}}",
-        "systemSource": "System",
-        "noDescription": "No description available"
-      },
       "irrigationStarted": "Irrigation started",
       "fertilizerAdded": "Fertilizer added",
       "diseaseAlert": "Disease alert",
@@ -1546,56 +972,7 @@
     "accountInfo": "Account Information",
     "memberSince": "Member Since",
     "lastLogin": "Last Login",
-    "accountStatus": "Account Status",
-    "descriptions": {
-      "personalInfo": "Update your personal details and contact information",
-      "security": "Keep your account secure with a strong password",
-      "accountInfo": "View your account information and activity"
-    },
-    "sections": {
-      "fullName": "Full Name",
-      "contact": "Contact Information",
-      "location": "Location",
-      "additional": "Additional Details"
-    },
-    "fields": {
-      "phone": "Phone Number",
-      "address": "Address",
-      "city": "City",
-      "country": "Country",
-      "dateOfBirth": "Date of Birth",
-      "gender": "Gender",
-      "userId": "User ID",
-      "role": "Role"
-    },
-    "placeholders": {
-      "firstName": "Enter first name",
-      "lastName": "Enter last name",
-      "email": "name@example.com",
-      "phone": "+1 (555) 000-0000",
-      "address": "Street address",
-      "city": "City",
-      "country": "Country",
-      "gender": "Gender",
-      "currentPassword": "Enter current password",
-      "newPassword": "Enter new password",
-      "confirmPassword": "Confirm new password"
-    },
-    "tooltips": {
-      "dateOfBirth": "Select your date of birth"
-    },
-    "securityRequirements": {
-      "title": "Password Requirements",
-      "items": {
-        "minLength": "At least 6 characters long",
-        "mixCharacters": "Use a combination of letters and numbers",
-        "unique": "Don't reuse passwords from other accounts"
-      }
-    },
-    "actions": {
-      "changePhoto": "Change profile picture",
-      "togglePasswordVisibility": "Toggle password visibility"
-    }
+    "accountStatus": "Account Status"
   },
   "settings": {
     "title": "Settings",
@@ -1625,69 +1002,6 @@
       "analytics": "Analytics",
       "cookies": "Cookies",
       "locationTracking": "Location Tracking"
-    },
-    "page": {
-      "subtitle": "Manage your application preferences and configurations",
-      "cards": {
-        "badgeComingSoon": "Coming Soon",
-        "notifications": {
-          "subtitle": "Configure quiet hours, categories, and cooldown periods for alerts",
-          "tags": {
-            "quietHours": "Quiet Hours",
-            "categories": "Categories",
-            "cooldown": "Cooldown"
-          }
-        },
-        "appearance": {
-          "title": "Appearance",
-          "subtitle": "Customize theme, colors, and display preferences",
-          "tags": {
-            "theme": "Theme",
-            "darkMode": "Dark Mode",
-            "colors": "Colors"
-          }
-        },
-        "languageRegion": {
-          "title": "Language & Region",
-          "subtitle": "Set your preferred language and regional formats",
-          "tags": {
-            "language": "Language",
-            "timezone": "Timezone",
-            "dateFormat": "Date Format"
-          }
-        },
-        "privacy": {
-          "title": "Privacy & Security",
-          "subtitle": "Manage data privacy, sessions, and security settings",
-          "tags": {
-            "twoFactor": "2FA",
-            "sessions": "Sessions",
-            "dataExport": "Data Export"
-          }
-        },
-        "system": {
-          "title": "System Preferences",
-          "subtitle": "Configure system behavior and advanced options",
-          "tags": {
-            "autoRefresh": "Auto-refresh",
-            "cache": "Cache",
-            "api": "API"
-          }
-        },
-        "support": {
-          "title": "Help & Support",
-          "subtitle": "Access documentation, FAQs, and contact support",
-          "tags": {
-            "docs": "Docs",
-            "faq": "FAQ",
-            "contact": "Contact"
-          }
-        }
-      },
-      "info": {
-        "title": "Need Help?",
-        "description": "Settings allow you to customize your TerraFlow experience. Changes are saved automatically and take effect immediately."
-      }
     }
   },
   "farms": {
@@ -1732,10 +1046,7 @@
     "password": "Password must be at least 8 characters long",
     "fieldRequired": "This field is required",
     "invalidEmail": "Invalid email address",
-    "invalidPassword": "Invalid password",
-    "fieldRequiredWithName": "{{field}} is required",
-    "invalidEmailWithName": "Please enter a valid email for {{field}}",
-    "minLengthWithName": "{{field}} must be at least {{min}} characters long"
+    "invalidPassword": "Invalid password"
   },
   "errors": {
     "networkError": "Network Error",
@@ -1939,8 +1250,6 @@
     "manualActionText": "{{action}} on {{device}}",
     "automaticActionText": "{{action}} on {{device}} (auto)",
     "deviceToggled": "{{device}} turned {{state}}",
-    "toggleError": "Failed to toggle device",
-    "actionExecutingTooltip": "Action \"{{actionName}}\" is currently being executed. Please wait...",
-    "deviceOfflineTooltip": "This action cannot be executed because \"{{deviceName}}\" is currently {{status}}. The device must be online or active to perform actions."
+    "toggleError": "Failed to toggle device"
   }
 }

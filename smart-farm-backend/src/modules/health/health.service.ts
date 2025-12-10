@@ -156,7 +156,7 @@ export class HealthService {
 
       const recentReadings = await this.sensorReadingRepository
         .createQueryBuilder('reading')
-        .where('reading.created_at >= :date', { date: last24Hours })
+        .where('reading.createdAt >= :date', { date: last24Hours })
         .getCount();
 
       const onlineDevices = await this.deviceRepository.count({ 

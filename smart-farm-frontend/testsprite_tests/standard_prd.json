@@ -1,0 +1,255 @@
+{
+  "meta": {
+    "project": "Smart Farm Management System",
+    "date": "2025-10-29",
+    "prepared_by": "Software Development Manager"
+  },
+  "product_overview": "Smart Farm Management System is a next-generation web application designed to empower farmers and administrators to monitor, control, and optimize agricultural operations through IoT-driven data, real-time dashboards, automation, and analytics within a modern, user-friendly interface supporting multiple languages and responsive design.",
+  "core_goals": [
+    "Provide farmers with real-time, actionable insights for farm management using IoT sensor data and device control.",
+    "Enable administrators to oversee and manage users, devices, farms, and global system performance effectively.",
+    "Deliver a highly usable and accessible system with advanced notifications, role-based access, and personalized profiles.",
+    "Implement seamless multi-language support with responsive dark/light themes for inclusive user experience.",
+    "Ensure high performance, security, and test readiness with modern web technologies and architectural best practices."
+  ],
+  "key_features": [
+    "JWT-based authentication with role-based access control for secure login and user management.",
+    "Real-time dashboard with sensor data visualization, device status, and quick action floating button.",
+    "Comprehensive farm, device, and sensor management modules with search, filtering, bulk operations, and export capabilities.",
+    "Action center providing manual control of equipment, real-time action streams, and detailed action histories.",
+    "Notification system delivering categorized real-time alerts with WebSocket support and alert dialogs.",
+    "Multi-language support (English, Arabic, French) with right-to-left layout support and smooth language transitions.",
+    "Dark and light theme toggling with eco-futuristic glassmorphism design and soft neumorphism UI.",
+    "Shared UI components for consistent experience including headers, footers, language switcher, loading screens, and custom dropdowns.",
+    "Advanced tooltips and dropdowns positioning using Floating UI library for improved usability.",
+    "RESTful API integration with interceptors for authentication, error handling, and global services."
+  ],
+  "user_flow_summary": [
+    "User logs in or registers with JWT-based authentication and is directed to their respective dashboard (Farmer or Admin) based on role.",
+    "Farmers access their dashboard to view real-time data from IoT devices, sensor readings, and farm maps; they can perform manual control actions and monitor recent activities.",
+    "Administrators navigate global dashboards to manage users, farms, and devices, and generate performance reports with role-based access restrictions.",
+    "Users receive real-time notifications with options to read, delete, or mark them as read and configure notification preferences in settings.",
+    "Users can edit their personal profile information and change passwords via the user profile module.",
+    "Users switch between supported languages in the UI with dynamic translation and layout adjustments, including RTL for Arabic.",
+    "Users toggle between dark and light themes, experiencing consistent UI style changes across all components."
+  ],
+  "validation_criteria": [
+    "Robust testing ensures no mock data is used; all modules connect to live backend services for integration validation.",
+    "Landing page exhibits premium feel, multilingual support, animated glassmorphic backgrounds, and correct redirection workflows.",
+    "User experience is seamless with smooth UI transitions, loading placeholders, and responsive design across devices."
+  ],
+  "code_summary": {
+    "tech_stack": [
+      "TypeScript 5.9.2",
+      "Angular 20.3.0",
+      "Angular Material 20.2.5",
+      "RxJS 7.8.0",
+      "SCSS/CSS3",
+      "Chart.js 4.5.0",
+      "Socket.io-client 4.8.1",
+      "JWT Authentication",
+      "Jasmine & Karma (Testing)",
+      "Service Worker (PWA)"
+    ],
+    "features": [
+      {
+        "name": "Authentication & Authorization",
+        "description": "JWT-based authentication system with login, register, role-based access control, and auth guards",
+        "files": [
+          "src/app/features/auth/login/login.component.ts",
+          "src/app/features/auth/login/login.component.html",
+          "src/app/features/auth/register/register.component.ts",
+          "src/app/features/auth/register/register.component.html",
+          "src/app/core/services/auth.service.ts",
+          "src/app/core/guards/auth.guard.ts",
+          "src/app/core/guards/guest.guard.ts",
+          "src/app/core/interceptors/auth.interceptor.ts"
+        ]
+      },
+      {
+        "name": "Dashboard",
+        "description": "Real-time overview dashboard with statistics, device status, sensor readings, and quick actions via floating FAB",
+        "files": [
+          "src/app/features/dashboard/dashboard.component.ts",
+          "src/app/features/dashboard/dashboard.component.html",
+          "src/app/features/dashboard/dashboard.component.scss"
+        ]
+      },
+      {
+        "name": "Devices Management",
+        "description": "IoT device management with card/table views, status toggling, filtering, search, sorting, pagination, bulk operations, and export",
+        "files": [
+          "src/app/features/devices/devices.component.ts",
+          "src/app/features/devices/devices.component.html",
+          "src/app/features/devices/devices.component.spec.ts",
+          "src/app/features/devices/device.utils.ts",
+          "src/app/features/devices/devices.constants.ts",
+          "src/app/features/devices/_devices-shared.scss",
+          "src/app/features/devices/_devices-cards.scss",
+          "src/app/features/devices/_devices-table.scss",
+          "src/app/features/devices/_devices-filters.scss",
+          "src/app/features/devices/_devices-header.scss",
+          "src/app/features/devices/components/device-details-dialog/device-details-dialog.component.ts",
+          "src/app/features/devices/components/device-form/device-form.component.ts"
+        ]
+      },
+      {
+        "name": "Sensors Management",
+        "description": "Sensor configuration and monitoring with master-detail layout",
+        "files": [
+          "src/app/features/sensors/sensors.component.ts",
+          "src/app/features/sensors/sensors.component.html",
+          "src/app/features/sensors/sensors.component.scss"
+        ]
+      },
+      {
+        "name": "Sensor Readings",
+        "description": "Real-time sensor data visualization with master-detail architecture, virtual scrolling, signal-based state, and auto-refresh",
+        "files": [
+          "src/app/features/sensors/sensor-readings/sensor-readings.component.ts",
+          "src/app/features/sensors/sensor-readings/services/readings-map.service.ts",
+          "src/app/features/sensors/sensor-readings/services/sensor-readings-api.service.ts",
+          "src/app/features/sensors/sensor-readings/utils/sensor-utils.ts",
+          "src/app/features/sensors/sensor-readings/utils/format-utils.ts",
+          "src/app/features/sensors/sensor-readings/utils/color-utils.ts",
+          "src/app/features/sensors/sensor-readings/utils/chart-utils.ts"
+        ]
+      },
+      {
+        "name": "Farms Management",
+        "description": "Farm creation, editing, and selection management",
+        "files": [
+          "src/app/features/farms/farms.component.ts",
+          "src/app/features/farms/farms.component.html",
+          "src/app/features/farms/farms.component.scss",
+          "src/app/core/services/farm-management.service.ts"
+        ]
+      },
+      {
+        "name": "Crops Management",
+        "description": "Crop tracking and cultivation management",
+        "files": [
+          "src/app/features/crops/crops.component.ts",
+          "src/app/features/crops/crops.component.html",
+          "src/app/features/crops/crops.component.scss"
+        ]
+      },
+      {
+        "name": "Actions & Automation",
+        "description": "Manual control, action logging, real-time action stream, and recent actions monitoring",
+        "files": [
+          "src/app/features/actions/actions.component.ts",
+          "src/app/features/actions/components/action-details-dialog/action-details-dialog.component.ts",
+          "src/app/features/actions/components/action-stream/action-stream.component.ts",
+          "src/app/features/actions/components/manual-control/manual-control.component.ts",
+          "src/app/features/actions/components/recent-actions/recent-actions.component.ts",
+          "src/app/core/services/action-events.service.ts"
+        ]
+      },
+      {
+        "name": "User Profile",
+        "description": "User profile management with personal information editing, password change, and account details",
+        "files": [
+          "src/app/features/profile/profile.component.ts",
+          "src/app/features/profile/profile.component.html",
+          "src/app/features/profile/profile.component.scss"
+        ]
+      },
+      {
+        "name": "Notifications",
+        "description": "Real-time notification system with toast messages, notification center, and alert dialogs",
+        "files": [
+          "src/app/features/notifications/notifications.component.ts",
+          "src/app/features/notifications/notifications.component.html",
+          "src/app/features/notifications/notifications.component.scss",
+          "src/app/features/notifications/confirm-delete-dialog.component.ts",
+          "src/app/core/services/notification.service.ts",
+          "src/app/core/services/alert.service.ts"
+        ]
+      },
+      {
+        "name": "Settings",
+        "description": "Application settings including notification preferences",
+        "files": [
+          "src/app/features/settings/settings.component.ts",
+          "src/app/features/settings/notification-settings/notification-settings.component.ts"
+        ]
+      },
+      {
+        "name": "Internationalization (i18n)",
+        "description": "Multi-language support with dynamic translation system (English, Arabic, French)",
+        "files": [
+          "src/app/core/services/language.service.ts",
+          "src/app/core/pipes/translate.pipe.ts",
+          "src/assets/i18n/en.json",
+          "src/assets/i18n/ar.json",
+          "src/assets/i18n/fr.json"
+        ]
+      },
+      {
+        "name": "Theme System",
+        "description": "Dark/light theme toggle with glassmorphism and eco-futuristic design",
+        "files": [
+          "src/app/core/services/theme.service.ts",
+          "src/styles.scss",
+          "src/styles-rtl.scss"
+        ]
+      },
+      {
+        "name": "Shared UI Components",
+        "description": "Reusable components including header, footer, floating FAB, loading screens, language switcher, and custom dropdowns",
+        "files": [
+          "src/app/shared/components/header/header.component.ts",
+          "src/app/shared/components/header/header.component.html",
+          "src/app/shared/components/footer/footer.component.ts",
+          "src/app/shared/components/footer/footer.component.html",
+          "src/app/shared/components/global-fab/global-fab.component.ts",
+          "src/app/shared/components/shared-fab/shared-fab.component.ts",
+          "src/app/shared/components/smart-loading-screen/smart-loading-screen.component.ts",
+          "src/app/shared/components/smart-loading-screen/smart-loading-screen-simple.component.ts",
+          "src/app/shared/components/language-switcher/language-switcher.component.ts",
+          "src/app/shared/components/custom-dropdown/custom-dropdown.component.ts",
+          "src/app/shared/components/not-found/not-found.component.ts"
+        ]
+      },
+      {
+        "name": "Floating UI System",
+        "description": "Advanced tooltip and dropdown positioning using Floating UI library",
+        "files": [
+          "src/app/core/services/floating-ui.service.ts",
+          "src/app/shared/directives/tooltip.directive.ts",
+          "src/app/shared/directives/dropdown.directive.ts",
+          "src/app/core/styles/floating-ui.scss"
+        ]
+      },
+      {
+        "name": "API Integration",
+        "description": "RESTful API service with HTTP interceptors for authentication and error handling",
+        "files": [
+          "src/app/core/services/api.service.ts",
+          "src/app/core/interceptors/auth.interceptor.ts",
+          "src/app/core/interceptors/error.interceptor.ts",
+          "src/app/core/services/global-error-handler.service.ts"
+        ]
+      },
+      {
+        "name": "Data Models",
+        "description": "TypeScript interfaces for type-safe data structures",
+        "files": [
+          "src/app/core/models/user.model.ts",
+          "src/app/core/models/farm.model.ts",
+          "src/app/core/models/action-log.model.ts",
+          "src/app/core/models/notification.model.ts"
+        ]
+      },
+      {
+        "name": "Router Configuration",
+        "description": "Lazy-loaded routes with authentication guards",
+        "files": [
+          "src/app/app.routes.ts",
+          "src/app/app.config.ts"
+        ]
+      }
+    ]
+  }
+}

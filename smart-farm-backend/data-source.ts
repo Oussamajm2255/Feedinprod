@@ -12,24 +12,20 @@ import { User } from './src/entities/user.entity';
 ConfigModule.forRoot({ isGlobal: true });
 
 export const AppDataSource = new DataSource({
-  type: 'postgres',
+  type: 'mysql',
   host: process.env.DB_HOST!,
-  port: parseInt(process.env.DB_PORT || '5432'),
   username: process.env.DB_USER!,
   password: process.env.DB_PASS!,
   database: process.env.DB_NAME!,
   entities: [
-    Farm,
-    Sensor,
-    SensorReading,
-    Device,
-    Crop,
-    ActionLog,
-    Notification,
-    User,
-  ],
+  Farm,
+  Sensor,
+  SensorReading,
+  Device,
+  Crop,
+  ActionLog,
+  Notification,
+  User,
+],
   migrations: ['migrations/*.ts'],
-  ssl: {
-    rejectUnauthorized: false,
-  },
 });

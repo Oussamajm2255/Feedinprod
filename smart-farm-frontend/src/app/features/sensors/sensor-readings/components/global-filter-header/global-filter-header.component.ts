@@ -68,48 +68,13 @@ export interface FilterState {
                 [ngModel]="filters().sensorType"
                 (ngModelChange)="onFilterChange('sensorType', $event)"
               >
-                <mat-option value="all">
-                  <span class="option-content">
-                    <mat-icon class="option-icon">sensors</mat-icon>
-                    <span>All</span>
-                  </span>
-                </mat-option>
-                <mat-option value="temperature">
-                  <span class="option-content">
-                    <mat-icon class="option-icon">thermostat</mat-icon>
-                    <span>Temp</span>
-                  </span>
-                </mat-option>
-                <mat-option value="humidity">
-                  <span class="option-content">
-                    <mat-icon class="option-icon">water_drop</mat-icon>
-                    <span>Humidity</span>
-                  </span>
-                </mat-option>
-                <mat-option value="soil_moisture">
-                  <span class="option-content">
-                    <mat-icon class="option-icon">grass</mat-icon>
-                    <span>Soil</span>
-                  </span>
-                </mat-option>
-                <mat-option value="light">
-                  <span class="option-content">
-                    <mat-icon class="option-icon">light_mode</mat-icon>
-                    <span>Light</span>
-                  </span>
-                </mat-option>
-                <mat-option value="ph">
-                  <span class="option-content">
-                    <mat-icon class="option-icon">science</mat-icon>
-                    <span>pH</span>
-                  </span>
-                </mat-option>
-                <mat-option value="pressure">
-                  <span class="option-content">
-                    <mat-icon class="option-icon">speed</mat-icon>
-                    <span>Pressure</span>
-                  </span>
-                </mat-option>
+                <mat-option value="all">All</mat-option>
+                <mat-option value="temperature">🌡️ Temp</mat-option>
+                <mat-option value="humidity">💧 Humidity</mat-option>
+                <mat-option value="soil_moisture">🌱 Soil</mat-option>
+                <mat-option value="light">☀️ Light</mat-option>
+                <mat-option value="ph">⚗️ pH</mat-option>
+                <mat-option value="pressure">🌀 Pressure</mat-option>
               </mat-select>
             </mat-form-field>
 
@@ -652,41 +617,6 @@ export interface FilterState {
         color: #34d399;
         box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4),
                     inset 0 1px 1px rgba(255, 255, 255, 0.15);
-      }
-
-      /* Option content with icons */
-      .option-content {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        width: 100%;
-      }
-
-      .option-icon {
-        font-size: 1.125rem;
-        width: 1.125rem;
-        height: 1.125rem;
-        color: var(--primary-green, #10b981);
-      }
-
-      /* Dark theme for option icons */
-      :host-context(body.dark-theme) .option-icon {
-        color: #34d399;
-      }
-
-      /* Style mat-option to ensure proper display */
-      ::ng-deep .mat-mdc-select-panel .mat-mdc-option {
-        .option-content {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-
-        .option-icon {
-          font-size: 1.125rem;
-          width: 1.125rem;
-          height: 1.125rem;
-        }
       }
     `,
   ],

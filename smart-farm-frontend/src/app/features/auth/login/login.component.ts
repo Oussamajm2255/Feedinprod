@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild, ElementRef, AfterViewInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, signal, computed } from '@angular/core';
+import { Component, inject, ViewChild, ElementRef, AfterViewInit, OnDestroy, ChangeDetectionStrategy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, AsyncValidatorFn, ValidationErrors } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -63,7 +63,6 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly alertService = inject(AlertService);
-  private readonly cdr = inject(ChangeDetectorRef);
   public readonly languageService = inject(LanguageService);
 
   // Reference to video element
@@ -118,7 +117,6 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.setupVideoPlayback();
     this.setupKeyboardShortcuts();
-    this.setupAutofillDetection();
   }
 
   ngOnDestroy(): void {
@@ -184,19 +182,25 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
 
   // Form submission
   onSubmit(): void {
-    // Always allow submission attempt, but validate and show errors if needed
+    if (!this.validateSubmission()) return;
+
+    if (this.loginForm.valid) {
+      this.performLogin();
+    }
+  }
+
+  private validateSubmission(): boolean {
     if (this.isRateLimited()) {
       this.showRateLimitWarning();
-      return;
+      return false;
     }
 
     if (!this.loginForm.valid) {
       this.markFormGroupTouched();
-      // Still allow submission attempt - validation will show errors
-      return;
+      return false;
     }
 
-    this.performLogin();
+    return true;
   }
 
   private performLogin(): void {
@@ -484,112 +488,6 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
   private isAnyFormFieldFocused(): boolean {
     const activeElement = document.activeElement;
     return activeElement?.tagName === 'INPUT' || activeElement?.tagName === 'TEXTAREA';
-  }
-
-  // Autofill detection and form state update
-  private setupAutofillDetection(): void {
-    // Method 1: Check for autofilled values after a delay (initial check)
-    setTimeout(() => {
-      this.checkAndUpdateAutofill();
-    }, 500);
-
-    // Method 2: Listen for input events (catches autofill and manual typing)
-    const emailInput = document.getElementById('email-input') as HTMLInputElement;
-    const passwordInput = document.querySelector('input[formControlName="password"]') as HTMLInputElement;
-
-    if (emailInput) {
-      emailInput.addEventListener('input', () => {
-        this.syncInputToForm('email', emailInput.value);
-      });
-      
-      // Also check on focus (autofill might happen on focus)
-      emailInput.addEventListener('focus', () => {
-        setTimeout(() => this.syncInputToForm('email', emailInput.value), 100);
-      });
-    }
-
-    if (passwordInput) {
-      passwordInput.addEventListener('input', () => {
-        this.syncInputToForm('password', passwordInput.value);
-      });
-      
-      passwordInput.addEventListener('focus', () => {
-        setTimeout(() => this.syncInputToForm('password', passwordInput.value), 100);
-      });
-    }
-
-    // Method 3: Periodic check for autofilled values (fallback for delayed autofill)
-    let checkCount = 0;
-    const maxChecks = 25; // 5 seconds total (25 * 200ms)
-    const autofillCheckInterval = setInterval(() => {
-      checkCount++;
-      if (this.hasAutofilledValues()) {
-        this.checkAndUpdateAutofill();
-        clearInterval(autofillCheckInterval);
-      } else if (checkCount >= maxChecks) {
-        clearInterval(autofillCheckInterval);
-      }
-    }, 200);
-  }
-
-  private syncInputToForm(controlName: 'email' | 'password', value: string): void {
-    const control = this.loginForm.get(controlName);
-    if (control && value !== control.value) {
-      control.setValue(value, { emitEvent: true });
-      control.markAsTouched();
-      control.updateValueAndValidity({ emitEvent: true });
-      this.cdr.markForCheck();
-    }
-  }
-
-  private hasAutofilledValues(): boolean {
-    const emailInput = document.getElementById('email-input') as HTMLInputElement;
-    const passwordInput = document.querySelector('input[formControlName="password"]') as HTMLInputElement;
-
-    if (!emailInput || !passwordInput) return false;
-
-    // Check if inputs have values but form controls don't
-    const emailValue = emailInput.value;
-    const passwordValue = passwordInput.value;
-    const formEmail = this.loginForm.get('email')?.value;
-    const formPassword = this.loginForm.get('password')?.value;
-
-    // Explicitly convert to boolean
-    const hasEmailMismatch = !!(emailValue && emailValue !== formEmail);
-    const hasPasswordMismatch = !!(passwordValue && passwordValue !== formPassword);
-    
-    return hasEmailMismatch || hasPasswordMismatch;
-  }
-
-  private checkAndUpdateAutofill(): void {
-    const emailInput = document.getElementById('email-input') as HTMLInputElement;
-    const passwordInput = document.querySelector('input[formControlName="password"]') as HTMLInputElement;
-
-    if (!emailInput || !passwordInput) return;
-
-    const emailValue = emailInput.value;
-    const passwordValue = passwordInput.value;
-
-    // Update form controls if values exist
-    if (emailValue && emailValue !== this.loginForm.get('email')?.value) {
-      this.loginForm.get('email')?.setValue(emailValue);
-      this.loginForm.get('email')?.markAsTouched();
-      this.loginForm.get('email')?.updateValueAndValidity();
-    }
-
-    if (passwordValue && passwordValue !== this.loginForm.get('password')?.value) {
-      this.loginForm.get('password')?.setValue(passwordValue);
-      this.loginForm.get('password')?.markAsTouched();
-      this.loginForm.get('password')?.updateValueAndValidity();
-    }
-
-    // Trigger change detection
-    if (this.loginForm.dirty || this.loginForm.touched) {
-      // Force form validation update
-      this.loginForm.updateValueAndValidity();
-      // Manually trigger change detection for OnPush strategy
-      this.cdr.markForCheck();
-    }
   }
 
   // Storage helpers

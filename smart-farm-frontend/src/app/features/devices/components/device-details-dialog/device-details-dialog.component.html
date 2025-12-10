@@ -1,11 +1,4 @@
-<div
-  class="device-details-dialog glass-dialog"
-  role="dialog"
-  [attr.aria-modal]="true"
-  [attr.aria-labelledby]="dialogTitleId"
-  [attr.aria-describedby]="dialogContentId"
-  [attr.aria-label]="languageService.t()('devices.dialog.ariaLabel', { name: device.name })"
-  [@dialogAnimation]>
+<div class="device-details-dialog glass-dialog" [@dialogAnimation]>
   <!-- Epic Header Section -->
   <div class="dialog-header">
     <div class="device-icon-wrapper" [style.background]="getDeviceTypeGradient(device.device_type || 'unknown')">
@@ -13,36 +6,32 @@
       <div class="status-indicator" [style.background]="getStatusColor(device.status)"></div>
     </div>
     <div class="header-content">
-      <h2 class="dialog-title" [attr.id]="dialogTitleId">{{ device.name }}</h2>
+      <h2 class="dialog-title">{{ device.name }}</h2>
       <p class="dialog-subtitle">{{ device.location }}</p>
       <div class="header-badges">
-        <mat-chip
-          class="status-chip"
-          [style.background]="getStatusColor(device.status) + '20'"
-          [style.color]="getStatusColor(device.status)">
-          <mat-icon class="status-icon">{{ getStatusIcon(device.status) }}</mat-icon>
+        <mat-chip class="status-chip" [style.background]="getStatusColor(device.status) + '20'" [style.color]="getStatusColor(device.status)">
+        <mat-icon class="status-icon">{{ getStatusIcon(device.status) }}</mat-icon>
           {{ getStatusTranslation(device.status) }}
         </mat-chip>
         <mat-chip class="type-chip">
           <mat-icon class="type-icon">{{ getDeviceIcon(device.device_type || 'unknown') }}</mat-icon>
           {{ getDeviceTypeTranslation(device.device_type || 'unknown') }}
-        </mat-chip>
+      </mat-chip>
       </div>
     </div>
-    <button
-      mat-icon-button
-      (click)="onClose()"
-      class="close-header-btn"
-      [attr.aria-label]="languageService.t()('common.close')">
+    <button mat-icon-button 
+            (click)="onClose()" 
+            class="close-header-btn"
+            [attr.aria-label]="languageService.t()('common.close')">
       <mat-icon>close</mat-icon>
     </button>
   </div>
 
   <!-- Content Section -->
-  <mat-dialog-content class="dialog-content" [@contentAnimation] [attr.id]="dialogContentId">
+  <mat-dialog-content class="dialog-content" [@contentAnimation]>
     <mat-tab-group class="device-tabs" animationDuration="300ms">
       <!-- Overview Tab -->
-      <mat-tab [label]="languageService.t()('devices.tabs.overview')">
+      <mat-tab [label]="languageService.t()('devices.overview')">
       <div class="tab-content">
           <!-- Quick Stats Grid -->
           <div class="metrics-grid">
@@ -159,7 +148,7 @@
     </mat-tab>
 
     <!-- Sensors Tab -->
-      <mat-tab [label]="languageService.t()('devices.tabs.sensors', { count: sensorCount() })">
+      <mat-tab [label]="languageService.t()('devices.sensors') + ' (' + sensorCount() + ')'">
       <div class="tab-content">
           <div *ngIf="isLoadingSensors()" class="loading-container">
             <mat-spinner diameter="50"></mat-spinner>
@@ -179,8 +168,8 @@
                   <mat-icon [style.color]="getSensorTypeColor(sensor.type)">{{ getSensorTypeIcon(sensor.type) }}</mat-icon>
                 </div>
                 <div class="sensor-title">
-                  <h4>{{ getSensorTypeLabel(sensor.type) }}</h4>
-                  <p>{{ sensor.location || languageService.t()('devices.sensorLocationUnknown') }}</p>
+                  <h4>{{ sensor.type }}</h4>
+                  <p>{{ sensor.location || languageService.t()('common.none') }}</p>
                 </div>
               </div>
               <div class="sensor-details">
@@ -206,7 +195,7 @@
       </mat-tab>
 
       <!-- Recent Readings Tab -->
-      <mat-tab [label]="languageService.t()('devices.tabs.readings')">
+      <mat-tab [label]="languageService.t()('devices.recentReadings')">
         <div class="tab-content">
           <div *ngIf="isLoadingReadings()" class="loading-container">
             <mat-spinner diameter="50"></mat-spinner>
@@ -228,11 +217,11 @@
                 <div class="reading-values">
                   <span class="reading-value" *ngIf="reading.value1 !== undefined">
                     <strong>{{ reading.value1 | number:'1.2-2' }}</strong>
-                    <span class="reading-label">{{ languageService.t()('devices.readings.value1') }}</span>
+                    <span class="reading-label">Value 1</span>
                   </span>
                   <span class="reading-value" *ngIf="reading.value2 !== undefined">
                     <strong>{{ reading.value2 | number:'1.2-2' }}</strong>
-                    <span class="reading-label">{{ languageService.t()('devices.readings.value2') }}</span>
+                    <span class="reading-label">Value 2</span>
                   </span>
                 </div>
                 <div class="reading-meta">
@@ -246,7 +235,7 @@
     </mat-tab>
 
       <!-- Actions Tab -->
-      <mat-tab [label]="languageService.t()('devices.tabs.actions', { count: recentActionsCount() })">
+      <mat-tab [label]="languageService.t()('devices.actions') + ' (' + recentActionsCount() + ')'">
       <div class="tab-content">
           <div *ngIf="isLoadingActions()" class="loading-container">
             <mat-spinner diameter="50"></mat-spinner>
@@ -268,8 +257,8 @@
                 <div class="action-title">{{ action.action_type || action.action_uri }}</div>
                 <div class="action-meta">
                   <span class="action-time">{{ formatRelativeTime(action.created_at) }}</span>
-                  <mat-chip class="action-status" [ngStyle]="getActionStatusStyle(action.status)">
-                    {{ getActionStatusTranslation(action.status) }}
+                  <mat-chip class="action-status" [style.background]="action.status === 'ack' ? '#10b98120' : '#ef444420'" [style.color]="action.status === 'ack' ? '#10b981' : '#ef4444'">
+                    {{ action.status }}
                   </mat-chip>
                 </div>
               </div>

@@ -109,14 +109,11 @@ $transition-neumorphic: 0.3s cubic-bezier(0.4, 0, 0.2, 1); // Smooth
 // Login card - Neumorphic Press & Lift Effect
 .login-card {
   z-index: 10;
-  padding: 32px 36px;
-  border-radius: 18px;
-  max-width: 420px;
+  padding: 40px;
+  border-radius: 20px;
+  max-width: 450px;
   width: 90%;
   text-align: center;
-  // Add vertical spacing (up and down)
-  margin-top: clamp(40px, 8vh, 80px);
-  margin-bottom: clamp(40px, 8vh, 80px);
   // MORE SOLID background for shadow visibility
   background: linear-gradient(145deg,
     rgba(255, 255, 255, 0.25) 0%,
@@ -189,33 +186,33 @@ $transition-neumorphic: 0.3s cubic-bezier(0.4, 0, 0.2, 1); // Smooth
 
 // Logo section
 .logo-section {
-  margin-bottom: 24px;
+  margin-bottom: 30px;
   color: white;
 
   img {
-    max-width: 120px;
+    max-width: 150px;
     height: auto;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     object-fit: contain;
   }
 
   .fallback-icon {
-    font-size: 52px;
-    width: 52px;
-    height: 52px;
-    margin-bottom: 12px;
+    font-size: 60px;
+    width: 60px;
+    height: 60px;
+    margin-bottom: 15px;
     color: $primary-color;
   }
 
   h2 {
     margin: 0;
-    font-size: 1.6em;
+    font-size: 1.8em;
     font-weight: 600;
   }
 
   p {
-    margin: 4px 0 0;
-    font-size: 0.95em;
+    margin: 5px 0 0;
+    font-size: 1em;
     opacity: 0.8;
   }
 }
@@ -224,7 +221,7 @@ $transition-neumorphic: 0.3s cubic-bezier(0.4, 0, 0.2, 1); // Smooth
 .login-form {
   .full-width {
     width: 100%;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
 
     ::ng-deep {
       .mat-mdc-form-field-subscript-wrapper {
@@ -281,18 +278,6 @@ $transition-neumorphic: 0.3s cubic-bezier(0.4, 0, 0.2, 1); // Smooth
           -webkit-text-fill-color: white !important;
           transition: background-color 5000s ease-in-out 0s;
           background-color: transparent !important;
-          // Trigger animation to detect autofill
-          animation-name: onAutoFillStart;
-        }
-
-        // Animation to detect autofill (browsers trigger this)
-        @keyframes onAutoFillStart {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 0;
-          }
         }
       }
 
@@ -447,10 +432,10 @@ $transition-neumorphic: 0.3s cubic-bezier(0.4, 0, 0.2, 1); // Smooth
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  font-size: 0.875em;
+  margin-bottom: 25px;
+  font-size: 0.9em;
   color: white;
-  min-height: 36px; // Ensure consistent height
+  min-height: 40px; // Ensure consistent height
 
   .forgot-password-link {
     color: rgba(255, 255, 255, 0.8);
@@ -540,38 +525,18 @@ $transition-neumorphic: 0.3s cubic-bezier(0.4, 0, 0.2, 1); // Smooth
   }
 }
 
-// Submit button - Alive and animated
+// Submit button
 .login-button {
   background: linear-gradient(135deg, $primary-color 0%, color.adjust($primary-color, $lightness: -10%) 100%) !important;
   color: white !important;
-  height: 48px;
-  font-size: 1.05em;
+  height: 54px;
+  font-size: 1.1em;
   font-weight: 600;
-  border-radius: 14px !important;
-  box-shadow: 0 6px 18px rgba($primary-color, 0.4);
+  border-radius: 16px !important;
+  box-shadow: 0 8px 20px rgba($primary-color, 0.4);
   transition: all $transition-standard;
   position: relative;
   overflow: hidden;
-  
-  // Pulsing glow animation - makes it look alive
-  animation: buttonPulse 2.5s ease-in-out infinite;
-
-  // Shimmer effect
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.3),
-      transparent
-    );
-    transition: left 0.5s;
-  }
 
   &::before {
     content: '';
@@ -587,14 +552,8 @@ $transition-neumorphic: 0.3s cubic-bezier(0.4, 0, 0.2, 1); // Smooth
   }
 
   &:hover:not([disabled]) {
-    box-shadow: 0 12px 30px rgba($primary-color, 0.6),
-                0 0 40px rgba($primary-color, 0.4);
-    transform: translateY(-3px) scale(1.02);
-    animation: buttonPulseHover 1.5s ease-in-out infinite;
-
-    &::after {
-      left: 100%;
-    }
+    box-shadow: 0 12px 30px rgba($primary-color, 0.6);
+    transform: translateY(-3px);
 
     &::before {
       width: 300px;
@@ -603,15 +562,12 @@ $transition-neumorphic: 0.3s cubic-bezier(0.4, 0, 0.2, 1); // Smooth
   }
 
   &:active:not([disabled]) {
-    transform: translateY(-1px) scale(0.98);
-    animation: none;
-    box-shadow: 0 4px 12px rgba($primary-color, 0.5);
+    transform: translateY(-1px);
   }
 
   &[disabled] {
     opacity: 0.5;
     cursor: not-allowed;
-    animation: none;
   }
 
   ::ng-deep mat-progress-spinner circle {
@@ -619,36 +575,10 @@ $transition-neumorphic: 0.3s cubic-bezier(0.4, 0, 0.2, 1); // Smooth
   }
 }
 
-// Pulsing animation for button - makes it look alive
-@keyframes buttonPulse {
-  0%, 100% {
-    box-shadow: 0 6px 18px rgba($primary-color, 0.4),
-                0 0 20px rgba($primary-color, 0.2);
-  }
-  50% {
-    box-shadow: 0 6px 18px rgba($primary-color, 0.5),
-                0 0 30px rgba($primary-color, 0.3);
-  }
-}
-
-// Enhanced pulse on hover
-@keyframes buttonPulseHover {
-  0%, 100% {
-    box-shadow: 0 12px 30px rgba($primary-color, 0.6),
-                0 0 40px rgba($primary-color, 0.4),
-                0 0 60px rgba($primary-color, 0.2);
-  }
-  50% {
-    box-shadow: 0 12px 30px rgba($primary-color, 0.7),
-                0 0 50px rgba($primary-color, 0.5),
-                0 0 80px rgba($primary-color, 0.3);
-  }
-}
-
 // Register prompt
 .register-prompt {
-  margin-top: 16px;
-  font-size: 0.9em;
+  margin-top: 20px;
+  font-size: 0.95em;
   color: rgba(255, 255, 255, 0.8);
 
   a {
@@ -712,9 +642,9 @@ $breakpoint-4xl: 2560px; // Ultra-wide
   padding: clamp(24px, 5vw, 40px);
   margin: auto;
 
-  // Ensure card doesn't touch viewport edges - maintain vertical spacing
-  margin-top: clamp(40px, 8vh, 80px);
-  margin-bottom: clamp(40px, 8vh, 80px);
+  // Ensure card doesn't touch viewport edges
+  margin-top: clamp(10px, 2vh, 20px);
+  margin-bottom: clamp(10px, 2vh, 20px);
 }
 
 .logo-section {

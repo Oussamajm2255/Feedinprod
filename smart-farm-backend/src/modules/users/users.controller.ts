@@ -9,11 +9,8 @@ import {
   Delete, 
   Query,
   HttpCode,
-  HttpStatus,
-  Res
+  HttpStatus 
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { Response } from 'express';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -21,32 +18,11 @@ import { LoginUserDto } from './dto/login-user.dto';
 
 @Controller('users')
 export class UsersController {
-  constructor(
-    private readonly usersService: UsersService,
-    private readonly jwtService: JwtService,
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Post('register')
-  async register(@Body() createUserDto: CreateUserDto, @Res({ passthrough: true }) res: Response) {
-    const user = await this.usersService.create(createUserDto);
-    
-    // Automatically log the user in after registration
-    const payload = { 
-      email: user.email, 
-      sub: user.user_id,
-      role: user.role 
-    };
-    const token = this.jwtService.sign(payload);
-    
-    res.cookie('sf_auth', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 1000 * 60 * 60 * 24, // 1 day
-      path: '/',
-    });
-    
-    return { user };
+  async register(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.create(createUserDto);
   }
 
   @Post('login')

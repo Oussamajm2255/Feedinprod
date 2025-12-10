@@ -13,11 +13,6 @@
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
-  
-  // Hide main footer on tablet and mobile (≤1024px) - navigation moved to bottom nav
-  @media (max-width: 1024px) {
-    display: none;
-  }
 }
 
 :host-context(body.dark-theme) .agri-footer,
@@ -327,17 +322,29 @@
 
 // ===== RESPONSIVE DESIGN =====
 
-// Desktop only (≥1025px) - Footer is hidden on tablet/mobile
-@media (min-width: 1025px) {
-  .agri-footer {
-    display: block;
-  }
-}
-
-// Tablet and small desktop (≤1024px) - Footer hidden, navigation in bottom nav
+// Tablet and small desktop
 @media (max-width: 1024px) {
   .agri-footer {
-    display: none; // Hidden - navigation moved to bottom nav in header
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+  }
+
+  .footer-content {
+    padding: 1rem 1.5rem;
+  }
+
+  .footer-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+
+  .footer-title {
+    font-size: 1rem;
+  }
+
+  .footer-copyright {
+    font-size: 0.8rem;
   }
 }
 

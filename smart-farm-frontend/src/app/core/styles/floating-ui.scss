@@ -255,8 +255,8 @@
 .floating-tooltip.dark-theme { background: rgba(28,28,28,.98); color: #fff; border-color: rgba(255,255,255,.12); }
 
 /* Dropdown */
-.floating-dropdown { position: absolute; opacity: 0; visibility: hidden; transform: translateY(-4px); transition: opacity .15s ease, transform .15s ease, visibility .15s ease; min-width: 160px; padding: 8px; border-radius: 10px; border: 1px solid rgba(0,0,0,.08); box-shadow: 0 12px 28px rgba(0,0,0,.18); pointer-events: none; }
-.floating-dropdown.visible { opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto; }
+.floating-dropdown { position: absolute; opacity: 0; transform: translateY(-4px); transition: opacity .15s ease, transform .15s ease; min-width: 160px; padding: 8px; border-radius: 10px; border: 1px solid rgba(0,0,0,.08); box-shadow: 0 12px 28px rgba(0,0,0,.18); }
+.floating-dropdown.visible { opacity: 1; transform: translateY(0); }
 .floating-dropdown.light-theme { background: rgba(255,255,255,1); color: #2c3e50; }
 .floating-dropdown.dark-theme { background: rgba(30,30,30,1); color: #fff; border-color: rgba(255,255,255,.12); }
 

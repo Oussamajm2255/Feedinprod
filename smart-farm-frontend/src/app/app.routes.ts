@@ -50,17 +50,8 @@ export const routes: Routes = [
   },
   {
     path: 'crops',
-    canActivate: [authGuard],
-    children: [
-      {
-        path: '',
-        loadComponent: () => import('./features/crops/crops-dashboard').then(m => m.CropDashboardComponent)
-      },
-      {
-        path: ':id/dashboard',
-        loadComponent: () => import('./features/crops/crops-dashboard').then(m => m.CropDashboardComponent)
-      }
-    ]
+    loadComponent: () => import('./features/crops/crops-with-fallback.component').then(m => m.CropsWithFallbackComponent),
+    canActivate: [authGuard]
   },
   {
     path: 'profile',

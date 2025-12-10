@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { ALERT_DURATIONS } from '../config/notification.config';
 
 export type AlertType = 'success' | 'error' | 'warning' | 'info';
 
@@ -70,7 +69,7 @@ export class AlertService {
   /**
    * Show a success alert
    */
-  success(title: string, message: string, duration: number = ALERT_DURATIONS.SUCCESS): Promise<CustomAlertResult> {
+  success(title: string, message: string, duration: number = 5000): Promise<CustomAlertResult> {
     this.show('success', title, message, duration);
     return Promise.resolve({ isConfirmed: true, isDismissed: false });
   }
@@ -78,7 +77,7 @@ export class AlertService {
   /**
    * Show an error alert
    */
-  error(title: string, message: string, duration: number = ALERT_DURATIONS.ERROR): Promise<CustomAlertResult> {
+  error(title: string, message: string, duration: number = 7000): Promise<CustomAlertResult> {
     this.show('error', title, message, duration);
     return Promise.resolve({ isConfirmed: true, isDismissed: false });
   }
@@ -86,7 +85,7 @@ export class AlertService {
   /**
    * Show a warning alert
    */
-  warning(title: string, message: string, duration: number = ALERT_DURATIONS.WARNING): Promise<CustomAlertResult> {
+  warning(title: string, message: string, duration: number = 6000): Promise<CustomAlertResult> {
     this.show('warning', title, message, duration);
     return Promise.resolve({ isConfirmed: true, isDismissed: false });
   }
@@ -94,7 +93,7 @@ export class AlertService {
   /**
    * Show an info alert
    */
-  info(title: string, message: string, duration: number = ALERT_DURATIONS.INFO): Promise<CustomAlertResult> {
+  info(title: string, message: string, duration: number = 5000): Promise<CustomAlertResult> {
     this.show('info', title, message, duration);
     return Promise.resolve({ isConfirmed: true, isDismissed: false });
   }

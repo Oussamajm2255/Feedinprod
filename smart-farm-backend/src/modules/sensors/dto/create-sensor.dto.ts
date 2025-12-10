@@ -1,11 +1,11 @@
-import { IsOptional, IsString, IsNumber } from 'class-validator';
+import { IsOptional, IsString, IsNumber, IsUUID } from 'class-validator';
 
 export class CreateSensorDto {
   @IsOptional()
   @IsString()
   sensor_id?: string;
 
-  @IsString()
+  @IsUUID()
   farm_id: string;
 
   @IsString()
@@ -22,7 +22,7 @@ export class CreateSensorDto {
   location?: string;
 
   @IsOptional()
-  @IsString()
+  @IsUUID()
   crop_id?: string;
 
   @IsOptional()

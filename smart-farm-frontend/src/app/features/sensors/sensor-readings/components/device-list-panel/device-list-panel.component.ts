@@ -13,7 +13,7 @@ import { MatRippleModule } from '@angular/material/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { SensorStatus } from '../../utils/sensor-status.util';
-import { getSensorIcon, getActionPurposeIcon as getActionIcon } from '../../utils/sensor-display.util';
+import { getSensorIcon, getSensorEmoji } from '../../utils/sensor-display.util';
 
 export interface DeviceListItem {
   id: string;
@@ -24,8 +24,6 @@ export interface DeviceListItem {
   unit: string;
   lastUpdate: Date | null;
   isPinned?: boolean;
-  actionPurpose?: string | null; // e.g., "Roof Control", "Humidifier Control"
-  sensorDbId?: number; // Database ID of the sensor for direct matching
 }
 
 @Component({
@@ -102,12 +100,6 @@ export interface DeviceListItem {
                     <mat-icon class="pin-icon">push_pin</mat-icon>
                   }
                   {{ item.name }}
-                  @if (item.actionPurpose) {
-                    <span class="action-purpose-badge" [matTooltip]="'Controls: ' + item.actionPurpose">
-                      <mat-icon class="purpose-icon">{{ getActionIcon(item.actionPurpose) }}</mat-icon>
-                      <span class="purpose-label">{{ item.actionPurpose }}</span>
-                    </span>
-                  }
                 </div>
                 <div class="device-meta">
                   <span class="device-type">{{ item.type }}</span>
@@ -551,12 +543,12 @@ export interface DeviceListItem {
         font-weight: 600;
         font-size: 0.9375rem;
         color: #1f2937;
-        overflow: visible;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
         display: flex;
         align-items: center;
-        gap: 6px;
-        flex-wrap: wrap;
-        min-width: 0;
+        gap: 4px;
       }
 
       .pin-icon {
@@ -564,41 +556,6 @@ export interface DeviceListItem {
         width: 14px;
         height: 14px;
         color: #f59e0b;
-      }
-
-      .action-purpose-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 3px;
-        padding: 2px 6px;
-        border-radius: 10px;
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.08));
-        border: 1px solid rgba(16, 185, 129, 0.2);
-        font-size: 0.65rem;
-        font-weight: 600;
-        color: #065f46;
-        white-space: nowrap;
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        margin-left: 4px;
-        flex-shrink: 0;
-      }
-
-      .action-purpose-badge:hover {
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.12));
-        border-color: rgba(16, 185, 129, 0.3);
-        transform: scale(1.05);
-      }
-
-      .purpose-icon {
-        font-size: 12px;
-        width: 12px;
-        height: 12px;
-        color: #059669;
-      }
-
-      .purpose-label {
-        font-size: 0.65rem;
-        line-height: 1.2;
       }
 
       .device-meta {
@@ -786,21 +743,6 @@ export interface DeviceListItem {
         color: #f1f5f9;
       }
 
-      :host-context(body.dark-theme) .action-purpose-badge {
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.15));
-        border-color: rgba(16, 185, 129, 0.4);
-        color: #34d399;
-      }
-
-      :host-context(body.dark-theme) .action-purpose-badge:hover {
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(5, 150, 105, 0.2));
-        border-color: rgba(16, 185, 129, 0.5);
-      }
-
-      :host-context(body.dark-theme) .purpose-icon {
-        color: #34d399;
-      }
-
       :host-context(body.dark-theme) .device-meta {
         color: #94a3b8;
       }
@@ -952,10 +894,6 @@ export class DeviceListPanelComponent {
     if (minutes < 60) return `${minutes}m ago`;
     if (hours < 24) return `${hours}h ago`;
     return date.toLocaleDateString();
-  }
-
-  getActionIcon(purpose: string | null): string {
-    return getActionIcon(purpose);
   }
 }
 

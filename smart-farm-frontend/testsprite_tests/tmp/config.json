@@ -1,0 +1,21 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:4200/devices",
+  "loginUser": "oussema.jomaaa@gmail.com",
+  "loginPassword": "Oussamabiat2023@",
+  "executionArgs": {
+    "projectName": "smart-farm-frontend",
+    "projectPath": "D:\\terraFlow\\smart-farm-frontend",
+    "testIds": [
+      "TC005",
+      "TC006"
+    ],
+    "additionalInstruction": "Focus on device management tests TC005 and TC006 to verify current functionality before refactoring",
+    "envs": {
+      "API_KEY": "sk-user-4Nl8xJ4S7rHXavjk2IEmvACTLfDuTF4GAzvyOf-5ang6IFIY7XSnP7sO1VHG8Cz9o0jMaE13fvevpmjjKKfbJhuQo3zk1PLdaYBJ7qftmOpcIHvEQr6Ct7yRnGD7JuckD8Q"
+    }
+  },
+  "proxy": "http://050e39d1-7201-431b-bc3f-406160d0fced:wNhpQg3gaxSdIVw6muNOOKMim3JYFJdf@tun.testsprite.com:8080"
+}

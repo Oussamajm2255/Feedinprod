@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
 import { Crop } from '../../entities/crop.entity';
 import { CreateCropDto } from './dto/create-crop.dto';
 import { UpdateCropDto } from './dto/update-crop.dto';
@@ -14,10 +13,7 @@ export class CropsService {
   ) {}
 
   async create(createCropDto: CreateCropDto): Promise<Crop> {
-    const crop = this.cropsRepository.create({
-      ...createCropDto,
-      crop_id: uuidv4(),
-    });
+    const crop = this.cropsRepository.create(createCropDto);
     return this.cropsRepository.save(crop);
   }
 

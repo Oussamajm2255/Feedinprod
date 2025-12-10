@@ -15,5 +15,5 @@ export class CreateSensorReadingDto {
 
   @IsOptional()
   @IsDateString()
-  created_at?: Date;
+  createdAt?: Date;
 }

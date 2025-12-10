@@ -34,7 +34,7 @@ export class AuthService {
   // Initialize auth when called (from app component)
   async initAuth(): Promise<void> {
     if (this.initialized) return;
-
+    
     this.initPromise = this.initializeAuth();
     await this.initPromise;
     this.initialized = true;
@@ -44,21 +44,11 @@ export class AuthService {
     try {
       // Prime CSRF token first
       await firstValueFrom(this.http.get<{ csrfToken: string }>(`${this.API_URL}/auth/csrf`, { withCredentials: true }));
-
+      
       // Then try to fetch current user from server session/cookie
       const user = await firstValueFrom(this.http.get<User>(`${this.API_URL}/auth/me`, { withCredentials: true }));
       this.setAuthData(user);
-    } catch (error: any) {
-      // Check if it's a connection error vs auth error
-      if (error?.status === 0) {
-        console.warn('⚠️ Unable to connect to backend server. Authentication will be retried on first API call.');
-      } else if (error?.status === 401) {
-        // 401 is expected when no session exists - silently handle it
-        // No need to log or clear state, just continue without authentication
-      } else {
-        // Only log unexpected errors
-        console.error('Auth initialization error:', error);
-      }
+    } catch (error) {
       // No valid session, clear auth state without making logout request
       this.clearAuthState(false);
     }
@@ -108,7 +98,7 @@ export class AuthService {
 
   logout(navigate: boolean = true): void {
     // Try to clear server cookie, but don't fail if CSRF is missing
-    this.http.post(`${this.API_URL}/auth/logout`, {}, { withCredentials: true }).subscribe({
+    this.http.post(`${this.API_URL}/auth/logout`, {}, { withCredentials: true }).subscribe({ 
       complete: () => {},
       error: () => {
         // Ignore logout errors (e.g., no valid session)

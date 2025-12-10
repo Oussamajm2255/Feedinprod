@@ -33,7 +33,7 @@ import {
   SensorStatusResult,
 } from './utils/sensor-status.util';
 import { normalizeThresholds } from './utils/sensor-thresholds.util';
-import { generateUniqueSensorId, parseUniqueSensorId, extractActionPurpose } from './utils/sensor-display.util';
+import { generateUniqueSensorId, parseUniqueSensorId } from './utils/sensor-display.util';
 
 // Child Components
 import { GlobalFilterHeaderComponent, FilterState } from './components/global-filter-header/global-filter-header.component';
@@ -442,42 +442,6 @@ import { FooterSummaryComponent, SummaryCounts } from './components/footer-summa
         background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.15));
       }
 
-      :host-context(body.dark-theme) .kpi-icon-mini.critical {
-        background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(254, 202, 202, 0.2));
-        color: #fca5a5;
-        border: 1px solid rgba(239, 68, 68, 0.4);
-      }
-
-      :host-context(body.dark-theme) .kpi-icon-mini.warning {
-        background: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(253, 230, 138, 0.2));
-        color: #fcd34d;
-        border: 1px solid rgba(245, 158, 11, 0.4);
-      }
-
-      :host-context(body.dark-theme) .kpi-icon-mini.normal {
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(167, 243, 208, 0.2));
-        color: #6ee7b7;
-        border: 1px solid rgba(16, 185, 129, 0.4);
-      }
-
-      :host-context(body.dark-theme) .kpi-icon-mini.offline {
-        background: linear-gradient(135deg, rgba(107, 114, 128, 0.3), rgba(229, 231, 235, 0.15));
-        color: #cbd5e1;
-        border: 1px solid rgba(107, 114, 128, 0.4);
-      }
-
-      :host-context(body.dark-theme) .kpi-icon-mini.info {
-        background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(191, 219, 254, 0.2));
-        color: #93c5fd;
-        border: 1px solid rgba(59, 130, 246, 0.4);
-      }
-
-      :host-context(body.dark-theme) .kpi-icon-mini.success {
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.35), rgba(52, 211, 153, 0.25));
-        color: #6ee7b7;
-        border: 1px solid rgba(16, 185, 129, 0.5);
-      }
-
       :host-context(body.dark-theme) .kpi-value-mini {
         color: var(--text-primary, #f1f5f9);
       }
@@ -607,23 +571,14 @@ export class SensorReadingsComponent implements OnInit {
     }
 
     // Map to DeviceListItem with unique IDs
-    // Track seen IDs to ensure absolute uniqueness (prevents Angular tracking errors)
-    const seenIds = new Set<string>();
-    const items: DeviceListItem[] = filtered.map((item, index) => {
+    const items: DeviceListItem[] = filtered.map((item) => {
       // Generate unique ID that includes sensor type (for composite sensors like DHT11)
-      let uniqueId = generateUniqueSensorId(
+      const uniqueId = generateUniqueSensorId(
         item.sensor.sensor_id,
         item.sensor.type || 'unknown',
         item.sensor.unit
       );
-
-      // Ensure absolute uniqueness by adding index if duplicate found
-      // This prevents Angular NG0955 tracking errors
-      if (seenIds.has(uniqueId)) {
-        uniqueId = `${uniqueId}-${index}`;
-      }
-      seenIds.add(uniqueId);
-
+      
       return {
         id: uniqueId,
         name: item.sensor.sensor_id || 'Unknown',
@@ -635,99 +590,43 @@ export class SensorReadingsComponent implements OnInit {
           ? new Date(item.statusResult.lastReading.createdAt)
           : null,
         isPinned: pinned.has(uniqueId),
-        actionPurpose: extractActionPurpose(item.sensor.action_low, item.sensor.action_high),
-        sensorDbId: item.sensor.id, // Store database ID for direct matching
       };
-    });
-
-    // Additional deduplication by ID to prevent tracking errors (keep first occurrence)
-    const uniqueItems = new Map<string, DeviceListItem>();
-    items.forEach(item => {
-      if (!uniqueItems.has(item.id)) {
-        uniqueItems.set(item.id, item);
-      }
     });
 
     // Sort: pinned first, then by status priority (critical > warning > offline > normal)
     const statusPriority = { critical: 0, warning: 1, offline: 2, normal: 3 };
-    return Array.from(uniqueItems.values()).sort((a, b) => {
+    return items.sort((a, b) => {
       if (a.isPinned !== b.isPinned) return a.isPinned ? -1 : 1;
       return statusPriority[a.status] - statusPriority[b.status];
     });
   });
-
-  // Signal to store historical data for selected sensor
-  private historicalReadings = signal<Map<string, SensorReading[]>>(new Map());
 
   // Computed: Selected device detail
   selectedDeviceDetail = computed(() => {
     const uniqueSensorId = this.selectedSensorId();
     if (!uniqueSensorId) return null;
 
-    // First, try to find the sensor by database ID from the device list items
-    // This handles cases where duplicate sensors have index suffixes (e.g., "dht11-humidity-1")
-    const items = this.deviceListItems();
-    const selectedItem = items.find(item => item.id === uniqueSensorId);
-    
-    let sensor: SensorWithThresholds | undefined;
-    
-    if (selectedItem?.sensorDbId) {
-      // Direct match by database ID (most reliable for duplicate sensors)
-      sensor = this.sensors().find(s => s.id === selectedItem.sensorDbId);
-    }
-    
-    if (!sensor) {
-      // Fallback: Parse the unique ID to get base sensor ID and type
-      const { baseSensorId, type } = parseUniqueSensorId(uniqueSensorId);
-      
-      // Find the sensor that matches both the base ID and type
-      const sensors = this.sensors();
-      sensor = sensors.find((s) => {
-        const matches = s.sensor_id === baseSensorId;
-        const typeMatches = s.type?.toLowerCase().replace(/\s+/g, '-') === type;
-        return matches && typeMatches;
-      });
-    }
+    // Parse the unique ID to get base sensor ID and type
+    const { baseSensorId, type } = parseUniqueSensorId(uniqueSensorId);
 
+    // Find the sensor that matches both the base ID and type
+    const sensors = this.sensors();
+    const sensor = sensors.find((s) => {
+      const matches = s.sensor_id === baseSensorId;
+      const typeMatches = s.type?.toLowerCase().replace(/\s+/g, '-') === type;
+      return matches && typeMatches;
+    });
+    
     if (!sensor) return null;
 
     const statuses = this.sensorStatuses();
-    const sensors = this.sensors();
     const statusIndex = sensors.findIndex((s) => s === sensor);
     const statusResult = statusIndex >= 0 ? statuses[statusIndex] : null;
-
+    
     if (!statusResult) return null;
 
     const timeRangeMs = this.getTimeRangeMs(this.filterState().timeRange);
-
-    // Get historical data if available, otherwise use in-memory readings
-    const historicalData = this.historicalReadings().get(sensor.sensor_id) || [];
-    const inMemoryData = this.readingsMap.getReadingsForSensor(sensor.sensor_id, timeRangeMs);
-
-    // Combine and deduplicate by timestamp
-    const allReadings = new Map<number, { timestamp: Date; value: number }>();
-
-    // Add historical data
-    historicalData.forEach(reading => {
-      const timestamp = new Date(reading.createdAt).getTime();
-      const cutoff = Date.now() - timeRangeMs;
-      if (timestamp >= cutoff) {
-        allReadings.set(timestamp, {
-          timestamp: new Date(reading.createdAt),
-          value: reading.value1 ?? 0
-        });
-      }
-    });
-
-    // Add in-memory data (may override historical if same timestamp)
-    inMemoryData.forEach(reading => {
-      const timestamp = reading.timestamp.getTime();
-      allReadings.set(timestamp, reading);
-    });
-
-    // Convert to array and sort by timestamp
-    const chartData = Array.from(allReadings.values())
-      .sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+    const chartData = this.readingsMap.getReadingsForSensor(sensor.sensor_id, timeRangeMs);
 
     const thresholds = normalizeThresholds(sensor.type || '', {
       min: sensor.min_threshold ?? sensor.min_critical,
@@ -823,18 +722,6 @@ export class SensorReadingsComponent implements OnInit {
         });
       }
     });
-
-    // Load historical data when sensor is selected or time range changes
-    effect(() => {
-      const uniqueSensorId = this.selectedSensorId();
-      const timeRange = this.filterState().timeRange;
-
-      if (uniqueSensorId) {
-        const { baseSensorId } = parseUniqueSensorId(uniqueSensorId);
-        // Load historical data asynchronously
-        this.loadHistoricalData(baseSensorId, timeRange);
-      }
-    });
   }
 
   ngOnInit() {
@@ -874,16 +761,16 @@ export class SensorReadingsComponent implements OnInit {
       if (params['sensor']) {
         const queryParam = params['sensor'];
         const items = this.deviceListItems();
-
+        
         // First, try to find exact match (new format: "dht11-temperature")
         let matchingItem = items.find(item => item.id === queryParam);
-
+        
         // If no exact match, try to find a sensor that starts with the query param
         // This provides backward compatibility for URLs like "?sensor=dht11"
         if (!matchingItem) {
           matchingItem = items.find(item => item.id.startsWith(queryParam + '-'));
         }
-
+        
         // Set the selected sensor ID (will be the unique ID)
         if (matchingItem) {
           this.selectedSensorId.set(matchingItem.id);
@@ -989,34 +876,6 @@ export class SensorReadingsComponent implements OnInit {
     if (items.length === 0) return 0;
     const online = items.filter(item => item.status !== 'offline').length;
     return Math.round((online / items.length) * 100);
-  }
-
-  /**
-   * Load historical data for a sensor based on the selected time range
-   */
-  private async loadHistoricalData(sensorId: string, timeRange: FilterState['timeRange']) {
-    try {
-      const timeRangeMs = this.getTimeRangeMs(timeRange);
-      const endDate = new Date();
-      const startDate = new Date(endDate.getTime() - timeRangeMs);
-
-      // Fetch historical data from API
-      const historicalReadings = await firstValueFrom(
-        this.apiService.getReadingsByDateRange(sensorId, startDate, endDate, 1000)
-      );
-
-      // Update historical readings map
-      this.historicalReadings.update((map) => {
-        const newMap = new Map(map);
-        newMap.set(sensorId, historicalReadings || []);
-        return newMap;
-      });
-
-      console.log(`[SensorReadings] Loaded ${historicalReadings?.length || 0} historical readings for ${sensorId}`);
-    } catch (error) {
-      console.error(`[SensorReadings] Error loading historical data for ${sensorId}:`, error);
-      // Don't show error notification - just log it, historical data is optional
-    }
   }
 }
 

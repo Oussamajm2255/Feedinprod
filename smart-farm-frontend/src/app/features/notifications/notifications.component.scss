@@ -47,12 +47,12 @@ body.dark-theme {
   --text-light: #64748b;
   --bg-subtle: rgba(30, 41, 59, 0.5);
   --border-subtle: rgba(51, 65, 85, 0.6);
-
+  
   // Smooth theme transition
   transition: all var(--transition-slow);
-
+  
   * {
-    transition:
+    transition: 
       background-color var(--transition-slow),
       border-color var(--transition-slow),
       color var(--transition-slow),
@@ -431,14 +431,15 @@ body.dark-theme {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 0 24px;
+  padding: 0 20px;
   height: 48px;
-  min-width: 160px;
+  min-width: auto;
   border-radius: 10px;
   background: rgba(239, 68, 68, 0.2);
   border: 2px solid rgba(239, 68, 68, 0.4);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   flex-shrink: 0;
   font-weight: 600;
@@ -446,17 +447,17 @@ body.dark-theme {
   position: relative;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
-  color: var(--text-primary, #1f2937);
 
-  mat-icon {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05));
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
 
   mat-icon {
@@ -464,6 +465,7 @@ body.dark-theme {
     width: 20px;
     height: 20px;
     color: #ffffff;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1;
     position: relative;
     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
@@ -473,25 +475,50 @@ body.dark-theme {
     font-size: 0.875rem;
     font-weight: 600;
     color: #ffffff;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1;
     position: relative;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   }
 
-  // No hover or active states - maintain glass red appearance always
+  &:hover {
+    background: rgba(239, 68, 68, 0.3);
+    border-color: rgba(239, 68, 68, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.35);
+
+    &::before {
+      opacity: 1;
+    }
+
+    mat-icon {
+      transform: scale(1.15);
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+
+    span {
+      letter-spacing: 0.3px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+  }
 }
 
 .filter-panel {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  padding: 0;
+  gap: 16px;
+  padding: 16px;
   border-radius: 20px;
   background: var(--card-bg, rgba(255, 255, 255, 0.8));
   border: 1px solid var(--border-color, rgba(16, 185, 129, 0.2));
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
-  box-shadow:
+  box-shadow: 
     var(--shadow-md, 0 8px 32px rgba(0, 0, 0, 0.08)),
     0 0 0 rgba(16, 185, 129, 0);
   transition: all var(--transition-slow);
@@ -502,11 +529,11 @@ body.dark-theme {
   margin-top: 0;
 
   &.expanded {
-    max-height: 600px;
+    max-height: 500px;
     opacity: 1;
     transform: translateY(0);
     margin-top: 12px;
-    padding: 0;
+    padding: 24px;
     border-radius: 24px;
     background: var(--card-bg, rgba(255, 255, 255, 0.85));
     border-color: rgba(16, 185, 129, 0.3);
@@ -514,61 +541,11 @@ body.dark-theme {
     &:hover {
       background: var(--card-bg, rgba(255, 255, 255, 0.9));
       border-color: rgba(16, 185, 129, 0.4);
-      box-shadow:
+      box-shadow: 
         var(--shadow-md, 0 12px 40px rgba(0, 0, 0, 0.12)),
         0 0 20px rgba(16, 185, 129, 0.2),
         0 0 40px rgba(16, 185, 129, 0.1);
       transform: translateY(-2px);
-    }
-  }
-}
-
-// Filter Panel Header
-.filter-panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 24px;
-  border-bottom: 1px solid var(--border-color, rgba(16, 185, 129, 0.15));
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(16, 185, 129, 0.02) 100%);
-  border-radius: 24px 24px 0 0;
-
-  .filter-header-content {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    .filter-header-icon {
-      color: var(--primary-green, #10b981);
-      font-size: 24px;
-      width: 24px;
-      height: 24px;
-    }
-
-    .filter-header-title {
-      margin: 0;
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--text-primary, #1f2937);
-      letter-spacing: -0.02em;
-    }
-  }
-
-  .filter-header-info {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    .active-filters-count {
-      display: inline-flex;
-      align-items: center;
-      padding: 6px 12px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.1) 100%);
-      color: var(--primary-green, #10b981);
-      font-size: 13px;
-      font-weight: 600;
-      border: 1px solid rgba(16, 185, 129, 0.2);
     }
   }
 }
@@ -663,189 +640,10 @@ body.dark-theme {
 .filter-controls-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
   width: 100%;
-  padding: 24px;
 }
 
-// Filter Controls Grid - Better Alignment
-.filter-controls-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); // 4 equal columns for first row
-  gap: 24px;
-  width: 100%;
-  align-items: start;
-
-  @media (max-width: 1200px) {
-    grid-template-columns: repeat(2, 1fr); // 2 columns on medium screens
-  }
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr; // 1 column on mobile
-    gap: 20px;
-  }
-}
-
-// Filter Group - Each filter with label
-.filter-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-
-  &.search-group {
-    grid-column: 1 / -1; // Search takes full width across all columns
-
-    &.search-full-width {
-      width: 100%;
-
-      .filter-field {
-        width: 100%;
-      }
-    }
-  }
-
-  .filter-group-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-primary, #1f2937);
-    margin-bottom: 4px;
-    letter-spacing: -0.01em;
-
-    mat-icon {
-      font-size: 18px;
-      width: 18px;
-      height: 18px;
-      color: var(--primary-green, #10b981);
-    }
-
-    span {
-      flex: 1;
-    }
-  }
-}
-
-// Filter Actions Row
-.filter-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 12px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border-color, rgba(16, 185, 129, 0.15));
-  margin-top: 8px;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    width: 100%;
-
-    button {
-      width: 100%;
-    }
-  }
-}
-
-// Mark Read Filter Button
-.mark-read-filter-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 0 20px;
-  height: 48px;
-  min-width: 180px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
-  border: 2px solid transparent;
-  color: white;
-  font-weight: 600;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-  position: relative;
-
-  mat-icon {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
-  }
-
-  .button-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 20px;
-    height: 20px;
-    padding: 0 6px;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.3);
-    color: white;
-    font-size: 11px;
-    font-weight: 700;
-    margin-left: 4px;
-  }
-
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-  }
-
-  &:active:not(:disabled) {
-    transform: translateY(0);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    background: rgba(16, 185, 129, 0.3);
-  }
-}
-
-// Apply Filters Button
-.apply-filters-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 0 24px;
-  height: 48px;
-  min-width: 140px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
-  border: 2px solid transparent;
-  color: white;
-  font-weight: 600;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-
-  mat-icon {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
-  }
-
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-  }
-
-  &:active:not(:disabled) {
-    transform: translateY(0);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-}
-
-// Legacy filter-controls class (for backward compatibility)
 .filter-controls {
   display: flex;
   justify-content: center;
@@ -857,21 +655,20 @@ body.dark-theme {
 
 // Enhanced Filter Fields - Matching Actions Component
 .filter-field {
-  width: 100%;
-  min-width: 0; // Allow flex shrinking
+  min-width: 200px;
+  flex: 1;
+  max-width: 280px;
 
   ::ng-deep {
     // Form field wrapper - compact size with visible border
     .mat-mdc-text-field-wrapper {
-      background: var(--card-bg, rgba(255, 255, 255, 0.9)) !important;
+      background: var(--glass-bg, #ffffff);
       border-radius: 10px;
-      border: 2px solid var(--primary-green, #10b981);
+      border: 2px solid var(--primary-green);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       box-shadow: 0 2px 6px rgba(16, 185, 129, 0.1);
       padding: 0 !important;
       height: 48px !important;
-      -webkit-backdrop-filter: blur(12px);
-      backdrop-filter: blur(12px);
     }
 
     // Reduce form field height
@@ -941,65 +738,69 @@ body.dark-theme {
       }
     }
 
-    // Label styling - theme matching
+    // Label styling - clean white text
     .mat-mdc-form-field-label {
-      color: var(--text-primary, #1f2937) !important;
+      color: #ffffff !important;
       font-weight: 600 !important;
       font-size: 0.875rem !important;
       line-height: 1.4 !important;
       letter-spacing: 0.3px !important;
       text-transform: none !important;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 
       &.mdc-floating-label--float-above {
-        color: var(--primary-green, #10b981) !important;
+        color: #ffffff !important;
         font-weight: 700 !important;
         font-size: 0.8125rem !important;
         letter-spacing: 0.5px !important;
         text-transform: uppercase !important;
-        background: rgba(16, 185, 129, 0.1) !important;
+        background: var(--primary-green) !important;
         padding: 2px 6px !important;
         border-radius: 4px;
       }
     }
 
-    // Input element styling - theme matching
+    // Input element styling - white text
     .mat-mdc-input-element {
-      color: var(--text-primary, #1f2937) !important;
+      color: #ffffff !important;
       font-weight: 600 !important;
       font-size: 0.875rem !important;
       padding: 8px 12px !important;
       background: transparent !important;
       line-height: 1.4 !important;
       height: auto !important;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 
       &::placeholder {
-        color: var(--text-secondary, #6b7280) !important;
+        color: rgba(255, 255, 255, 0.7) !important;
         opacity: 1 !important;
         font-weight: 500 !important;
         font-size: 0.8125rem !important;
       }
     }
 
-    // Select styling - theme matching
+    // Select styling - white text
     .mat-mdc-select {
       .mat-mdc-select-trigger {
         padding: 8px 12px !important;
+        min-height: auto !important;
         height: 48px !important;
         display: flex !important;
         align-items: center !important;
 
         .mat-mdc-select-value {
-          color: var(--text-primary, #1f2937) !important;
+          color: #ffffff !important;
           font-weight: 600 !important;
           font-size: 0.875rem !important;
           line-height: 1.4 !important;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
 
         .mat-mdc-select-arrow-wrapper {
           transform: translateY(0) !important;
-
+          
           .mat-mdc-select-arrow {
-            color: var(--primary-green, #10b981) !important;
+            color: #ffffff !important;
             transition: all 0.3s ease !important;
             font-size: 20px !important;
             width: 20px !important;
@@ -1013,14 +814,14 @@ body.dark-theme {
     &.mat-focused .mat-mdc-select .mat-mdc-select-trigger {
       .mat-mdc-select-arrow-wrapper .mat-mdc-select-arrow {
         transform: rotate(180deg) scale(1.05) !important;
-        color: var(--primary-green, #10b981) !important;
+        color: #ffffff !important;
       }
     }
 
-    // Icon styling
+    // Icon styling - white icons
     .mat-mdc-form-field-icon-prefix,
     .mat-mdc-form-field-icon-suffix {
-      color: var(--primary-green, #10b981) !important;
+      color: #ffffff !important;
       margin: 0 8px 0 4px !important;
       display: flex !important;
       align-items: center !important;
@@ -1031,6 +832,7 @@ body.dark-theme {
         height: 22px !important;
         opacity: 0.95 !important;
         transition: all 0.3s ease !important;
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
       }
     }
 
@@ -1038,192 +840,6 @@ body.dark-theme {
     &.mat-focused .mat-mdc-form-field-icon-prefix mat-icon {
       opacity: 1 !important;
       transform: scale(1.1) !important;
-    }
-  }
-}
-
-// Dropdown Panel Styling - Global (for mat-select overlay)
-::ng-deep {
-  .mat-mdc-select-panel {
-    background: var(--card-bg, rgba(255, 255, 255, 0.95)) !important;
-    border-radius: 12px !important;
-    border: 1px solid var(--border-color, rgba(16, 185, 129, 0.2)) !important;
-    box-shadow:
-      0 8px 32px rgba(0, 0, 0, 0.12),
-      0 0 0 1px rgba(16, 185, 129, 0.1) !important;
-    -webkit-backdrop-filter: blur(20px) !important;
-    backdrop-filter: blur(20px) !important;
-    padding: 8px 0 !important;
-    margin-top: 4px !important;
-    max-height: 300px !important;
-    overflow-y: auto !important;
-
-    // Custom scrollbar
-    &::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: rgba(16, 185, 129, 0.1);
-      border-radius: 4px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: rgba(16, 185, 129, 0.3);
-      border-radius: 4px;
-
-      &:hover {
-        background: rgba(16, 185, 129, 0.5);
-      }
-    }
-  }
-
-  // Mat Option Styling
-  .mat-mdc-option {
-    min-height: 44px !important;
-    padding: 10px 16px !important;
-    margin: 2px 8px !important;
-    border-radius: 8px !important;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    color: var(--text-primary, #1f2937) !important;
-    font-weight: 500 !important;
-    font-size: 0.875rem !important;
-
-    &:hover:not(.mdc-list-item--disabled) {
-      background: rgba(16, 185, 129, 0.1) !important;
-      transform: translateX(4px) !important;
-    }
-
-    &.mdc-list-item--selected {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.1) 100%) !important;
-      color: var(--primary-green, #10b981) !important;
-      font-weight: 600 !important;
-      border-left: 3px solid var(--primary-green, #10b981) !important;
-      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2) !important;
-
-      &::before {
-        content: '✓' !important;
-        position: absolute !important;
-        right: 16px !important;
-        color: var(--primary-green, #10b981) !important;
-        font-weight: 700 !important;
-        font-size: 16px !important;
-      }
-    }
-
-    &.mdc-list-item--disabled {
-      opacity: 0.5 !important;
-      cursor: not-allowed !important;
-    }
-
-    .mdc-list-item__primary-text {
-      color: inherit !important;
-    }
-  }
-
-  // Dark theme for dropdown panel
-  body.dark-theme .mat-mdc-select-panel {
-    background: rgba(30, 41, 59, 0.95) !important;
-    border-color: rgba(16, 185, 129, 0.3) !important;
-    box-shadow:
-      0 8px 32px rgba(0, 0, 0, 0.3),
-      0 0 0 1px rgba(16, 185, 129, 0.2) !important;
-
-    &::-webkit-scrollbar-track {
-      background: rgba(16, 185, 129, 0.15);
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: rgba(16, 185, 129, 0.4);
-
-      &:hover {
-        background: rgba(16, 185, 129, 0.6);
-      }
-    }
-  }
-
-  // Dark theme for mat options
-  body.dark-theme .mat-mdc-option {
-    color: #cbd5e1 !important;
-
-    &:hover:not(.mdc-list-item--disabled) {
-      background: rgba(16, 185, 129, 0.15) !important;
-    }
-
-    &.mdc-list-item--selected {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(16, 185, 129, 0.15) 100%) !important;
-      color: #34d399 !important;
-      border-left-color: #10b981 !important;
-      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3) !important;
-
-      &::before {
-        color: #34d399 !important;
-      }
-    }
-  }
-
-  // Date Picker Styling - Matching Theme
-  .mat-datepicker-content {
-    background: var(--card-bg, rgba(255, 255, 255, 0.95)) !important;
-    border-radius: 12px !important;
-    border: 1px solid var(--border-color, rgba(16, 185, 129, 0.2)) !important;
-    box-shadow:
-      0 8px 32px rgba(0, 0, 0, 0.12),
-      0 0 0 1px rgba(16, 185, 129, 0.1) !important;
-    -webkit-backdrop-filter: blur(20px) !important;
-    backdrop-filter: blur(20px) !important;
-  }
-
-  .mat-datepicker-toggle {
-    color: var(--primary-green, #10b981) !important;
-
-    button {
-      color: var(--primary-green, #10b981) !important;
-    }
-  }
-
-  // Dark theme for date picker
-  body.dark-theme {
-    .mat-datepicker-toggle {
-      color: #34d399 !important;
-
-      button {
-        color: #34d399 !important;
-      }
-
-      &:hover button {
-        color: #10b981 !important;
-      }
-    }
-
-    .mat-datepicker-content {
-      background: rgba(30, 41, 59, 0.95) !important;
-      border-color: rgba(16, 185, 129, 0.3) !important;
-      box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.3),
-        0 0 0 1px rgba(16, 185, 129, 0.2) !important;
-    }
-
-    .mat-calendar {
-      background: rgba(30, 41, 59, 0.95) !important;
-      color: var(--text-primary, #f1f5f9) !important;
-    }
-
-    .mat-calendar-table-header {
-      color: var(--text-primary, #f1f5f9) !important;
-    }
-
-    .mat-calendar-body-cell-content {
-      color: var(--text-primary, #f1f5f9) !important;
-    }
-
-    .mat-calendar-body-selected {
-      background: linear-gradient(135deg, #10b981 0%, #34d399 100%) !important;
-      color: white !important;
-    }
-
-    .mat-calendar-body-today:not(.mat-calendar-body-selected) {
-      border-color: var(--primary-green, #10b981) !important;
     }
   }
 }
@@ -1236,23 +852,6 @@ body.dark-theme {
       width: 24px !important;
       height: 24px !important;
       opacity: 0.9 !important;
-    }
-
-    .clear-search-btn {
-      color: var(--text-secondary, #6b7280);
-      transition: all 0.2s ease;
-
-      &:hover {
-        color: var(--text-primary, #1f2937);
-        background: rgba(0, 0, 0, 0.05);
-        border-radius: 50%;
-      }
-
-      mat-icon {
-        font-size: 18px;
-        width: 18px;
-        height: 18px;
-      }
     }
 
     &.mat-focused {
@@ -1414,35 +1013,6 @@ body.dark-theme {
   background: rgba(102, 126, 234, 0.1);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  -webkit-user-select: none;
-  user-select: none;
-
-  &:hover {
-    background: rgba(102, 126, 234, 0.15);
-    transform: translateX(4px);
-  }
-
-  &.expanded {
-    background: rgba(102, 126, 234, 0.2);
-  }
-
-  .expand-icon {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
-    color: #667eea;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  &.expanded .expand-icon {
-    transform: rotate(0deg);
-  }
-
-  &:not(.expanded) .expand-icon {
-    transform: rotate(-90deg);
-  }
 }
 
 .date-label {
@@ -1471,22 +1041,9 @@ body.dark-theme {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 500px), 1fr));
   gap: 16px;
-  overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  max-height: 10000px; // Large enough to show all content
-  opacity: 1;
 
   @media (min-width: 1200px) {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  &.collapsed {
-    max-height: 0;
-    opacity: 0;
-    margin: 0;
-    padding: 0;
-    gap: 0;
-    overflow: hidden;
   }
 }
 
@@ -1504,7 +1061,7 @@ body.dark-theme {
   backdrop-filter: blur(20px);
   background: var(--card-bg, rgba(255, 255, 255, 0.75));
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.4));
-  box-shadow:
+  box-shadow: 
     var(--shadow-md, 0 4px 20px rgba(0, 0, 0, 0.06)),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transition: all var(--transition-normal);
@@ -1519,9 +1076,9 @@ body.dark-theme {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg,
-      rgba(255, 255, 255, 0.1) 0%,
-      transparent 50%,
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.1) 0%, 
+      transparent 50%, 
       rgba(255, 255, 255, 0.05) 100%
     );
     opacity: 0;
@@ -1537,9 +1094,9 @@ body.dark-theme {
     left: 0;
     width: 3px;
     height: 100%;
-    background: linear-gradient(180deg,
-      rgba(203, 213, 225, 0.8) 0%,
-      rgba(203, 213, 225, 0.6) 50%,
+    background: linear-gradient(180deg, 
+      rgba(203, 213, 225, 0.8) 0%, 
+      rgba(203, 213, 225, 0.6) 50%, 
       rgba(203, 213, 225, 0.8) 100%
     );
     transition: all var(--transition-normal);
@@ -1548,7 +1105,7 @@ body.dark-theme {
 
   &:hover {
     transform: translateY(-3px) scale(1.02);
-    box-shadow:
+    box-shadow: 
       0 12px 40px rgba(0, 0, 0, 0.1),
       0 4px 20px rgba(102, 126, 234, 0.1),
       inset 0 1px 0 rgba(255, 255, 255, 0.3);
@@ -1561,9 +1118,9 @@ body.dark-theme {
 
     &::before {
       width: 4px;
-      background: linear-gradient(180deg,
-        rgba(102, 126, 234, 0.8) 0%,
-        rgba(102, 126, 234, 0.6) 50%,
+      background: linear-gradient(180deg, 
+        rgba(102, 126, 234, 0.8) 0%, 
+        rgba(102, 126, 234, 0.6) 50%, 
         rgba(102, 126, 234, 0.8) 100%
       );
     }
@@ -1593,7 +1150,7 @@ body.dark-theme {
 
     .card-icon {
       transform: scale(1.05);
-
+      
       .pulse-ring {
         animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
       }
@@ -1638,15 +1195,15 @@ body.dark-theme {
     &:hover {
       opacity: 1;
       background: rgba(255, 255, 255, 0.8);
-
+      
       .card-title {
         color: #475569;
       }
-
+      
       .card-message {
         color: #64748b;
       }
-
+      
       .card-icon {
         opacity: 1;
       }
@@ -1893,13 +1450,13 @@ body.dark-theme {
 
 @keyframes timeline-glow {
   0%, 100% {
-    box-shadow:
+    box-shadow: 
       0 0 20px rgba(102, 126, 234, 0.4),
       0 0 40px rgba(102, 126, 234, 0.2),
       inset 0 0 10px rgba(102, 126, 234, 0.3);
   }
   50% {
-    box-shadow:
+    box-shadow: 
       0 0 30px rgba(102, 126, 234, 0.6),
       0 0 60px rgba(102, 126, 234, 0.3),
       inset 0 0 15px rgba(102, 126, 234, 0.4);
@@ -1908,12 +1465,12 @@ body.dark-theme {
 
 @keyframes connector-pulse {
   0%, 100% {
-    box-shadow:
+    box-shadow: 
       0 0 8px rgba(102, 126, 234, 0.3),
       0 0 16px rgba(102, 126, 234, 0.1);
   }
   50% {
-    box-shadow:
+    box-shadow: 
       0 0 12px rgba(102, 126, 234, 0.4),
       0 0 24px rgba(102, 126, 234, 0.2);
   }
@@ -1934,7 +1491,7 @@ body.dark-theme {
   align-items: flex-start;
   gap: 12px;
   margin-bottom: 8px;
-
+  
   // Logical properties for RTL support
   margin-inline: 0;
   padding-inline: 0;
@@ -2050,7 +1607,7 @@ body.dark-theme {
   transition: all var(--transition-normal);
   position: relative;
   overflow: hidden;
-  box-shadow:
+  box-shadow: 
     0 2px 8px rgba(0, 0, 0, 0.06),
     0 0 0 rgba(16, 185, 129, 0);
 
@@ -2062,9 +1619,9 @@ body.dark-theme {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg,
-      rgba(255, 255, 255, 0.1) 0%,
-      transparent 50%,
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.1) 0%, 
+      transparent 50%, 
       rgba(16, 185, 129, 0.05) 100%
     );
     opacity: 0;
@@ -2087,7 +1644,7 @@ body.dark-theme {
     &:hover {
       background: rgba(16, 185, 129, 0.1);
       border-color: rgba(16, 185, 129, 0.3);
-      box-shadow:
+      box-shadow: 
         0 4px 16px rgba(0, 0, 0, 0.08),
         0 0 12px rgba(16, 185, 129, 0.2);
       transform: translateY(-2px) scale(1.05);
@@ -2113,15 +1670,15 @@ body.dark-theme {
     &:hover {
       background: rgba(239, 68, 68, 0.1);
       border-color: rgba(239, 68, 68, 0.3);
-      box-shadow:
+      box-shadow: 
         0 4px 16px rgba(0, 0, 0, 0.08),
         0 0 12px rgba(239, 68, 68, 0.2);
       transform: translateY(-2px) scale(1.05);
 
       &::before {
-        background: linear-gradient(135deg,
-          rgba(239, 68, 68, 0.1) 0%,
-          transparent 50%,
+        background: linear-gradient(135deg, 
+          rgba(239, 68, 68, 0.1) 0%, 
+          transparent 50%, 
           rgba(239, 68, 68, 0.05) 100%
         );
         opacity: 1;
@@ -2255,74 +1812,6 @@ body.dark-theme {
   }
 }
 
-// Expanded Actions Buttons
-.expanded-actions {
-  display: flex;
-  gap: 12px;
-  padding-top: 16px;
-  margin-top: 16px;
-  border-top: 1px solid var(--border-color, rgba(16, 185, 129, 0.15));
-  flex-wrap: wrap;
-
-  button {
-    flex: 1;
-    min-width: 120px;
-    height: 44px;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 14px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-
-    mat-icon {
-      font-size: 18px;
-      width: 18px;
-      height: 18px;
-    }
-  }
-
-  .mark-read-expanded-button {
-    background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
-    color: white;
-    border: none;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-      background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-    }
-  }
-
-  .mark-unread-expanded-button,
-  .dismiss-expanded-button {
-    background: var(--card-bg, rgba(255, 255, 255, 0.8));
-    border: 2px solid var(--border-color, rgba(16, 185, 129, 0.2));
-    color: var(--text-primary, #1f2937);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
-
-    &:hover {
-      transform: translateY(-2px);
-      border-color: rgba(16, 185, 129, 0.4);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-  }
-
-  .dismiss-expanded-button {
-    border-color: rgba(239, 68, 68, 0.3);
-    color: #dc2626;
-
-    &:hover {
-      border-color: rgba(239, 68, 68, 0.5);
-      background: rgba(239, 68, 68, 0.1);
-    }
-  }
-}
-
 // ========================
 // ⏱️ TIMELINE VIEW - MODERN DESIGN
 // ========================
@@ -2355,7 +1844,7 @@ body.dark-theme {
       rgba(102, 126, 234, 0.5) 85%,
       rgba(102, 126, 234, 0.2) 100%
     );
-    box-shadow:
+    box-shadow: 
       0 0 20px rgba(102, 126, 234, 0.4),
       0 0 40px rgba(102, 126, 234, 0.2),
       inset 0 0 10px rgba(102, 126, 234, 0.3);
@@ -2385,15 +1874,15 @@ body.dark-theme {
   // Alternate left/right alignment (except for RTL)
   &:nth-child(even) {
     flex-direction: row-reverse;
-
+    
     .timeline-content {
       text-align: right;
     }
-
+    
     .timeline-meta {
       justify-content: flex-end;
     }
-
+    
     .timeline-actions {
       justify-content: flex-end;
     }
@@ -2402,15 +1891,15 @@ body.dark-theme {
   // RTL: All items aligned to the right
   &[dir="rtl"] {
     flex-direction: row-reverse;
-
+    
     .timeline-content {
       text-align: right;
     }
-
+    
     .timeline-meta {
       justify-content: flex-end;
     }
-
+    
     .timeline-actions {
       justify-content: flex-end;
     }
@@ -2433,7 +1922,7 @@ body.dark-theme {
       rgba(102, 126, 234, 0.3) 50%,
       rgba(102, 126, 234, 0.1) 100%
     );
-    box-shadow:
+    box-shadow: 
       0 0 8px rgba(102, 126, 234, 0.3),
       0 0 16px rgba(102, 126, 234, 0.1);
     border-radius: 1px;
@@ -2784,7 +2273,7 @@ body.dark-theme {
     transition: all var(--transition-normal);
     position: relative;
     overflow: hidden;
-    box-shadow:
+    box-shadow: 
       0 2px 8px rgba(0, 0, 0, 0.06),
       0 0 0 rgba(16, 185, 129, 0);
 
@@ -2796,9 +2285,9 @@ body.dark-theme {
       left: 0;
       right: 0;
       bottom: 0;
-      background: linear-gradient(135deg,
-        rgba(255, 255, 255, 0.1) 0%,
-        transparent 50%,
+      background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.1) 0%, 
+        transparent 50%, 
         rgba(16, 185, 129, 0.05) 100%
       );
       opacity: 0;
@@ -2809,7 +2298,7 @@ body.dark-theme {
     &:hover {
       background: rgba(16, 185, 129, 0.1);
       border-color: rgba(16, 185, 129, 0.3);
-      box-shadow:
+      box-shadow: 
         0 4px 16px rgba(0, 0, 0, 0.08),
         0 0 12px rgba(16, 185, 129, 0.2);
       transform: translateY(-2px) scale(1.05);
@@ -2844,14 +2333,14 @@ body.dark-theme {
       &:hover {
         background: rgba(239, 68, 68, 0.1);
         border-color: rgba(239, 68, 68, 0.3);
-        box-shadow:
+        box-shadow: 
           0 4px 16px rgba(0, 0, 0, 0.08),
           0 0 12px rgba(239, 68, 68, 0.2);
 
         &::before {
-          background: linear-gradient(135deg,
-            rgba(239, 68, 68, 0.1) 0%,
-            transparent 50%,
+          background: linear-gradient(135deg, 
+            rgba(239, 68, 68, 0.1) 0%, 
+            transparent 50%, 
             rgba(239, 68, 68, 0.05) 100%
           );
         }
@@ -3477,45 +2966,13 @@ body.dark-theme .kpi-item {
   }
 }
 
-// Notification Cards - Dark Mode (dark + green combo matching timeline view)
-body.dark-theme .notification-card,
-body.dark-theme .notification-card.glass-card {
-  background: linear-gradient(135deg, 
-    rgba(30, 41, 59, 0.95) 0%,
-    rgba(16, 185, 129, 0.12) 50%,
-    rgba(30, 41, 59, 0.95) 100%
-  );
-  border-color: rgba(16, 185, 129, 0.3);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.15),
-    0 0 0 rgba(16, 185, 129, 0),
-    inset 0 1px 0 rgba(16, 185, 129, 0.1);
-
-  // Enhanced gradient overlay for dark mode with green accents (matching timeline)
-  &::after {
-    background: linear-gradient(135deg,
-      rgba(16, 185, 129, 0.1) 0%,
-      transparent 50%,
-      rgba(16, 185, 129, 0.12) 100%
-    );
-    opacity: 0.6;
-  }
+// Notification Cards - Dark Mode (matching dashboard approach)
+body.dark-theme .notification-card {
+  background: var(--card-bg, #1e293b);
+  border-color: var(--border-color, #334155);
 
   &:hover {
-    background: linear-gradient(135deg,
-      rgba(30, 41, 59, 0.98) 0%,
-      rgba(16, 185, 129, 0.15) 50%,
-      rgba(30, 41, 59, 0.98) 100%
-    );
-    border-color: rgba(16, 185, 129, 0.4);
-    box-shadow:
-      0 12px 40px rgba(0, 0, 0, 0.2),
-      0 0 20px rgba(16, 185, 129, 0.25),
-      inset 0 1px 0 rgba(16, 185, 129, 0.15);
-
-    &::after {
-      opacity: 1;
-    }
+    box-shadow: 0 16px 40px rgba(16, 185, 129, 0.3);
   }
 
   .card-title, h3, h4 {
@@ -3529,125 +2986,21 @@ body.dark-theme .notification-card.glass-card {
   .card-time {
     color: var(--text-secondary, #cbd5e1);
   }
-
-  // Unread state - vibrant dark + teal green combo (matching timeline)
-  &.unread {
-    background: linear-gradient(135deg, 
-      rgba(16, 185, 129, 0.25) 0%, 
-      rgba(30, 41, 59, 0.8) 50%,
-      rgba(16, 185, 129, 0.15) 100%
-    );
-    border: 2px solid rgba(16, 185, 129, 0.5);
-    box-shadow: 
-      0 8px 32px rgba(16, 185, 129, 0.3), 
-      0 0 20px rgba(16, 185, 129, 0.2),
-      inset 0 1px 0 rgba(16, 185, 129, 0.1);
-
-    &::after {
-      background: linear-gradient(135deg, 
-        rgba(16, 185, 129, 0.3) 0%, 
-        transparent 50%,
-        rgba(16, 185, 129, 0.2) 100%
-      );
-      opacity: 1;
-    }
-
-    &:hover {
-      background: linear-gradient(135deg, 
-        rgba(16, 185, 129, 0.3) 0%, 
-        rgba(30, 41, 59, 0.85) 50%,
-        rgba(16, 185, 129, 0.2) 100%
-      );
-      border-color: rgba(16, 185, 129, 0.6);
-      box-shadow: 
-        0 12px 40px rgba(16, 185, 129, 0.4), 
-        0 0 30px rgba(16, 185, 129, 0.3),
-        inset 0 1px 0 rgba(16, 185, 129, 0.15);
-    }
-
-    .card-title {
-      color: #a7f3d0;
-      font-weight: 800;
-    }
-
-    .card-message {
-      color: #6ee7b7;
-      font-weight: 500;
-    }
-
-    &::before {
-      background: linear-gradient(180deg, 
-        rgba(16, 185, 129, 0.8) 0%, 
-        rgba(16, 185, 129, 0.6) 50%, 
-        rgba(16, 185, 129, 0.8) 100%
-      );
-      box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
-    }
-  }
-
-  // Read state - dark with subtle green accents (matching timeline)
-  &:not(.unread) {
-    background: linear-gradient(135deg,
-      rgba(30, 41, 59, 0.7) 0%,
-      rgba(16, 185, 129, 0.08) 50%,
-      rgba(30, 41, 59, 0.7) 100%
-    );
-    border: 1px solid rgba(16, 185, 129, 0.15);
-    box-shadow: 
-      0 4px 16px rgba(0, 0, 0, 0.2),
-      inset 0 1px 0 rgba(16, 185, 129, 0.05);
-    opacity: 0.7;
-
-    &::after {
-      background: linear-gradient(135deg, 
-        rgba(16, 185, 129, 0.05) 0%, 
-        rgba(16, 185, 129, 0.08) 50%,
-        transparent 100%
-      );
-      opacity: 0.4;
-    }
-
-    &:hover {
-      background: linear-gradient(135deg,
-        rgba(30, 41, 59, 0.85) 0%,
-        rgba(16, 185, 129, 0.12) 50%,
-        rgba(30, 41, 59, 0.85) 100%
-      );
-      opacity: 0.95;
-      border-color: rgba(16, 185, 129, 0.25);
-      box-shadow: 
-        0 8px 24px rgba(0, 0, 0, 0.25),
-        0 0 12px rgba(16, 185, 129, 0.15),
-        inset 0 1px 0 rgba(16, 185, 129, 0.1);
-      
-      &::after {
-        opacity: 0.7;
-      }
-    }
-
-    &::before {
-      background: linear-gradient(180deg,
-        rgba(16, 185, 129, 0.3) 0%,
-        rgba(16, 185, 129, 0.2) 50%,
-        rgba(16, 185, 129, 0.3) 100%
-      );
-    }
-  }
 }
 
 // Timeline Content - Dark Mode (Enhanced with Read/Unread States)
 body.dark-theme .timeline-content {
   background: var(--card-bg, #1e293b);
   border-color: rgba(16, 185, 129, 0.2);
-  box-shadow:
+  box-shadow: 
     0 8px 32px rgba(0, 0, 0, 0.15),
     0 0 0 rgba(16, 185, 129, 0);
 
   // Enhanced gradient overlay for dark mode
   &::before {
-    background: linear-gradient(135deg,
-      rgba(16, 185, 129, 0.05) 0%,
-      transparent 50%,
+    background: linear-gradient(135deg, 
+      rgba(16, 185, 129, 0.05) 0%, 
+      transparent 50%, 
       rgba(16, 185, 129, 0.08) 100%
     );
   }
@@ -3655,7 +3008,7 @@ body.dark-theme .timeline-content {
   &:hover {
     background: rgba(30, 41, 59, 0.9);
     border-color: rgba(16, 185, 129, 0.3);
-    box-shadow:
+    box-shadow: 
       0 12px 40px rgba(0, 0, 0, 0.2),
       0 0 20px rgba(16, 185, 129, 0.2);
 
@@ -3745,7 +3098,7 @@ body.dark-theme .timeline-container {
       rgba(16, 185, 129, 0.6) 85%,
       rgba(16, 185, 129, 0.3) 100%
     );
-    box-shadow:
+    box-shadow: 
       0 0 30px rgba(16, 185, 129, 0.5),
       0 0 60px rgba(16, 185, 129, 0.3),
       inset 0 0 15px rgba(16, 185, 129, 0.4);
@@ -3761,7 +3114,7 @@ body.dark-theme .timeline-item {
       rgba(16, 185, 129, 0.4) 50%,
       rgba(16, 185, 129, 0.2) 100%
     );
-    box-shadow:
+    box-shadow: 
       0 0 12px rgba(16, 185, 129, 0.4),
       0 0 24px rgba(16, 185, 129, 0.2);
   }
@@ -3771,7 +3124,7 @@ body.dark-theme .timeline-item {
 body.dark-theme .marker-dot {
   background: rgba(30, 41, 59, 0.95);
   border-color: rgba(16, 185, 129, 0.3);
-  box-shadow:
+  box-shadow: 
     0 8px 32px rgba(0, 0, 0, 0.2),
     0 0 0 rgba(16, 185, 129, 0);
 
@@ -3789,7 +3142,7 @@ body.dark-theme .marker-dot {
 
   &:hover {
     border-color: rgba(16, 185, 129, 0.5);
-    box-shadow:
+    box-shadow: 
       0 12px 40px rgba(0, 0, 0, 0.25),
       0 0 20px rgba(16, 185, 129, 0.3);
 
@@ -3896,7 +3249,7 @@ body.dark-theme .filter-panel {
   &:hover {
       background: rgba(30, 41, 59, 0.9);
       border-color: rgba(16, 185, 129, 0.4);
-      box-shadow:
+      box-shadow: 
         0 12px 40px rgba(0, 0, 0, 0.2),
         0 0 20px rgba(16, 185, 129, 0.3),
         0 0 40px rgba(16, 185, 129, 0.15);
@@ -3938,64 +3291,19 @@ body.dark-theme .clear-filters-button {
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
   }
 
-  // No hover state - maintain glass red appearance always
-}
-
-// Dark theme for mark read filter button
-body.dark-theme .mark-read-filter-button {
-  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-
-  &:hover:not(:disabled) {
-    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
-  }
-
-  .button-badge {
-    background: rgba(255, 255, 255, 0.25);
+  &:hover {
+    background: rgba(239, 68, 68, 0.35);
+    border-color: rgba(239, 68, 68, 0.65);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
   }
 }
 
-// Dark theme for expanded actions
-body.dark-theme .expanded-actions {
-  border-top-color: rgba(16, 185, 129, 0.2);
-
-  .mark-read-expanded-button {
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-
-    &:hover {
-      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
-    }
-  }
-
-  .mark-unread-expanded-button,
-  .dismiss-expanded-button {
-    background: rgba(30, 41, 59, 0.8);
-    border-color: rgba(16, 185, 129, 0.3);
-    color: #cbd5e1;
-
-    &:hover {
-      background: rgba(30, 41, 59, 0.95);
-      border-color: rgba(16, 185, 129, 0.5);
-    }
-  }
-
-  .dismiss-expanded-button {
-    border-color: rgba(239, 68, 68, 0.4);
-    color: #fca5a5;
-
-    &:hover {
-      background: rgba(239, 68, 68, 0.15);
-      border-color: rgba(239, 68, 68, 0.6);
-    }
-  }
-}
-
-// Filter Fields - Dark Mode
+// Filter Fields - Dark Mode (White Text Always)
 body.dark-theme .filter-field {
   ::ng-deep {
     .mat-mdc-text-field-wrapper {
-      background: rgba(30, 41, 59, 0.9) !important;
-      border-color: var(--primary-green, #10b981) !important;
+      background: var(--card-bg, #1e293b) !important;
+      border-color: var(--primary-green) !important;
       box-shadow: 0 2px 6px rgba(16, 185, 129, 0.15) !important;
     }
 
@@ -4004,7 +3312,6 @@ body.dark-theme .filter-field {
       .mdc-notched-outline__notch,
       .mdc-notched-outline__trailing {
         border-width: 2.5px !important;
-        border-color: var(--primary-green, #10b981) !important;
       }
     }
 
@@ -4018,56 +3325,59 @@ body.dark-theme .filter-field {
         .mdc-notched-outline__notch,
         .mdc-notched-outline__trailing {
           border-width: 2.5px !important;
-          border-color: var(--primary-green, #10b981) !important;
         }
       }
     }
 
     .mat-mdc-form-field-label {
-      color: #cbd5e1 !important;
+      color: #ffffff !important;
       font-weight: 600 !important;
       font-size: 0.875rem !important;
       letter-spacing: 0.3px !important;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 
       &.mdc-floating-label--float-above {
-        color: #34d399 !important;
+        color: #ffffff !important;
         font-weight: 700 !important;
         font-size: 0.8125rem !important;
         letter-spacing: 0.5px !important;
         text-transform: uppercase !important;
-        background: rgba(16, 185, 129, 0.2) !important;
+        background: var(--primary-green) !important;
         padding: 2px 6px !important;
         border-radius: 4px;
       }
     }
 
     .mat-mdc-input-element {
-      color: #cbd5e1 !important;
+      color: #ffffff !important;
       font-weight: 600 !important;
       font-size: 0.875rem !important;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 
       &::placeholder {
-        color: rgba(203, 213, 225, 0.6) !important;
+        color: rgba(255, 255, 255, 0.7) !important;
         opacity: 1 !important;
         font-weight: 500 !important;
       }
     }
 
     .mat-mdc-select-trigger .mat-mdc-select-value {
-      color: #cbd5e1 !important;
+      color: #ffffff !important;
       font-weight: 600 !important;
       font-size: 0.875rem !important;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     }
 
     .mat-mdc-select-arrow-wrapper .mat-mdc-select-arrow {
-      color: var(--primary-green, #10b981) !important;
+      color: #ffffff !important;
     }
 
     .mat-mdc-form-field-icon-prefix,
     .mat-mdc-form-field-icon-suffix {
       mat-icon {
-        color: var(--primary-green, #10b981) !important;
+        color: #ffffff !important;
         opacity: 0.95 !important;
+        filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.3));
       }
     }
   }
@@ -4077,78 +3387,37 @@ body.dark-theme .filter-field {
 body.dark-theme .glass-chips mat-chip-option {
   background: var(--card-bg, #1e293b);
   border-color: var(--border-color, #334155);
-  color: white !important;
-
-  mat-icon {
-    color: white !important;
-  }
-
-  // Target all text content except badge
-  span:not(.chip-badge) {
-    color: white !important;
-  }
+  color: var(--text-secondary, #cbd5e1);
 
   &:hover {
     background: rgba(16, 185, 129, 0.1);
     border-color: #10b981;
-    color: white !important;
-
-    mat-icon {
-      color: white !important;
-    }
-
-    span:not(.chip-badge) {
-      color: white !important;
-    }
   }
 
   &.mat-mdc-chip-selected {
     background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
-    color: white !important;
+    color: white;
     border-color: transparent;
     box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
-
-    mat-icon {
-      color: white !important;
-    }
-
-    span:not(.chip-badge) {
-      color: white !important;
-    }
-  }
-}
-
-// Global Material chip text override for dark mode
-::ng-deep body.dark-theme .glass-chips {
-  .mdc-evolution-chip__text-label,
-  .mat-mdc-chip-action-label {
-    color: white !important;
-  }
-
-  mat-chip-option {
-    .mdc-evolution-chip__text-label,
-    .mat-mdc-chip-action-label {
-      color: white !important;
-    }
   }
 }
 
 // Form Fields - Dark Mode (Enhanced with Green Theme)
-body.dark-theme .glass-select,
+body.dark-theme .glass-select, 
 body.dark-theme .glass-search {
   ::ng-deep .mat-mdc-text-field-wrapper {
     background: var(--card-bg, #1e293b);
     border-color: rgba(16, 185, 129, 0.2);
-    box-shadow:
+    box-shadow: 
       0 4px 12px rgba(0, 0, 0, 0.15),
       0 0 0 rgba(16, 185, 129, 0),
       inset 0 1px 0 rgba(255, 255, 255, 0.1);
 
     // Dark mode gradient overlay
     &::before {
-      background: linear-gradient(135deg,
-        rgba(16, 185, 129, 0.05) 0%,
-        transparent 50%,
+      background: linear-gradient(135deg, 
+        rgba(16, 185, 129, 0.05) 0%, 
+        transparent 50%, 
         rgba(16, 185, 129, 0.08) 100%
       );
     }
@@ -4178,7 +3447,7 @@ body.dark-theme .glass-search {
   &:hover ::ng-deep .mat-mdc-text-field-wrapper {
     background: rgba(30, 41, 59, 0.95);
     border-color: rgba(16, 185, 129, 0.4);
-    box-shadow:
+    box-shadow: 
       0 8px 24px rgba(0, 0, 0, 0.2),
       0 0 16px rgba(16, 185, 129, 0.25),
       inset 0 1px 0 rgba(255, 255, 255, 0.15);
@@ -4193,7 +3462,7 @@ body.dark-theme .glass-search {
   &.mat-focused ::ng-deep .mat-mdc-text-field-wrapper {
     background: rgba(30, 41, 59, 0.98);
     border-color: rgba(16, 185, 129, 0.7);
-    box-shadow:
+    box-shadow: 
       0 12px 32px rgba(0, 0, 0, 0.25),
       0 0 24px rgba(16, 185, 129, 0.4),
       inset 0 1px 0 rgba(255, 255, 255, 0.2);
@@ -4303,27 +3572,10 @@ body.dark-theme .clear-filters-button {
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
   }
 
-  // No hover state - maintain glass red appearance always
-}
-
-// Date Group Header - Dark Mode
-body.dark-theme .date-group-header {
-  background: rgba(102, 126, 234, 0.15);
-
   &:hover {
-    background: rgba(102, 126, 234, 0.2);
-  }
-
-  &.expanded {
-    background: rgba(102, 126, 234, 0.25);
-  }
-
-  .expand-icon {
-    color: #818cf8;
-  }
-
-  .date-label {
-    color: #a5b4fc;
+    background: rgba(239, 68, 68, 0.35);
+    border-color: rgba(239, 68, 68, 0.65);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
   }
 }
 
@@ -4358,15 +3610,15 @@ body.dark-theme .loading-state {
 body.dark-theme .action-button {
   background: var(--card-bg, #1e293b);
   border-color: rgba(16, 185, 129, 0.2);
-  box-shadow:
+  box-shadow: 
     0 2px 8px rgba(0, 0, 0, 0.15),
     0 0 0 rgba(16, 185, 129, 0);
 
   // Dark mode gradient overlay
   &::before {
-    background: linear-gradient(135deg,
-      rgba(16, 185, 129, 0.05) 0%,
-      transparent 50%,
+    background: linear-gradient(135deg, 
+      rgba(16, 185, 129, 0.05) 0%, 
+      transparent 50%, 
       rgba(16, 185, 129, 0.08) 100%
     );
   }
@@ -4380,7 +3632,7 @@ body.dark-theme .action-button {
     &:hover {
       background: rgba(16, 185, 129, 0.15);
       border-color: rgba(16, 185, 129, 0.4);
-      box-shadow:
+      box-shadow: 
         0 4px 16px rgba(0, 0, 0, 0.2),
         0 0 12px rgba(16, 185, 129, 0.3);
 
@@ -4395,14 +3647,14 @@ body.dark-theme .action-button {
     &:hover {
       background: rgba(239, 68, 68, 0.15);
       border-color: rgba(239, 68, 68, 0.4);
-      box-shadow:
+      box-shadow: 
         0 4px 16px rgba(0, 0, 0, 0.2),
         0 0 12px rgba(239, 68, 68, 0.3);
 
       &::before {
-        background: linear-gradient(135deg,
-          rgba(239, 68, 68, 0.1) 0%,
-          transparent 50%,
+        background: linear-gradient(135deg, 
+          rgba(239, 68, 68, 0.1) 0%, 
+          transparent 50%, 
           rgba(239, 68, 68, 0.08) 100%
         );
       }
@@ -4427,14 +3679,14 @@ body.dark-theme .action-button {
 body.dark-theme .timeline-actions button {
   background: var(--card-bg, #1e293b);
   border-color: rgba(16, 185, 129, 0.2);
-  box-shadow:
+  box-shadow: 
     0 2px 8px rgba(0, 0, 0, 0.15),
     0 0 0 rgba(16, 185, 129, 0);
 
   &::before {
-    background: linear-gradient(135deg,
-      rgba(16, 185, 129, 0.05) 0%,
-      transparent 50%,
+    background: linear-gradient(135deg, 
+      rgba(16, 185, 129, 0.05) 0%, 
+      transparent 50%, 
       rgba(16, 185, 129, 0.08) 100%
     );
   }
@@ -4446,7 +3698,7 @@ body.dark-theme .timeline-actions button {
   &:hover {
     background: rgba(16, 185, 129, 0.15);
     border-color: rgba(16, 185, 129, 0.4);
-    box-shadow:
+    box-shadow: 
       0 4px 16px rgba(0, 0, 0, 0.2),
       0 0 12px rgba(16, 185, 129, 0.3);
 
@@ -4460,14 +3712,14 @@ body.dark-theme .timeline-actions button {
     &:hover {
       background: rgba(239, 68, 68, 0.15);
       border-color: rgba(239, 68, 68, 0.4);
-      box-shadow:
+      box-shadow: 
         0 4px 16px rgba(0, 0, 0, 0.2),
         0 0 12px rgba(239, 68, 68, 0.3);
 
       &::before {
-        background: linear-gradient(135deg,
-          rgba(239, 68, 68, 0.1) 0%,
-          transparent 50%,
+        background: linear-gradient(135deg, 
+          rgba(239, 68, 68, 0.1) 0%, 
+          transparent 50%, 
           rgba(239, 68, 68, 0.08) 100%
         );
       }
@@ -4486,10 +3738,7 @@ body.dark-theme .glass-button {
   color: var(--text-primary, #f1f5f9);
 
   &:hover:not(:disabled) {
-    background: rgba(30, 41, 59, 0.9);
-    border-color: rgba(16, 185, 129, 0.3);
     box-shadow: 0 16px 40px rgba(16, 185, 129, 0.3);
-    transform: translateY(-2px);
   }
 
   &.primary {
@@ -4499,63 +3748,6 @@ body.dark-theme .glass-button {
 
     &:hover:not(:disabled) {
       box-shadow: 0 16px 40px rgba(16, 185, 129, 0.3);
-    }
-  }
-
-  &.load-more {
-    background: var(--card-bg, #1e293b);
-    border-color: var(--border-color, #334155);
-    color: var(--text-primary, #f1f5f9);
-
-    mat-icon {
-      color: var(--text-primary, #f1f5f9);
-    }
-
-    &:hover:not(:disabled) {
-      background: rgba(16, 185, 129, 0.15);
-      border-color: rgba(16, 185, 129, 0.4);
-      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.25);
-      transform: translateY(-2px);
-
-      mat-icon {
-        color: #34d399;
-      }
-    }
-
-    &:disabled {
-      opacity: 0.5;
-      color: var(--text-secondary, #64748b);
-    }
-  }
-}
-
-// Load Info Text - Dark Mode
-body.dark-theme .load-info {
-  color: var(--text-secondary, #cbd5e1);
-}
-
-// Material Components - Dark Mode Touch Targets
-body.dark-theme {
-  ::ng-deep {
-    .mat-mdc-button-touch-target {
-      background-color: transparent !important;
-      opacity: 0 !important;
-    }
-
-    // Ensure all Material buttons have proper dark mode styling
-    .mat-mdc-button,
-    .mat-mdc-raised-button,
-    .mat-mdc-stroked-button,
-    .mat-mdc-icon-button {
-      .mat-mdc-button-touch-target {
-        display: none !important;
-      }
-    }
-
-    // Fix Material ripple colors for dark mode
-    .mat-mdc-button .mat-ripple-element,
-    .mat-mdc-icon-button .mat-ripple-element {
-      background-color: rgba(16, 185, 129, 0.1) !important;
     }
   }
 }
@@ -4578,45 +3770,6 @@ body.dark-theme {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  }
-}
-
-// ========================
-// 🎯 MATERIAL BUTTON TOUCH TARGET FIX
-// ========================
-
-// Fix Material button touch targets to match theme
-::ng-deep {
-  .mat-mdc-button-touch-target,
-  .mat-mdc-icon-button .mat-mdc-button-touch-target {
-    background-color: transparent !important;
-  }
-
-  // Light mode - ensure touch targets are invisible
-  .mat-mdc-button .mat-mdc-button-touch-target,
-  .mat-mdc-raised-button .mat-mdc-button-touch-target,
-  .mat-mdc-stroked-button .mat-mdc-button-touch-target,
-  .mat-mdc-icon-button .mat-mdc-button-touch-target {
-    background-color: transparent !important;
-    opacity: 0 !important;
-  }
-
-  // Dark mode - ensure touch targets are invisible
-  body.dark-theme {
-    .mat-mdc-button .mat-mdc-button-touch-target,
-    .mat-mdc-raised-button .mat-mdc-button-touch-target,
-    .mat-mdc-stroked-button .mat-mdc-button-touch-target,
-    .mat-mdc-icon-button .mat-mdc-button-touch-target {
-      background-color: transparent !important;
-      opacity: 0 !important;
-    }
-  }
-
-  // Fix for buttons in this component specifically
-  .insight-stream-container {
-    .mat-mdc-button-touch-target {
-      display: none !important;
-    }
   }
 }
 
