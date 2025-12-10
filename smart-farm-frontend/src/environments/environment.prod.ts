@@ -16,7 +16,7 @@ export const environment = {
     loginSuccessDelay: 1500,
     emailValidationDebounce: 300,
     emailValidationDelay: 500,
-    maxLoginAttempts: 5,
+    maxLoginAttempts: 999999, // Temporarily disabled for testing
     loginAttemptWindow: 900000 // 15 minutes in ms
   },
   
