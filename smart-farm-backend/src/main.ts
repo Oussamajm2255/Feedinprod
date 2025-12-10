@@ -20,34 +20,10 @@ async function bootstrap() {
     
     const app = await NestFactory.create(AppModule, {
       logger: ['error', 'warn', 'log', 'debug', 'verbose'],
+      cors: true, // Enable CORS at app creation for better compatibility
     });
     
-    // ✅ Security headers
-    app.use(helmet({
-      contentSecurityPolicy: false, // CSP is managed at the frontend/nginx layer
-      crossOriginResourcePolicy: { policy: 'cross-origin' },
-    }));
-    app.use(cookieParser());
-
-    // ✅ Global exception filter
-    app.useGlobalFilters(new AllExceptionsFilter());
-
-    // ✅ Global validation pipe
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        transform: true,
-        transformOptions: {
-          enableImplicitConversion: true,
-        },
-      }),
-    );
-
-    // ✅ Global prefix for all routes
-    app.setGlobalPrefix('api/v1');
-
-    // ✅ Allow requests from your frontend
+    // ✅ Configure CORS FIRST (before other middleware)
     // CORS configuration: supports Railway domains, localhost, and custom origins
     const corsOrigin = process.env.CORS_ORIGIN;
     const railwayPattern = /^https:\/\/.*\.up\.railway\.app$/;
@@ -71,14 +47,14 @@ async function bootstrap() {
         
         // Allow all Railway domains
         if (railwayPattern.test(origin)) {
-          logger.debug(`✅ CORS: Allowed Railway origin: ${origin}`);
+          logger.log(`✅ CORS: Allowed Railway origin: ${origin}`);
           callback(null, true);
           return;
         }
         
         // Allow localhost for development
         if (localhostPattern.test(origin) || localhostIpPattern.test(origin)) {
-          logger.debug(`✅ CORS: Allowed localhost origin: ${origin}`);
+          logger.log(`✅ CORS: Allowed localhost origin: ${origin}`);
           callback(null, true);
           return;
         }
@@ -87,7 +63,7 @@ async function bootstrap() {
         if (corsOrigin) {
           const customOrigins = corsOrigin.split(',').map(o => o.trim()).filter(o => o);
           if (customOrigins.includes(origin)) {
-            logger.debug(`✅ CORS: Allowed custom origin: ${origin}`);
+            logger.log(`✅ CORS: Allowed custom origin: ${origin}`);
             callback(null, true);
             return;
           }
@@ -114,6 +90,31 @@ async function bootstrap() {
     });
     
     logger.log(`✅ CORS configured - Railway domains (*.up.railway.app) and localhost allowed`);
+    
+    // ✅ Security headers
+    app.use(helmet({
+      contentSecurityPolicy: false, // CSP is managed at the frontend/nginx layer
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+    }));
+    app.use(cookieParser());
+
+    // ✅ Global exception filter
+    app.useGlobalFilters(new AllExceptionsFilter());
+
+    // ✅ Global validation pipe
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+        transformOptions: {
+          enableImplicitConversion: true,
+        },
+      }),
+    );
+
+    // ✅ Global prefix for all routes
+    app.setGlobalPrefix('api/v1');
 
     const port = process.env.PORT || 3000;
     await app.listen(port);
