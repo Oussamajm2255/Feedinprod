@@ -50,77 +50,66 @@ async function bootstrap() {
     // ✅ Allow requests from your frontend
     // CORS configuration: supports Railway domains, localhost, and custom origins
     const corsOrigin = process.env.CORS_ORIGIN;
-    let allowedOrigins: any;
+    const railwayPattern = /^https:\/\/.*\.up\.railway\.app$/;
+    const localhostPattern = /^http:\/\/localhost(:\d+)?$/;
+    const localhostIpPattern = /^http:\/\/127\.0\.0\.1(:\d+)?$/;
     
-    if (corsOrigin === '*') {
-      allowedOrigins = true; // Allow all origins
-    } else if (corsOrigin) {
-      // Split comma-separated origins and add Railway domain pattern support
-      const customOrigins = corsOrigin.split(',').map(o => o.trim());
-      const railwayPattern = /^https:\/\/.*\.up\.railway\.app$/;
-      const localhostPattern = /^http:\/\/localhost:\d+$/;
-      const localhostIpPattern = /^http:\/\/127\.0\.0\.1:\d+$/;
-      
-      allowedOrigins = (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-        // Allow if no origin (same-origin requests) or matches patterns
-        if (!origin) {
-          callback(null, true);
-          return;
-        }
-        
-        // Check custom origins list
-        if (customOrigins.includes(origin)) {
-          callback(null, true);
-          return;
-        }
-        
-        // Check Railway domain pattern
-        if (railwayPattern.test(origin)) {
-          callback(null, true);
-          return;
-        }
-        
-        // Check localhost patterns for development
-        if (localhostPattern.test(origin) || localhostIpPattern.test(origin)) {
-          callback(null, true);
-          return;
-        }
-        
-        // Reject all other origins
-        callback(null, false);
-      };
-    } else {
-      // Default: allow localhost and Railway domains
-      const railwayPattern = /^https:\/\/.*\.up\.railway\.app$/;
-      const localhostPattern = /^http:\/\/localhost:\d+$/;
-      const localhostIpPattern = /^http:\/\/127\.0\.0\.1:\d+$/;
-      
-      allowedOrigins = (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-        // Allow if no origin (same-origin requests)
-        if (!origin) {
-          callback(null, true);
-          return;
-        }
-        
-        // Check Railway domain pattern
-        if (railwayPattern.test(origin)) {
-          callback(null, true);
-          return;
-        }
-        
-        // Check localhost patterns for development
-        if (localhostPattern.test(origin) || localhostIpPattern.test(origin)) {
-          callback(null, true);
-          return;
-        }
-        
-        // Reject all other origins
-        callback(null, false);
-      };
+    // Build allowed origins array
+    const allowedOriginsList: string[] = [];
+    
+    // Always allow Railway domains
+    // Railway domains are matched dynamically via function
+    
+    // Add custom origins from environment
+    if (corsOrigin && corsOrigin !== '*') {
+      corsOrigin.split(',').forEach(origin => {
+        const trimmed = origin.trim();
+        if (trimmed) allowedOriginsList.push(trimmed);
+      });
     }
     
+    // Function to validate origin - compatible with Express CORS
+    const validateOrigin = (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+      // Allow requests with no origin (same-origin, mobile apps, Postman, etc.)
+      if (!origin) {
+        callback(null, true);
+        return;
+      }
+      
+      // Allow all Railway domains
+      if (railwayPattern.test(origin)) {
+        logger.debug(`CORS: Allowed Railway origin: ${origin}`);
+        callback(null, true);
+        return;
+      }
+      
+      // Allow localhost for development
+      if (localhostPattern.test(origin) || localhostIpPattern.test(origin)) {
+        logger.debug(`CORS: Allowed localhost origin: ${origin}`);
+        callback(null, true);
+        return;
+      }
+      
+      // Check custom origins list
+      if (allowedOriginsList.length > 0 && allowedOriginsList.includes(origin)) {
+        logger.debug(`CORS: Allowed custom origin: ${origin}`);
+        callback(null, true);
+        return;
+      }
+      
+      // Allow all if CORS_ORIGIN is '*'
+      if (corsOrigin === '*') {
+        callback(null, true);
+        return;
+      }
+      
+      // Reject all other origins
+      logger.warn(`CORS: Blocked origin: ${origin}`);
+      callback(null, false);
+    };
+    
     app.enableCors({
-      origin: allowedOrigins,
+      origin: corsOrigin === '*' ? true : validateOrigin,
       methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
       credentials: true,
       allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
@@ -128,6 +117,8 @@ async function bootstrap() {
       preflightContinue: false,
       optionsSuccessStatus: 204,
     });
+    
+    logger.log(`✅ CORS configured. Allowing Railway domains (*.up.railway.app) and localhost`);
 
     const port = process.env.PORT || 3000;
     await app.listen(port);
