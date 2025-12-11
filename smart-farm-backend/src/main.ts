@@ -23,45 +23,79 @@ async function bootstrap() {
     });
     
     // ✅ Configure CORS FIRST (before other middleware)
-    // Support CORS_ORIGIN env variable or use explicit frontend domain
+    // IMPORTANT: When credentials: true, we CANNOT use wildcard (*) - must specify exact origins
     const corsOrigin = process.env.CORS_ORIGIN;
-    const allowedOrigins = corsOrigin === '*' 
-      ? true // Allow all origins
-      : [
-          'https://feedin.up.railway.app',
-          'http://localhost:4200',
-          ...(corsOrigin ? corsOrigin.split(',').map(o => o.trim()).filter(o => o) : [])
-        ];
     
-    app.enableCors({
-      origin: allowedOrigins,
+    // Build allowed origins list - always include frontend domain explicitly
+    const allowedOriginsList = [
+      'https://feedin.up.railway.app',
+      'http://localhost:4200',
+      ...(corsOrigin && corsOrigin !== '*' 
+        ? corsOrigin.split(',').map(o => o.trim()).filter(o => o)
+        : [])
+    ];
+    
+    // For credentials: true, we must use a function to return exact origin, not wildcard
+    const corsOptions = {
+      origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+        // Allow requests with no origin (same-origin, mobile apps, Postman, etc.)
+        if (!origin) {
+          callback(null, true);
+          return;
+        }
+        
+        // If CORS_ORIGIN is '*', allow any origin but return the exact origin (required for credentials)
+        if (corsOrigin === '*') {
+          logger.log(`✅ CORS: Allowing origin (wildcard mode): ${origin}`);
+          callback(null, true);
+          return;
+        }
+        
+        // Check if origin is in allowed list
+        if (allowedOriginsList.includes(origin)) {
+          logger.log(`✅ CORS: Allowed origin: ${origin}`);
+          callback(null, true);
+          return;
+        }
+        
+        // Reject
+        logger.warn(`❌ CORS: Blocked origin: ${origin}`);
+        callback(null, false);
+      },
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
       credentials: true,
       allowedHeaders: 'Content-Type, Accept, Authorization, X-CSRF-Token, X-Requested-With, Origin',
-    });
+    };
     
-    logger.log(`✅ CORS configured - Origin: ${corsOrigin === '*' ? 'ALL (*)' : allowedOrigins.join(', ')}`);
+    app.enableCors(corsOptions);
     
-    // ✅ Add explicit CORS headers middleware to ensure CSRF endpoint works
-    // This ensures CORS headers are always set, even for OPTIONS requests
+    logger.log(`✅ CORS configured - Allowing origins: ${corsOrigin === '*' ? 'ALL (*)' : allowedOriginsList.join(', ')}`);
+    
+    // ✅ Add explicit CORS headers middleware BEFORE all other middleware
+    // This ensures CORS headers are set for ALL requests, especially OPTIONS preflight
     app.use((req, res, next) => {
       const origin = req.headers.origin as string | undefined;
-      const isAllowedOrigin = corsOrigin === '*' || 
-        !origin || 
-        origin === 'https://feedin.up.railway.app' || 
-        origin === 'http://localhost:4200' ||
-        (corsOrigin && corsOrigin.split(',').map(o => o.trim()).includes(origin));
       
-      if (isAllowedOrigin && origin) {
-        res.header('Access-Control-Allow-Origin', origin);
-        res.header('Access-Control-Allow-Credentials', 'true');
-        res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, X-CSRF-Token');
-        res.header('Access-Control-Allow-Methods', 'GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS');
+      // Determine if this origin should be allowed
+      const isAllowed = !origin || 
+        corsOrigin === '*' ||
+        allowedOriginsList.includes(origin);
+      
+      if (isAllowed && origin) {
+        // Set exact origin (required when credentials: true)
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+        res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, X-CSRF-Token');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS');
+        res.setHeader('Access-Control-Max-Age', '86400'); // 24 hours
+      } else if (!origin) {
+        // Same-origin request, no CORS needed but set headers anyway
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
       }
       
       // Handle preflight OPTIONS requests
       if (req.method === 'OPTIONS') {
-        return res.sendStatus(204);
+        return res.status(204).send();
       }
       
       next();
