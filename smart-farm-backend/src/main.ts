@@ -20,76 +20,52 @@ async function bootstrap() {
     
     const app = await NestFactory.create(AppModule, {
       logger: ['error', 'warn', 'log', 'debug', 'verbose'],
-      cors: true, // Enable CORS at app creation for better compatibility
     });
     
     // ✅ Configure CORS FIRST (before other middleware)
-    // CORS configuration: supports Railway domains, localhost, and custom origins
+    // Support CORS_ORIGIN env variable or use explicit frontend domain
     const corsOrigin = process.env.CORS_ORIGIN;
-    const railwayPattern = /^https:\/\/.*\.up\.railway\.app$/;
-    const localhostPattern = /^http:\/\/localhost(:\d+)?$/;
-    const localhostIpPattern = /^http:\/\/127\.0\.0\.1(:\d+)?$/;
-    
-    // Function to validate origin - compatible with Express CORS middleware
-    const validateOrigin = (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-      try {
-        // Allow requests with no origin (same-origin, mobile apps, Postman, etc.)
-        if (!origin) {
-          callback(null, true);
-          return;
-        }
-        
-        // Allow all if CORS_ORIGIN is '*'
-        if (corsOrigin === '*') {
-          callback(null, true);
-          return;
-        }
-        
-        // Allow all Railway domains
-        if (railwayPattern.test(origin)) {
-          logger.log(`✅ CORS: Allowed Railway origin: ${origin}`);
-          callback(null, true);
-          return;
-        }
-        
-        // Allow localhost for development
-        if (localhostPattern.test(origin) || localhostIpPattern.test(origin)) {
-          logger.log(`✅ CORS: Allowed localhost origin: ${origin}`);
-          callback(null, true);
-          return;
-        }
-        
-        // Check custom origins from environment variable
-        if (corsOrigin) {
-          const customOrigins = corsOrigin.split(',').map(o => o.trim()).filter(o => o);
-          if (customOrigins.includes(origin)) {
-            logger.log(`✅ CORS: Allowed custom origin: ${origin}`);
-            callback(null, true);
-            return;
-          }
-        }
-        
-        // Reject all other origins
-        logger.warn(`❌ CORS: Blocked origin: ${origin}`);
-        callback(null, false);
-      } catch (error) {
-        logger.error(`❌ CORS validation error: ${error.message}`);
-        callback(error, false);
-      }
-    };
+    const allowedOrigins = corsOrigin === '*' 
+      ? true // Allow all origins
+      : [
+          'https://feedin.up.railway.app',
+          'http://localhost:4200',
+          ...(corsOrigin ? corsOrigin.split(',').map(o => o.trim()).filter(o => o) : [])
+        ];
     
     app.enableCors({
-      origin: corsOrigin === '*' ? true : validateOrigin,
-      methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+      origin: allowedOrigins,
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
       credentials: true,
-      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin', 'Cookie'],
-      exposedHeaders: ['Authorization', 'Set-Cookie'],
-      preflightContinue: false,
-      optionsSuccessStatus: 204,
-      maxAge: 86400, // 24 hours
+      allowedHeaders: 'Content-Type, Accept, Authorization, X-CSRF-Token, X-Requested-With, Origin',
     });
     
-    logger.log(`✅ CORS configured - Railway domains (*.up.railway.app) and localhost allowed`);
+    logger.log(`✅ CORS configured - Origin: ${corsOrigin === '*' ? 'ALL (*)' : allowedOrigins.join(', ')}`);
+    
+    // ✅ Add explicit CORS headers middleware to ensure CSRF endpoint works
+    // This ensures CORS headers are always set, even for OPTIONS requests
+    app.use((req, res, next) => {
+      const origin = req.headers.origin as string | undefined;
+      const isAllowedOrigin = corsOrigin === '*' || 
+        !origin || 
+        origin === 'https://feedin.up.railway.app' || 
+        origin === 'http://localhost:4200' ||
+        (corsOrigin && corsOrigin.split(',').map(o => o.trim()).includes(origin));
+      
+      if (isAllowedOrigin && origin) {
+        res.header('Access-Control-Allow-Origin', origin);
+        res.header('Access-Control-Allow-Credentials', 'true');
+        res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, X-CSRF-Token');
+        res.header('Access-Control-Allow-Methods', 'GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS');
+      }
+      
+      // Handle preflight OPTIONS requests
+      if (req.method === 'OPTIONS') {
+        return res.sendStatus(204);
+      }
+      
+      next();
+    });
     
     // ✅ Security headers
     app.use(helmet({
