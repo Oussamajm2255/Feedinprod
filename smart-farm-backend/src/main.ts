@@ -23,20 +23,32 @@ async function bootstrap() {
     });
     
     // ✅ Configure CORS FIRST (before other middleware)
-    // IMPORTANT: When credentials: true, we CANNOT use wildcard (*) - must specify exact origins
+    // IMPORTANT: When credentials: true, browsers REJECT wildcard (*)
+    // We MUST return the exact origin, not '*'
     const corsOrigin = process.env.CORS_ORIGIN;
     
-    // Build allowed origins list - always include frontend domain explicitly
-    const allowedOriginsList = [
-      'https://feedin.up.railway.app',
-      'http://localhost:4200',
-      ...(corsOrigin && corsOrigin !== '*' 
-        ? corsOrigin.split(',').map(o => o.trim()).filter(o => o)
-        : [])
-    ];
+    // Always include frontend domain - required for production
+    const frontendOrigin = 'https://feedin.up.railway.app';
+    const localhostOrigin = 'http://localhost:4200';
     
-    // For credentials: true, we must use a function to return exact origin, not wildcard
-    const corsOptions = {
+    // Build allowed origins list
+    const allowedOriginsSet = new Set([
+      frontendOrigin,
+      localhostOrigin
+    ]);
+    
+    // Add custom origins from env if not wildcard
+    if (corsOrigin && corsOrigin !== '*') {
+      corsOrigin.split(',').forEach(o => {
+        const trimmed = o.trim();
+        if (trimmed) allowedOriginsSet.add(trimmed);
+      });
+    }
+    
+    const allowedOriginsList = Array.from(allowedOriginsSet);
+    
+    // CORS origin callback - returns true to allow, and NestJS will set exact origin
+    app.enableCors({
       origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
         // Allow requests with no origin (same-origin, mobile apps, Postman, etc.)
         if (!origin) {
@@ -44,58 +56,60 @@ async function bootstrap() {
           return;
         }
         
-        // If CORS_ORIGIN is '*', allow any origin but return the exact origin (required for credentials)
+        // If CORS_ORIGIN is '*', allow ALL origins (but return exact origin, not wildcard)
         if (corsOrigin === '*') {
-          logger.log(`✅ CORS: Allowing origin (wildcard mode): ${origin}`);
+          logger.log(`✅ CORS: Allowed origin (wildcard mode): ${origin}`);
           callback(null, true);
           return;
         }
         
-        // Check if origin is in allowed list
-        if (allowedOriginsList.includes(origin)) {
+        // Check if origin is explicitly allowed
+        if (allowedOriginsSet.has(origin)) {
           logger.log(`✅ CORS: Allowed origin: ${origin}`);
           callback(null, true);
           return;
         }
         
-        // Reject
+        // Reject unknown origins
         logger.warn(`❌ CORS: Blocked origin: ${origin}`);
         callback(null, false);
       },
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+      methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
       credentials: true,
-      allowedHeaders: 'Content-Type, Accept, Authorization, X-CSRF-Token, X-Requested-With, Origin',
-    };
+      allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'X-CSRF-Token', 'X-Requested-With', 'Origin'],
+      exposedHeaders: ['Authorization', 'Set-Cookie'],
+      preflightContinue: false,
+      optionsSuccessStatus: 204,
+      maxAge: 86400,
+    });
     
-    app.enableCors(corsOptions);
+    logger.log(`✅ CORS configured - Mode: ${corsOrigin === '*' ? 'ALLOW ALL (*)' : 'EXPLICIT'}`);
+    if (corsOrigin !== '*') {
+      logger.log(`   Allowed origins: ${allowedOriginsList.join(', ')}`);
+    }
     
-    logger.log(`✅ CORS configured - Allowing origins: ${corsOrigin === '*' ? 'ALL (*)' : allowedOriginsList.join(', ')}`);
-    
-    // ✅ Add explicit CORS headers middleware BEFORE all other middleware
-    // This ensures CORS headers are set for ALL requests, especially OPTIONS preflight
+    // ✅ Add explicit CORS headers middleware - MUST run before all other middleware
+    // This ensures CORS headers are ALWAYS set, even for preflight OPTIONS requests
     app.use((req, res, next) => {
       const origin = req.headers.origin as string | undefined;
       
-      // Determine if this origin should be allowed
-      const isAllowed = !origin || 
-        corsOrigin === '*' ||
-        allowedOriginsList.includes(origin);
+      // Check if origin should be allowed
+      const shouldAllow = !origin || 
+        corsOrigin === '*' || 
+        allowedOriginsSet.has(origin);
       
-      if (isAllowed && origin) {
-        // Set exact origin (required when credentials: true)
+      if (shouldAllow && origin) {
+        // CRITICAL: Set exact origin (browsers reject '*' with credentials: true)
         res.setHeader('Access-Control-Allow-Origin', origin);
         res.setHeader('Access-Control-Allow-Credentials', 'true');
         res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, X-CSRF-Token');
         res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS');
-        res.setHeader('Access-Control-Max-Age', '86400'); // 24 hours
-      } else if (!origin) {
-        // Same-origin request, no CORS needed but set headers anyway
-        res.setHeader('Access-Control-Allow-Credentials', 'true');
+        res.setHeader('Access-Control-Max-Age', '86400');
       }
       
-      // Handle preflight OPTIONS requests
+      // Handle preflight OPTIONS requests immediately
       if (req.method === 'OPTIONS') {
-        return res.status(204).send();
+        return res.status(204).end();
       }
       
       next();
