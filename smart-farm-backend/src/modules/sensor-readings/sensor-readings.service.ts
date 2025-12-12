@@ -159,7 +159,7 @@ export class SensorReadingsService {
         sensor_id: sensorId,
         created_at: Between(startDate, endDate)
       },
-      order: { createdAt: 'ASC' }
+      order: { created_at: 'ASC' }
     });
 
     if (readings.length === 0) {
