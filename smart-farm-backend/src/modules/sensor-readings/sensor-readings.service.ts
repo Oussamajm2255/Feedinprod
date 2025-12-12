@@ -106,7 +106,7 @@ export class SensorReadingsService {
     return this.sensorReadingRepository.findOne({
       where: { sensor_id: sensorId },
       relations: ['sensor'],
-      order: { createdAt: 'DESC' }
+      order: { created_at: 'DESC' }
     });
   }
 
