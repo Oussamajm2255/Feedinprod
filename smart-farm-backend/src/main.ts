@@ -22,23 +22,13 @@ async function bootstrap() {
       logger: ['error', 'warn', 'log', 'debug', 'verbose'],
     });
     
-    // ✅ CORS Configuration - Exact specification for Railway production
-    // Railway requires explicit origin (no wildcard with credentials: true)
     app.enableCors({
-      origin: process.env.NODE_ENV === 'production' 
-        ? 'https://feedin.up.railway.app'
-        : ['https://feedin.up.railway.app', 'http://localhost:4200'],
-      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-      allowedHeaders: [
-        'Content-Type',
-        'Authorization'
-      ],
-      credentials: true
+      origin: 'https://feedin.up.railway.app',
+      credentials: true,
+      methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
+      allowedHeaders: ['Content-Type','Authorization']
     });
     
-    logger.log('✅ CORS configured');
-    
-    // ✅ Ensure OPTIONS requests pass through (before guards/middleware)
     app.use((req, res, next) => {
       if (req.method === 'OPTIONS') {
         res.sendStatus(204);

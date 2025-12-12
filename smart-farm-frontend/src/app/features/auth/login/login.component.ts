@@ -1,6 +1,6 @@
 import { Component, inject, ViewChild, ElementRef, AfterViewInit, OnDestroy, ChangeDetectionStrategy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, AsyncValidatorFn, ValidationErrors } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -9,8 +9,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { Observable, of, timer } from 'rxjs';
-import { map, switchMap, catchError, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { AuthService } from '../../../core/services/auth.service';
 import { LoginRequest } from '../../../core/models/user.model';
@@ -94,10 +92,9 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
     this.initializeFormState();
   }
 
-  // Form initialization
   private createLoginForm(): FormGroup {
     return this.fb.group({
-      email: ['', [Validators.required, Validators.email]], // Removed async validator - check-email endpoint doesn't exist in production
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       rememberMe: [false]
     });
@@ -243,8 +240,6 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
     this.incrementLoginAttempts();
     this.clearPasswordField();
     this.showErrorMessage(error);
-
-    console.error('Login error:', error);
   }
 
   private handleRememberMe(email: string): void {
@@ -331,22 +326,12 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
     this.showFallbackIcon.set(true);
   }
 
-  // Removed emailExistsValidator - check-email endpoint doesn't exist in production
-
-  // Error handling
   private getSpecificErrorMessage(error: any): string {
-    const errorMessages: Record<number, string> = {
-      401: this.languageService.t()('auth.invalidCredentials'),
-      422: this.languageService.t()('auth.invalidEmailFormat'),
-      429: this.languageService.t()('auth.tooManyAttempts')
-    };
-
-    if (error.status in errorMessages) {
-      return errorMessages[error.status];
+    if (error.status === 401) {
+      return this.languageService.t()('auth.invalidCredentials');
     }
-
-    if (error.status === 0 || error.status >= 500) {
-      return this.languageService.t()('auth.networkError');
+    
+    return this.languageService.t()('auth.loginError');
     }
 
     return this.languageService.t()('auth.loginError');
