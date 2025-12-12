@@ -22,13 +22,18 @@ async function bootstrap() {
       logger: ['error', 'warn', 'log', 'debug', 'verbose'],
     });
     
-    // ✅ CORS Configuration - Simple and clean
+    // ✅ CORS Configuration - Explicit for preflight requests
     app.enableCors({
       origin: [
         'https://feedin.up.railway.app',
         'http://localhost:4200'
       ],
-      credentials: true
+      methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+      credentials: true,
+      allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'X-Requested-With', 'Origin'],
+      exposedHeaders: ['Authorization', 'Set-Cookie'],
+      preflightContinue: false,
+      optionsSuccessStatus: 204
     });
     
     logger.log('✅ CORS configured');
