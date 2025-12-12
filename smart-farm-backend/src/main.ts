@@ -1,104 +1,56 @@
-// src/main.ts
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe, Logger } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
-  const logger = new Logger('Bootstrap');
+  await new Promise(resolve => setTimeout(resolve, 2000));
   
-  try {
-    logger.log('🚀 Starting Smart Farm Backend...');
-    logger.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-    logger.log(`🗄️ Database URL: ${process.env.DATABASE_URL ? 'Set' : 'Not set'}`);
-    logger.log(`🔌 MQTT Broker: ${process.env.MQTT_BROKER || 'Not set'}`);
-    
-    // Add a small delay to allow database to initialize
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    const app = await NestFactory.create(AppModule, {
-      logger: ['error', 'warn', 'log', 'debug', 'verbose'],
-    });
-    
-    app.enableCors({
-      origin: 'https://feedin.up.railway.app',
-      credentials: true,
-      methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
-      allowedHeaders: ['Content-Type','Authorization']
-    });
-    
-    app.use((req, res, next) => {
-      if (req.method === 'OPTIONS') {
-        res.sendStatus(204);
-        return;
-      }
-      next();
-    });
-    
-    // ✅ Security headers (after CORS)
-    app.use(helmet({
-      contentSecurityPolicy: false, // CSP is managed at the frontend/nginx layer
-      crossOriginResourcePolicy: { policy: 'cross-origin' },
-    }));
-    app.use(cookieParser());
+  const app = await NestFactory.create(AppModule, {
+    logger: ['error', 'warn', 'log', 'debug', 'verbose'],
+  });
 
-    // ✅ Global exception filter
-    app.useGlobalFilters(new AllExceptionsFilter());
-
-    // ✅ Global validation pipe
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        transform: true,
-        transformOptions: {
-          enableImplicitConversion: true,
-        },
-      }),
-    );
-
-    // ✅ Global prefix for all routes
-    app.setGlobalPrefix('api/v1');
-
-    const port = process.env.PORT || 3000;
-    await app.listen(port);
-    
-    logger.log(`🚀 Smart Farm Backend is running on: http://localhost:${port}/api/v1`);
-    logger.log(`📊 Health check: http://localhost:${port}/api/v1/health`);
-    logger.log(`🔧 API Documentation: http://localhost:${port}/api/v1`);
-    logger.log(`✅ Backend started successfully!`);
-    
-  } catch (error) {
-    logger.error('❌ Failed to start Smart Farm Backend:', error);
-    logger.error('Error details:', error.message);
-    logger.error('Stack trace:', error.stack);
-    
-    // Try to provide more specific error information
-    if (error.message?.includes('database')) {
-      logger.error('💡 Database connection issue detected. Check DATABASE_URL environment variable.');
+  app.use((req, res, next) => {
+    if (req.method === 'OPTIONS') {
+      res.header('Access-Control-Allow-Origin', 'https://feedin.up.railway.app');
+      res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+      res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      res.header('Access-Control-Allow-Credentials', 'true');
+      return res.sendStatus(204);
     }
-    if (error.message?.includes('port')) {
-      logger.error('💡 Port binding issue detected. Check PORT environment variable.');
-    }
-    
-    process.exit(1);
-  }
+    next();
+  });
+
+  app.enableCors({
+    origin: 'https://feedin.up.railway.app',
+    credentials: true,
+    methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
+    allowedHeaders: ['Content-Type','Authorization'],
+  });
+
+  app.use(helmet({
+    contentSecurityPolicy: false,
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+  }));
+  app.use(cookieParser());
+
+  app.useGlobalFilters(new AllExceptionsFilter());
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+    }),
+  );
+
+  app.setGlobalPrefix('api/v1');
+
+  await app.listen(process.env.PORT || 3000);
 }
-
-// Handle uncaught exceptions
-process.on('uncaughtException', (error) => {
-  console.error('❌ Uncaught Exception:', error);
-  process.exit(1);
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
-  process.exit(1);
-});
-
-bootstrap().catch((error) => {
-  console.error('❌ Bootstrap failed:', error);
-  process.exit(1);
-});
+bootstrap();
