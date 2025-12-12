@@ -332,9 +332,6 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
     }
     
     return this.languageService.t()('auth.loginError');
-    }
-
-    return this.languageService.t()('auth.loginError');
   }
 
   // Form persistence (sessionStorage)
