@@ -31,8 +31,9 @@ export class AppComponent implements OnInit {
     // Always show loading screen first (even if already authenticated)
     this.isLoading = true;
 
-    // Initialize auth service after Angular is ready
-    await this.authService.initAuth();
+    // DO NOT initialize auth here - let guards handle it
+    // authGuard will call initAuth() on protected routes
+    // guestGuard will NOT call initAuth() on /login
 
     // Initialize theme service (this will apply the saved theme)
     // The theme service constructor already handles initialization

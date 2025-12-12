@@ -31,7 +31,7 @@ export class AuthService {
     // Don't initialize immediately - wait for Angular to be ready
   }
 
-  // Initialize auth when called (from app component)
+  // Initialize auth - only check /auth/me (no CSRF needed with JWT/cookies)
   async initAuth(): Promise<void> {
     if (this.initialized) return;
     
@@ -42,19 +42,17 @@ export class AuthService {
 
   private async initializeAuth(): Promise<void> {
     try {
-      // Prime CSRF token first
-      await firstValueFrom(this.http.get<{ csrfToken: string }>(`${this.API_URL}/auth/csrf`, { withCredentials: true }));
-      
-      // Then try to fetch current user from server session/cookie
+      // Try to fetch current user from server session/cookie
       const user = await firstValueFrom(this.http.get<User>(`${this.API_URL}/auth/me`, { withCredentials: true }));
       this.setAuthData(user);
     } catch (error) {
-      // No valid session, clear auth state without making logout request
+      // No valid session, clear auth state silently (don't navigate)
       this.clearAuthState(false);
     }
   }
 
   // Method for guards to wait for initialization
+  // Only called on protected routes (authGuard), never on /login
   async waitForInit(): Promise<boolean> {
     if (!this.initialized) {
       await this.initAuth();
@@ -97,7 +95,7 @@ export class AuthService {
   }
 
   logout(navigate: boolean = true): void {
-    // Try to clear server cookie, but don't fail if CSRF is missing
+    // Try to clear server cookie, but don't fail if request fails
     this.http.post(`${this.API_URL}/auth/logout`, {}, { withCredentials: true }).subscribe({ 
       complete: () => {},
       error: () => {
