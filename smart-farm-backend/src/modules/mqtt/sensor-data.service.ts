@@ -579,7 +579,7 @@ export class SensorDataService implements OnModuleInit, OnModuleDestroy {
         .createQueryBuilder('reading')
         .innerJoinAndSelect('reading.sensor', 'sensor')
         .where('reading.sensor_id IN (:...sensorIds)', { sensorIds })
-        .orderBy('reading.createdAt', 'DESC')
+        .orderBy('reading.created_at', 'DESC')
         .limit(limit)
         .getMany();
 
@@ -588,7 +588,7 @@ export class SensorDataService implements OnModuleInit, OnModuleDestroy {
         sensorType: reading.sensor?.type,
         unit: reading.sensor?.unit,
         value: reading.value1,
-        timestamp: reading.createdAt,
+        timestamp: reading.created_at,
         topic: `smartfarm/sensors/${reading.sensor_id}` // New topic format
       }));
 
@@ -607,7 +607,7 @@ export class SensorDataService implements OnModuleInit, OnModuleDestroy {
         .createQueryBuilder('reading')
         .innerJoinAndSelect('reading.sensor', 'sensor')
         .where('reading.sensor_id = :sensorId', { sensorId })
-        .orderBy('reading.createdAt', 'DESC')
+        .orderBy('reading.created_at', 'DESC')
         .limit(limit)
         .getMany();
 
@@ -616,7 +616,7 @@ export class SensorDataService implements OnModuleInit, OnModuleDestroy {
         sensorType: reading.sensor?.type,
         unit: reading.sensor?.unit,
         value: reading.value1,
-        timestamp: reading.createdAt,
+        timestamp: reading.created_at,
         topic: `smartfarm/sensors/${reading.sensor_id}`
       }));
 
@@ -638,7 +638,7 @@ export class SensorDataService implements OnModuleInit, OnModuleDestroy {
           const lastReading = await this.sensorReadingRepository
             .findOne({
               where: { sensor_id: sensor.sensor_id },
-              order: { createdAt: 'DESC' }
+              order: { created_at: 'DESC' }
             });
 
           const readingCount = await this.sensorReadingRepository
@@ -654,7 +654,7 @@ export class SensorDataService implements OnModuleInit, OnModuleDestroy {
             },
             lastReading: lastReading ? {
               value: lastReading.value1,
-              timestamp: lastReading.createdAt
+              timestamp: lastReading.created_at
             } : null,
             totalReadings: readingCount,
             thresholds: this.thresholdMonitor.getThresholdSummary(sensor)
@@ -771,7 +771,7 @@ export class SensorDataService implements OnModuleInit, OnModuleDestroy {
       
       const recentReadingCount = await this.sensorReadingRepository
         .createQueryBuilder('reading')
-        .where('reading.createdAt >= :yesterday', { yesterday })
+        .where('reading.created_at >= :yesterday', { yesterday })
         .getCount();
 
       const mqttStatus = this.mqttConnectionService.getConnectionStatus();

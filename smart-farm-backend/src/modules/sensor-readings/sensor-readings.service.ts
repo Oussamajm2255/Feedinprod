@@ -33,7 +33,7 @@ export class SensorReadingsService {
     // First, let's check if there are any readings at all
     const allReadings = await this.sensorReadingRepository.find({
       relations: ['sensor', 'sensor.farm'],
-      order: { createdAt: 'DESC' },
+      order: { created_at: 'DESC' },
       take: 10
     });
     console.log('Total readings in database:', allReadings.length);
@@ -62,7 +62,7 @@ export class SensorReadingsService {
     const readings = await this.sensorReadingRepository.find({
       where: whereCondition,
       relations: ['sensor', 'sensor.farm'],
-      order: { createdAt: 'DESC' },
+      order: { created_at: 'DESC' },
       take: limit,
       skip: offset
     });
@@ -96,7 +96,7 @@ export class SensorReadingsService {
     return this.sensorReadingRepository.find({
       where: { sensor_id: sensorId },
       relations: ['sensor'],
-      order: { createdAt: 'DESC' },
+      order: { created_at: 'DESC' },
       take: limit,
       skip: offset
     });
@@ -119,10 +119,10 @@ export class SensorReadingsService {
     return this.sensorReadingRepository.find({
       where: {
         sensor_id: sensorId,
-        createdAt: Between(startDate, endDate)
+        created_at: Between(startDate, endDate)
       },
       relations: ['sensor'],
-      order: { createdAt: 'ASC' },
+      order: { created_at: 'ASC' },
       take: limit
     });
   }
@@ -132,7 +132,7 @@ export class SensorReadingsService {
       .createQueryBuilder('reading')
       .innerJoin('reading.sensor', 'sensor')
       .where('sensor.farm_id = :farmId', { farmId })
-      .orderBy('reading.createdAt', 'DESC')
+      .orderBy('reading.created_at', 'DESC')
       .take(limit)
       .skip(offset)
       .getMany();
@@ -143,7 +143,7 @@ export class SensorReadingsService {
       .createQueryBuilder('reading')
       .innerJoin('reading.sensor', 'sensor')
       .where('sensor.device_id = :deviceId', { deviceId })
-      .orderBy('reading.createdAt', 'DESC')
+      .orderBy('reading.created_at', 'DESC')
       .take(limit)
       .skip(offset)
       .getMany();
@@ -157,7 +157,7 @@ export class SensorReadingsService {
     const readings = await this.sensorReadingRepository.find({
       where: {
         sensor_id: sensorId,
-        createdAt: Between(startDate, endDate)
+        created_at: Between(startDate, endDate)
       },
       order: { createdAt: 'ASC' }
     });
@@ -189,7 +189,7 @@ export class SensorReadingsService {
       max,
       latest: {
         value: latest.value1,
-        timestamp: latest.createdAt
+        timestamp: latest.created_at
       }
     };
   }
@@ -203,7 +203,7 @@ export class SensorReadingsService {
       .createQueryBuilder('reading')
       .innerJoin('reading.sensor', 'sensor')
       .where('sensor.farm_id = :farmId', { farmId })
-      .andWhere('reading.createdAt BETWEEN :startDate AND :endDate', { startDate, endDate })
+      .andWhere('reading.created_at BETWEEN :startDate AND :endDate', { startDate, endDate })
       .getMany();
 
     const sensorStats = new Map();
@@ -252,7 +252,7 @@ export class SensorReadingsService {
     const result = await this.sensorReadingRepository
       .createQueryBuilder()
       .delete()
-      .where('createdAt < :cutoffDate', { cutoffDate })
+      .where('created_at < :cutoffDate', { cutoffDate })
       .execute();
 
     return result.affected || 0;

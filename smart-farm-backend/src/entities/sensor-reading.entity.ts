@@ -21,6 +21,6 @@ export class SensorReading {
   @Column({ type: 'float', nullable: true })
   value2: number;
 
-  @CreateDateColumn()
-  createdAt: Date;
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+  created_at: Date;
 }
