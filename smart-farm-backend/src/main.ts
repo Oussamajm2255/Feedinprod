@@ -22,17 +22,17 @@ async function bootstrap() {
       logger: ['error', 'warn', 'log', 'debug', 'verbose'],
     });
     
-    // ✅ CORS Configuration - SIMPLE and BULLETPROOF
-    // Always allow the frontend domain explicitly
+    // ✅ CORS Configuration - CRITICAL: Must be configured BEFORE all other middleware
+    const corsOrigin = process.env.CORS_ORIGIN || '*';
+    const frontendOrigin = 'https://feedin.up.railway.app';
     const allowedOrigins = [
-      'https://feedin.up.railway.app',
+      frontendOrigin,
       'http://localhost:4200',
       'http://127.0.0.1:4200'
     ];
     
-    // Add custom origins from env if provided
-    const corsOrigin = process.env.CORS_ORIGIN;
-    if (corsOrigin && corsOrigin !== '*') {
+    // Build final allowed origins list
+    if (corsOrigin !== '*') {
       corsOrigin.split(',').forEach(o => {
         const trimmed = o.trim();
         if (trimmed && !allowedOrigins.includes(trimmed)) {
@@ -41,62 +41,54 @@ async function bootstrap() {
       });
     }
     
-    // Use function-based origin to handle wildcard mode properly
-    const originCallback = (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-      // Allow requests with no origin (same-origin, mobile apps, etc.)
-      if (!origin) {
-        callback(null, true);
-        return;
-      }
-      
-      // If CORS_ORIGIN is '*', allow all origins
-      if (corsOrigin === '*') {
-        logger.log(`✅ CORS: Allowing origin (wildcard): ${origin}`);
-        callback(null, true);
-        return;
-      }
-      
-      // Check if origin is in allowed list
-      if (allowedOrigins.includes(origin)) {
-        logger.log(`✅ CORS: Allowed origin: ${origin}`);
-        callback(null, true);
-        return;
-      }
-      
-      logger.warn(`❌ CORS: Blocked origin: ${origin}`);
-      callback(null, false);
-    };
-    
+    // Configure CORS - use function to handle wildcard properly with credentials
     app.enableCors({
-      origin: corsOrigin === '*' ? true : originCallback,
+      origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+        // Allow requests with no origin
+        if (!origin) {
+          callback(null, true);
+          return;
+        }
+        
+        // If wildcard mode, allow all origins (cors middleware will set exact origin)
+        if (corsOrigin === '*') {
+          callback(null, true);
+          return;
+        }
+        
+        // Check allowed origins
+        if (allowedOrigins.includes(origin)) {
+          callback(null, true);
+          return;
+        }
+        
+        callback(null, false);
+      },
       methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
       credentials: true,
       allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'X-CSRF-Token', 'X-Requested-With', 'Origin'],
       exposedHeaders: ['Authorization', 'Set-Cookie'],
       preflightContinue: false,
       optionsSuccessStatus: 204,
-      maxAge: 86400,
     });
     
-    logger.log(`✅ CORS configured - Allowing: ${corsOrigin === '*' ? 'ALL ORIGINS (*)' : allowedOrigins.join(', ')}`);
+    logger.log(`✅ CORS configured - Mode: ${corsOrigin === '*' ? 'ALLOW ALL' : 'EXPLICIT'}`);
+    if (corsOrigin !== '*') {
+      logger.log(`   Allowed origins: ${allowedOrigins.join(', ')}`);
+    }
     
-    // ✅ CRITICAL: Add explicit CORS middleware that runs FIRST
-    // This handles preflight OPTIONS requests before they hit any route handlers
+    // ✅ Add explicit CORS headers middleware - runs BEFORE helmet and other middleware
+    // This ensures CORS headers are ALWAYS set, especially for OPTIONS requests
     app.use((req, res, next) => {
-      const origin = req.headers.origin as string | undefined;
+      const origin = req.headers.origin;
       
       // Determine if origin should be allowed
-      let shouldAllow = false;
-      if (!origin) {
-        shouldAllow = true; // Same-origin requests
-      } else if (corsOrigin === '*') {
-        shouldAllow = true; // Wildcard mode
-      } else if (allowedOrigins.includes(origin)) {
-        shouldAllow = true; // Explicitly allowed
-      }
+      const shouldAllow = !origin || 
+        corsOrigin === '*' || 
+        allowedOrigins.includes(origin as string);
       
-      // Set CORS headers if origin is allowed
       if (shouldAllow && origin) {
+        // Set exact origin (required when credentials: true - cannot use '*')
         res.setHeader('Access-Control-Allow-Origin', origin);
         res.setHeader('Access-Control-Allow-Credentials', 'true');
         res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS');
@@ -104,16 +96,16 @@ async function bootstrap() {
         res.setHeader('Access-Control-Max-Age', '86400');
       }
       
-      // Handle preflight OPTIONS requests
+      // Handle preflight OPTIONS requests immediately
       if (req.method === 'OPTIONS') {
-        logger.log(`🔄 CORS: Handling OPTIONS preflight from ${origin || 'unknown'}`);
-        return res.status(204).send();
+        logger.log(`🔄 CORS: OPTIONS preflight from ${origin || 'no-origin'}`);
+        return res.status(204).end();
       }
       
       next();
     });
     
-    // ✅ Security headers
+    // ✅ Security headers (after CORS)
     app.use(helmet({
       contentSecurityPolicy: false, // CSP is managed at the frontend/nginx layer
       crossOriginResourcePolicy: { policy: 'cross-origin' },
