@@ -97,7 +97,7 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
   // Form initialization
   private createLoginForm(): FormGroup {
     return this.fb.group({
-      email: ['', [Validators.required, Validators.email], [this.emailExistsValidator()]],
+      email: ['', [Validators.required, Validators.email]], // Removed async validator - check-email endpoint doesn't exist in production
       password: ['', [Validators.required, Validators.minLength(6)]],
       rememberMe: [false]
     });
@@ -331,22 +331,7 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
     this.showFallbackIcon.set(true);
   }
 
-  // Async email validation
-  private emailExistsValidator(): AsyncValidatorFn {
-    return (control: AbstractControl): Observable<ValidationErrors | null> => {
-      if (!control.value || control.errors?.['email']) {
-        return of(null);
-      }
-
-      return timer(this.config.auth.emailValidationDelay).pipe(
-        debounceTime(this.config.auth.emailValidationDebounce),
-        distinctUntilChanged(),
-        switchMap(() => this.authService.checkEmailExists(control.value)),
-        map(exists => exists ? null : { emailNotExists: true }),
-        catchError(() => of(null))
-      );
-    };
-  }
+  // Removed emailExistsValidator - check-email endpoint doesn't exist in production
 
   // Error handling
   private getSpecificErrorMessage(error: any): string {

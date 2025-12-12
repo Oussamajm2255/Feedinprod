@@ -22,21 +22,30 @@ async function bootstrap() {
       logger: ['error', 'warn', 'log', 'debug', 'verbose'],
     });
     
-    // ✅ CORS Configuration - Explicit for preflight requests
+    // ✅ CORS Configuration - Exact specification for Railway production
+    // Railway requires explicit origin (no wildcard with credentials: true)
     app.enableCors({
-      origin: [
-        'https://feedin.up.railway.app',
-        'http://localhost:4200'
+      origin: process.env.NODE_ENV === 'production' 
+        ? 'https://feedin.up.railway.app'
+        : ['https://feedin.up.railway.app', 'http://localhost:4200'],
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+      allowedHeaders: [
+        'Content-Type',
+        'Authorization'
       ],
-      methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
-      credentials: true,
-      allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'X-Requested-With', 'Origin'],
-      exposedHeaders: ['Authorization', 'Set-Cookie'],
-      preflightContinue: false,
-      optionsSuccessStatus: 204
+      credentials: true
     });
     
     logger.log('✅ CORS configured');
+    
+    // ✅ Ensure OPTIONS requests pass through (before guards/middleware)
+    app.use((req, res, next) => {
+      if (req.method === 'OPTIONS') {
+        res.sendStatus(204);
+        return;
+      }
+      next();
+    });
     
     // ✅ Security headers (after CORS)
     app.use(helmet({
